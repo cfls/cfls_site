@@ -11,12 +11,17 @@ use App\Models\VerifyCode;
 
 class VerifyCodeController
 {
-    public function index(User $user)
+    public function index(User $user, $theme = null)
     {
+        $query = VerifyCode::where('user_id', $user->id);
 
-        $verifyCodes = VerifyCode::where('user_id', $user->id)->get();
+        // Solo filtrar por theme si se proporciona
+        if ($theme !== null) {
+            $query->where('theme', $theme);
+        }
+
+        $verifyCodes = $query->get();
 
         return VerifyCodeResource::collection($verifyCodes);
-
     }
 }
