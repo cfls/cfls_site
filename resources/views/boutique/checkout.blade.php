@@ -395,8 +395,9 @@
 
                     // 🔥 CALCULAR SUBTOTAL Y DESCUENTO
                     @php
+
                         $subtotal = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
-                        $memberDiscount = $user->getMemberDiscount();
+                        $memberDiscount = auth()->check() ? auth()->user()->getMemberDiscount() : 0;
                         $discountAmount = ($subtotal * $memberDiscount) / 100;
                         $baseTotal = $subtotal - $discountAmount;
                     @endphp
