@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminLsfbgo\AdminLsfbgoController;
 use App\Http\Controllers\Api\V1\QuizController;
 use App\Http\Controllers\BoutiqueController;
 use App\Http\Controllers\DownloadController;
@@ -22,12 +23,21 @@ Route::get('/equipe', [TeamController::class, 'index'])->name('equipe');
 Route::get('/contact', [HomeController::class, 'contacto'])->name('contact');
 Route::get('/general-4', [HomeController::class, 'general'])->name('general-4');
 Route::get('/telechargements-gratuits', [DownloadController::class, 'index'])->name('telechargements-gratuits');
+Route::get('/admin-lsfbgo', [AdminLsfbgoController::class, 'index'])->name('admin-lsfbgo');// Crear nueva pregunta
+Route::post('/admin-lsfbgo/questions/create', [AdminLsfbgoController::class, 'createQuestion'])->name('admin-lsfbgo.create-question');
+Route::delete('/admin-lsfbgo/question/{question}',[AdminLsfbgoController::class, 'deleteQuestion'])->name('admin-lsfbgo.delete-question');
 
+Route::get('/admin-lsfbgo/{type}', [AdminLsfbgoController::class, 'type'])->name('admin-lsfbgo.type');
+Route::get('/admin-lsfbgo/questions/{syllabu_id}/{theme_id}/{type}', [AdminLsfbgoController::class, 'showQuestions'])->name('admin-lsfbgo.show-questions');
+Route::put('/admin-lsfbgo/question/{question}', [AdminLsfbgoController::class, 'updateQuestion'])
+    ->name('admin-lsfbgo.update-question');
 // Cuestionario
 
 Route::get('/questions', [QuizController::class, 'setting'])->name('question.setting');
 // routes/web.php
 Route::put('/questions/{id}', [QuizController::class, 'updateAnswer'])->name('questions.update');
+
+
 
 
 // Redirecciones de URLs antiguas Wix (deben ir ANTES de las rutas dinámicas)
