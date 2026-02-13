@@ -15,9 +15,9 @@ class AdminLsfbgoController extends Controller
 {
     public function index()
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403, 'Unauthorized action.');
-        }
+        abort_if(!auth()->check(), 403);
+
+        abort_if(auth()->user()->role !== 'admin', 403);
 
         return view('lsfbgo.index');
     }
