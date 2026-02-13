@@ -33,20 +33,24 @@ class AdminLsfgoDashboard extends Component
     {
         $featured = [
             [
-                'title' => 'Textes',
+                'title' => 'Traduire la LSFB',
                 'type' => 'text',
+                'img' => 'text.jpeg'
             ],
             [
                 'title' => 'Choix',
                 'type' => 'choice',
+                'img' => 'choice.jpeg'
             ],
             [
-                'title' => 'Choix Oui/Non',
+                'title' => 'Oui/Non',
                 'type' => 'yes-no',
+                'img' => 'yes-no.jpeg'
             ],
             [
                 'title' => 'Vidéos Choix',
                 'type' => 'video-choice',
+                'img' => 'video-choice.jpeg'
             ],
 
         ];
