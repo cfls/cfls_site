@@ -1,8 +1,11 @@
 <?php
 
+
+
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\V1\CrosswordController;
 use App\Http\Controllers\Api\V1\DictionaryController;
+use App\Http\Controllers\Api\V1\FeedBackController;
 use App\Http\Controllers\Api\V1\LettersController;
 use App\Http\Controllers\Api\V1\MemoryGameController;
 use App\Http\Controllers\Api\V1\PlanController;
@@ -51,6 +54,8 @@ Route::get('/product/{id}', function ($id) {
     return Product::with(['images', 'options'])->findOrFail($id);
 });
 
+;
+
 Route::prefix('v1')->group(function () {
 
     Route::get('/syllabus/settings/{slug}', [SyllabusController::class, 'settings']);
@@ -88,6 +93,6 @@ Route::prefix('v1')->group(function () {
     Route::get('/spell/{id}', [SpellController::class, 'spell']);
     Route::get('/letters', [LettersController::class, 'index']);
     Route::get('/video-quiz/{syllabu}/{theme}', [VideoQuizItemController::class, 'index']);
-
+    Route::post('/feedback', [FeedbackController::class, 'store']);
 
 });
