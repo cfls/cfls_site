@@ -22,13 +22,14 @@ class FeedBackController extends Controller
 
     public function store(Request $request, User $user) {
         $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
             'type' => 'required|in:bug,suggestion,question',
             'message' => 'required|string|max:1000',
             'question_id' => 'nullable|integer',
         ]);
 
         Feedback::create([
-            'user_id' => $user->id,
+            'user_id' => $request->input('user_id'),
             'type' => $request->input('type'),
             'message' => $request->input('message'),
             'question_id' => $request->input('question_id'),
