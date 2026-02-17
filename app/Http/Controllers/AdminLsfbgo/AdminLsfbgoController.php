@@ -10,6 +10,7 @@ use App\Models\VideoTheme;
 use Cloudinary\Asset\Video;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AdminLsfbgoController extends Controller
 {
@@ -161,9 +162,20 @@ class AdminLsfbgoController extends Controller
     {
         $newStatus = $question->status ? 0 : 1;
 
-        $question->update(['status' => $newStatus]);
+        DB::transaction(function () use ($question, $newStatus) {
 
-        $message = $newStatus ? 'Question activée avec succès!' : 'Question désactivée avec succès!';
+            // 🔹 Actualizar todas las questions del mismo video
+            Question::where('video_id', $question->video_id)
+                ->update(['status' => $newStatus]);
+
+            // 🔹 Actualizar todos los themes del mismo video
+            VideoTheme::where('id', $question->video_id)
+                ->update(['active' => $newStatus]);
+        });
+
+        $message = $newStatus
+            ? 'Question activée avec succès!'
+            : 'Question désactivée avec succès!';
 
         return redirect()->back()->with('success', $message);
     }
