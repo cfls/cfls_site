@@ -41,7 +41,7 @@
         <!-- Header con breadcrumb -->
         <div class="bg-white border-b border-gray-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                <a href="{{ route('admin-lsfbgo') }}"
+                <a href="/admin-lsfbgo"
                    class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 transition">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -200,9 +200,12 @@
                                 </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
+
                                 @foreach($questions as $question)
+
                                     @php
                                         $options = json_decode($question->options, true);
+
                                     @endphp
 
                                     <tr class="hover:bg-gray-50 transition">
@@ -277,19 +280,22 @@
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                                     </svg>
                                                 </button>
-                                                <form action="{{ route('admin-lsfbgo.delete-question', $question->id) }}" method="POST">
-                                                    @csrf @method('DELETE')
-                                                    <input type="hidden" name="question_id" value="{{ $question->id }}">
-                                                    <input type="hidden" name="syllabu_id" value="{{ $question->syllabu_id  }}">
-                                                    <input type="hidden" name="theme_id" value="{{$question->theme_id  }}">
+
+                                                <form action="{{ route('admin-lsfbgo.update-status-question', $question->id) }}" method="POST">
+                                                    @csrf @method('PUT')
                                                     <button type="submit"
-                                                            onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette question ?')"
-                                                            class="text-red-600 hover:text-red-900 transition"
-                                                            title="Supprimer">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                                    </svg>
-                                                </button>
+                                                            onclick="return confirm('{{ $question->status ? 'Désactiver' : 'Activer' }} cette question ?')"
+                                                            class="{{ $question->status ? 'text-green-600 hover:text-green-900' : 'text-red-600 hover:text-red-900' }} transition"
+                                                            title="{{ $question->status ? 'Désactiver' : 'Activer' }}">
+
+                                                        @if($question->status)
+
+
+                                                            Activer
+                                                        @else
+                                                            Désactiver
+                                                        @endif
+                                                    </button>
                                                 </form>
                                             </div>
                                         </td>
@@ -453,7 +459,7 @@
                                 <input
                                         type="text"
                                         name="answer"
-                                        value="{{ $question->video->url }}"
+                                        value="{{ $question->answer }}"
                                         class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"
                                         required>
                             </div>

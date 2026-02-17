@@ -17,13 +17,15 @@ class Question extends Model
         'question_text',
         'type',
         'options',
-        'answer'
+        'answer',
+        'status'
     ];
 
     public $timestamps = true;
 
     protected $casts = [
         'options' => 'array', // convierte JSON a array automáticamente
+        'status' => 'boolean',
     ];
 
     public function syllabus(): \Illuminate\Database\Eloquent\Relations\BelongsTo

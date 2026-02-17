@@ -46,6 +46,7 @@ class QuestionResource extends JsonResource
                 : null,
             'options'       => $this->formatOptions(),
             'answer'        => $this->answer ?? '',
+            'status'        => $this->status ?? false,
         ];
     }
 

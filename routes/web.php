@@ -23,14 +23,18 @@ Route::get('/equipe', [TeamController::class, 'index'])->name('equipe');
 Route::get('/contact', [HomeController::class, 'contacto'])->name('contact');
 Route::get('/general-4', [HomeController::class, 'general'])->name('general-4');
 Route::get('/telechargements-gratuits', [DownloadController::class, 'index'])->name('telechargements-gratuits');
-Route::get('/admin-lsfbgo', [AdminLsfbgoController::class, 'index'])->name('admin-lsfbgo');// Crear nueva pregunta
-Route::post('/admin-lsfbgo/questions/create', [AdminLsfbgoController::class, 'createQuestion'])->name('admin-lsfbgo.create-question');
-Route::delete('/admin-lsfbgo/question/{question}',[AdminLsfbgoController::class, 'deleteQuestion'])->name('admin-lsfbgo.delete-question');
+Route::prefix('admin-lsfbgo')
+    ->name('admin-lsfbgo.')
+    ->group(function () {
+        Route::get('/', [AdminLsfbgoController::class, 'index'])->name('index');
+        Route::get('/{type}', [AdminLsfbgoController::class, 'type'])->name('type');
+        Route::get('/questions/{syllabu_id}/{theme_id}/{type}', [AdminLsfbgoController::class, 'showQuestions'])->name('show-questions');
+        Route::post('/questions/create', [AdminLsfbgoController::class, 'createQuestion'])->name('create-question');
+        Route::put('/question/{question}', [AdminLsfbgoController::class, 'updateQuestion'])->name('update-question');
 
-Route::get('/admin-lsfbgo/{type}', [AdminLsfbgoController::class, 'type'])->name('admin-lsfbgo.type');
-Route::get('/admin-lsfbgo/questions/{syllabu_id}/{theme_id}/{type}', [AdminLsfbgoController::class, 'showQuestions'])->name('admin-lsfbgo.show-questions');
-Route::put('/admin-lsfbgo/question/{question}', [AdminLsfbgoController::class, 'updateQuestion'])
-    ->name('admin-lsfbgo.update-question');
+        // ← ADD THIS
+        Route::put('/question/{question}/status', [AdminLsfbgoController::class, 'updateStatusQuestion'])->name('update-status-question');
+    });
 // Cuestionario
 
 Route::get('/questions', [QuizController::class, 'setting'])->name('question.setting');

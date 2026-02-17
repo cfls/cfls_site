@@ -157,22 +157,15 @@ class AdminLsfbgoController extends Controller
         return [];
     }
 
-    public function deleteQuestion(Request $request)
+    public function updateStatusQuestion(Question $question)
     {
-        $validated = $request->validate([
-            'question_id' => 'required|exists:questions,id',
-        ], [
-            'question_id.required' => 'L\'ID de la question est requis',
-            'question_id.exists' => 'La question spécifiée n\'existe pas',
-        ]);
+        $newStatus = $question->status ? 0 : 1;
 
-        $question = Question::findOrFail($validated['question_id']);
-        $question->delete();
+        $question->update(['status' => $newStatus]);
 
+        $message = $newStatus ? 'Question activée avec succès!' : 'Question désactivée avec succès!';
 
-        return redirect()->back()->with('success', 'Question supprimée avec succès!');
-
-
+        return redirect()->back()->with('success', $message);
     }
 
 
@@ -213,6 +206,7 @@ class AdminLsfbgoController extends Controller
 
 
 
+
         // Retornar vista con los datos
         return view('lsfbgo.'.$type, compact('type', 'syllabus', 'theme', 'questions'));
     }
@@ -235,12 +229,22 @@ class AdminLsfbgoController extends Controller
 
 
 
+
         // Aplicar búsqueda si existe
         if ($search = request('search')) {
             $searchColumn = $type === 'yes-no' ? 'question_text' : 'answer';
 
-            $query->where($searchColumn, 'LIKE', "%{$search}%");
+            $query->where(function ($q) use ($search, $searchColumn) {
+                $q->where($searchColumn, 'LIKE', "%{$search}%");
+
+                if (is_numeric($search)) {
+
+                    $q->orWhere('video_id', (int) $search);
+                }
+            });
         }
+
+
 
         // Paginar resultados
         $questions = $query->orderBy('id', 'asc')->paginate(15);

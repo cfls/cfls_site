@@ -77,11 +77,14 @@ class QuizController
 
         $questions = $query
             ->with(['video:id,title,url'])
-            ->select(['id', 'theme_id', 'type', 'question_text', 'answer', 'video_id', 'options'])
+            ->select(['id', 'theme_id', 'type', 'question_text', 'answer', 'video_id', 'options','status'])
+            ->whereStatus(true)
             ->offset($randomOffset)
             ->limit($limit)
             ->get()
             ->shuffle();
+
+
 
         return QuestionResource::collection($questions);
     }
