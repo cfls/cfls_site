@@ -38,30 +38,39 @@ class SyllabusController extends Controller
     /** Página de un syllabus (lista de temas). */
     public function syllabu(string $slug)
     {
+        if ($redirect = $this->ensureActiveUser()) {
+            return $redirect;
+        }
 
+        $user = Auth::user();
 
+        // Verifica código activo para este slug
+        $hasAccess = VerifyCode::where([
+            'user_id' => $user->id,
+            'theme'   => $slug,
+            'active'  => 1
+        ])->exists();
 
-            if ($redirect = $this->ensureActiveUser()) {
-                return $redirect;
-            }
-            $user = Auth::user();
-            // Exige código válido para ESTE slug
-            $exists = VerifyCode::where('user_id', $user->id)->where('theme', $slug)->where('active', 1)->first();
+        if (!$hasAccess) {
+            return redirect()->route('code-livre', ['slug' => $slug]);
+        }
 
-            if (!$exists) {
-                return redirect()->route('code-livre', ['slug' => $slug]);
-            }
+        // Base query
+        $query = Syllabu::where('slug', $slug);
 
+        // Si no es admin, solo activos
+        if ($user->role !== 'admin') {
+            $query->where('status', 1);
+        }
 
+        $syllabu = $query->firstOrFail();
 
-//        // Caso especial Wix
-//        if (request()->path() === 'ue1-themes' && in_array($slug, self::WIX_VALID_SLUGS, true)) {
-//            return redirect()->away("https://wix.cfls.be/{$slug}/" . rawurlencode('a-bientôt'));
-//        }
-
-
-        $syllabu = Syllabu::where('slug', $slug)->where('status', 1)->firstOrFail();
-        $themes  = $syllabu->themes()->where('status', 1)->get();
+        // Cargar temas según rol
+        $themes = $syllabu->themes()
+            ->when($user->role !== 'admin', function ($q) {
+                $q->where('status', 1);
+            })
+            ->get();
 
         return view('syllabus.theme', compact('syllabu', 'slug', 'themes'));
     }
@@ -118,45 +127,60 @@ class SyllabusController extends Controller
     /** Página de un tema específico del syllabus. */
     public function theme(string $slug, string $theme, ?string $code = null)
     {
+        if ($redirect = $this->ensureActiveUser()) {
+            return $redirect;
+        }
 
+        $user = Auth::user();
 
+        // 🔐 Validar acceso solo si NO es admin
+        if ($user->role !== 'admin') {
 
+            $hasAccess = VerifyCode::where([
+                'user_id' => $user->id,
+                'theme'   => $slug,
+                'active'  => 1
+            ])->exists();
 
-            if ($redirect = $this->ensureActiveUser()) {
-                return $redirect;
-            }
-
-            $user = Auth::user();
-
-            // Exige código válido para ESTE slug
-            $exists = VerifyCode::where('user_id', $user->id)->where('theme', $slug)->where('active', 1)->first();
-
-            if (!$exists) {
+            if (!$hasAccess) {
                 return redirect()->route('code-livre', ['slug' => $slug]);
             }
+        }
 
+        // 📚 Base query syllabus
+        $syllabuQuery = Syllabu::where('slug', $slug);
 
+        if ($user->role !== 'admin') {
+            $syllabuQuery->where('status', 1);
+        }
 
+        $syllabu = $syllabuQuery->firstOrFail();
 
+        // 📂 Base query theme
+        $themeQuery = $syllabu->themes()
+            ->where('slug', $theme);
 
-        $syllabu = Syllabu::where('slug', $slug)->where('status', 1)->firstOrFail();
+        if ($user->role !== 'admin') {
+            $themeQuery->where('status', 1);
+        }
 
-        $themeModel = $syllabu->themes()
-            ->where('slug', $theme)
-            ->where('status', 1)
-            ->firstOrFail();
+        $themeModel = $themeQuery->firstOrFail();
 
-        $videos = DB::table('video_themes_cloudinary')
-            ->select('id','url as url_video', 'title')
-            ->where('syllabu_id', $syllabu->id)
-            ->where('theme_id', $themeModel->id)
-            ->where('active', 1)
-            ->orderBy('title', 'asc')
-            ->get()
-            ->map(fn ($item) => (array) $item)
+        // 🎥 Videos (admin ve todo)
+        $videosQuery = DB::table('video_themes_cloudinary')
+            ->where([
+                'syllabu_id' => $syllabu->id,
+                'theme_id'   => $themeModel->id,
+            ])
+            ->orderBy('title');
+
+        if ($user->role !== 'admin') {
+            $videosQuery->where('active', 1);
+        }
+
+        $videos = $videosQuery
+            ->get(['id', 'url as url_video', 'title'])
             ->toArray();
-
-
 
         return view('syllabus.show', compact('syllabu', 'themeModel', 'videos'));
     }
