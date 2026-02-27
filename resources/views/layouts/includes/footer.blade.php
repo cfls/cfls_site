@@ -3,38 +3,60 @@
 <footer class="bg-[#84DBF0]">
     <div class="w-full p-4 py-6 lg:py-8">
         <div class="md:flex md:justify-between">
-          <div class="mb-6 md:mb-0 ml-7">
-              <a href="/" class="flex items-center">
-                  <img
-                      class="object-contain w-20 sm:w-24 md:w-32 h-auto"
-                      src="{{ asset('storage/' . $logo) }}"
-                      alt="CFLS Logo"
-                  />
+            <div class="mb-6 md:mb-0 ml-7">
+                <a href="/" class="flex items-center">
+                    <img
+                            class="object-contain w-20 sm:w-24 md:w-32 h-auto"
+                            src="{{ asset('storage/' . $logo) }}"
+                            alt="CFLS Logo"
+                    />
+                </a>
+            </div>
 
-              </a>
-          </div>
-          <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
-              <div>
-                  <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase">Suivez-nous</h2>
-                  <ul class="font-medium">
-                      <li class="mb-4">
-                          <a href="https://www.facebook.com/cfls.asbl" target="_blank" class="hover:underline ">Facebook</a>
-                      </li>
-                      <li>
-                          <a href="https://www.instagram.com/cflsasbl" target="_blank" class="hover:underline">Instagram</a>
-                      </li>
-                  </ul>
-              </div>
-              <div>
-                  <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase">LÉGAL</h2>
-                  <ul class="font-medium">
-                      <li class="mb-4">
-                          <a href="{{route('general-4')}}" class="hover:underline">Politique de confidentialité</a>
-                      </li>
-                  </ul>
-              </div>
-          </div>
-      </div>
+            <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3 lg:grid-cols-4">
+
+                <!-- Columna Redes Sociales -->
+                <div>
+                    <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase">Suivez-nous</h2>
+                    <ul class="font-medium">
+                        <li class="mb-4">
+                            <a href="https://www.facebook.com/cfls.asbl" target="_blank" class="hover:underline">
+                                Facebook
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.instagram.com/cflsasbl" target="_blank" class="hover:underline">
+                                Instagram
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Columna Legal -->
+                <div>
+                    <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase">LÉGAL</h2>
+                    <ul class="font-medium">
+                        <li class="mb-4">
+                            <a href="{{route('general-4')}}" class="hover:underline">
+                                Politique de confidentialité
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Nueva Columna Información Empresa -->
+                <div>
+                    <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase">INFORMATIONS</h2>
+                    <ul class="font-medium text-gray-600">
+                        <li class="mb-2">RPM : Bruxelles</li>
+                        <li class="mb-2">N° d'entreprise : BE 0422.073.229</li>
+                        <li class="mb-2">N° de compte : BE38 3100 5385 3072</li>
+                        <li>BIC : BBRUBEBB</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
       <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
       <div class="sm:flex sm:items-center sm:justify-center">
           <span class="text-sm  sm:text-center ">© {{ date('Y') }} <a href="/" class="hover:underline">CFLS</a>. Tous droits réservés.
