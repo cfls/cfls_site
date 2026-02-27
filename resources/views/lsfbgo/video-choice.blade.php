@@ -228,9 +228,12 @@
                                 </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
+
                                 @foreach($questions as $question)
                                     @php
-                                        $options = json_decode($question->options, true);
+                                        $options = is_string($question->options)
+                                            ? json_decode($question->options, true)
+                                            : $question->options;
                                     @endphp
 
                                     <tr class="hover:bg-gray-50 transition">
@@ -351,7 +354,9 @@
     <!-- MODALES -->
     @foreach($questions as $question)
         @php
-            $options = json_decode($question->options, true);
+            $options = is_string($question->options)
+                ? json_decode($question->options, true)
+                : $question->options;
         @endphp
 
                 <!-- Modal de Visualización -->
