@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\QuizController;
 use App\Http\Controllers\BoutiqueController;
 use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\VideoController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
@@ -86,7 +87,8 @@ Route::get('ue1-themes-11/a-bientôt', fn() => redirect()->away('https://cfls.be
     Route::get('/facture/{order}', [OrderController::class, 'facture'])->name('order.facture');
 //});
 
-
+Route::get('/inscription', [InscriptionController::class, 'index'])->name('inscription.index');
+Route::post('/inscription', [InscriptionController::class, 'store'])->name('inscription.store');;
 
 // Cloudinary (libre)
 Route::get('/cloudinary/get-video', [VideoController::class, 'getAllVideos']);

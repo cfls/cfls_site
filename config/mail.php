@@ -113,4 +113,6 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Centre Francophone de la Langue des Signes'),
     ],
 
+    'organizer_email' => env('ORGANIZER_EMAIL', 'info@cfls.be'),
+
 ];

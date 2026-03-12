@@ -22,7 +22,7 @@ class VideoController extends Controller
             'url' => ['secure' => true]
         ]);
         // Replace 'your-folder-name' with your actual folder name
-        $folderPath = "Syllabus 3/THEME 9";
+        $folderPath = "Syllabus_1_2026/THEME 1";
 
         $search = new SearchApi();
 
@@ -37,12 +37,12 @@ class VideoController extends Controller
             $title = $video['display_name'] ?? $video['public_id'];
             $slug  = Str::slug($title);
 
-            DB::table('video_themes_cloudinary')->updateOrInsert(
+            DB::table('video_themes_cloudinary_version')->updateOrInsert(
                 ['slug' => $slug], // condición única
                 [
                     'title'      => $title,
-                    'theme_id'   => 29,
-                    'syllabu_id' => 3,
+                    'theme_id'   => 1,
+                    'syllabu_id' => 1,
                     'url'        => $video['url'],
                     'active'     => 1,
                     'updated_at' => now(),
