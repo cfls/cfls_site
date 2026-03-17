@@ -39,55 +39,44 @@ class QuizController
         ]);
     }
 
-    public function show($slug, $theme, Request $request)
-    {
-        $syllabusId = Syllabu::where('slug', $slug)->value('id');
+   public function show($slug, $theme, Request $request)
+        {
+            $syllabusId = Syllabu::where('slug', $slug)->value('id');
 
-        if (!$syllabusId) {
-            abort(404);
+            if (!$syllabusId) {
+                abort(404);
+            }
+
+            $themeId = Theme::where('syllabu_id', $syllabusId)
+                ->where('slug', $theme)
+                ->value('id');
+
+            if (!$themeId) {
+                abort(404);
+            }
+
+            $type = $request->input('type');
+
+            $query = Question::where('theme_id', $themeId)
+                ->whereStatus(true);
+
+            if ($type) {
+                $query->where('type', $type);
+            }
+
+            if ($query->count() === 0) {
+                return response()->json(['data' => []]);
+            }
+
+            $questions = $query
+                ->with(['video:id,title,url'])
+                ->select(['id', 'theme_id', 'type', 'question_text', 'answer', 'video_id', 'options', 'status'])
+                ->inRandomOrder() // ✅ Aleatorio real a nivel DB
+                ->limit(15)
+                ->get();
+
+            return QuestionResource::collection($questions);
         }
-
-        $themeId = Theme::where('syllabu_id', $syllabusId)
-            ->where('slug', $theme)
-            ->value('id');
-
-        if (!$themeId) {
-            abort(404);
-        }
-
-        // ✅ Obtener tipo desde la request (opcional)
-        $type = $request->input('type'); // ?type=text
-
-        $query = Question::where('theme_id', $themeId);
-
-        // ✅ Filtrar por tipo si se proporciona
-        if ($type) {
-            $query->where('type', $type);
-        }
-
-        $totalQuestions = $query->count();
-
-        if ($totalQuestions === 0) {
-            return response()->json(['data' => []]);
-        }
-
-        $limit = 15;
-        $maxOffset = max(0, $totalQuestions - $limit);
-        $randomOffset = rand(0, $maxOffset);
-
-        $questions = $query
-            ->with(['video:id,title,url'])
-            ->select(['id', 'theme_id', 'type', 'question_text', 'answer', 'video_id', 'options','status'])
-            ->whereStatus(true)
-            ->offset($randomOffset)
-            ->limit($limit)
-            ->get()
-            ->shuffle();
-
-
-
-        return QuestionResource::collection($questions);
-    }
 
     public function setting(Request $request)
     {

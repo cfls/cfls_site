@@ -1,23 +1,15 @@
 {
   "public/img/FOND_CLAIR_1.png": {
-    "file": "assets/FOND_CLAIR_1-Cgh64pA5.png",
+    "file": "assets/FOND_CLAIR_1-CDY8aiJh.png",
     "src": "public/img/FOND_CLAIR_1.png"
   },
-  "public/img/fond_movil_1.png": {
-    "file": "assets/fond_movil_1-BovDgUYO.png",
-    "src": "public/img/fond_movil_1.png"
-  },
-  "public/img/fond_movil_2.png": {
-    "file": "assets/fond_movil_2-0QnRElOP.png",
-    "src": "public/img/fond_movil_2.png"
-  },
   "resources/css/app.css": {
-    "file": "assets/app-CXwjar52.css",
+    "file": "assets/app-D_GCVfqo.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-Xaw6OIO1.js",
+    "file": "assets/app-BuG9aa18.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true
