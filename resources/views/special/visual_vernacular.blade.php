@@ -143,7 +143,7 @@
 
     <!-- Subtitle -->
     <div class="w-full max-w-lg mb-10 text-center stagger-1">
-      <p class="font-sans text-sm leading-relaxed" style="color:#9aaa9c;font-weight:300;">
+      <p class="font-sans text-lg leading-relaxed" style="color:#9aaa9c;font-weight:300;">
         Stage de découverte et d'initiation — 3 jours pour explorer<br />
         un langage visuel universel et poétique.
       </p>
@@ -154,15 +154,15 @@
       <div class="grid grid-cols-3 gap-0 border border-white border-opacity-10 rounded-sm overflow-hidden">
         <div class="p-4 border-r border-white border-opacity-10">
           <p class="text-xs tracking-widest uppercase mb-1.5" style="color:#c8893a;">Quand</p>
-          <p class="font-sans text-xs leading-snug" style="color:#f5f0e8;">6 – 8 mai 2026<br/><span style="color:#9aaa9c;">9h30 – 16h00</span></p>
+          <p class="font-sans text-lg leading-snug" style="color:#f5f0e8;">6 – 8 mai 2026<br/><span style="color:#9aaa9c;">9h30 – 16h00</span></p>
         </div>
         <div class="p-4 border-r border-white border-opacity-10">
           <p class="text-xs tracking-widest uppercase mb-1.5" style="color:#c8893a;">Où</p>
-          <p class="font-sans text-xs leading-snug" style="color:#f5f0e8;">École IRHOV<br/><span style="color:#9aaa9c;">Rue Monulphe 80, Liège</span></p>
+          <p class="font-sans text-lg leading-snug" style="color:#f5f0e8;">École IRHOV<br/><span style="color:#9aaa9c;">Rue Monulphe 80, Liège</span></p>
         </div>
         <div class="p-4">
           <p class="text-xs tracking-widest uppercase mb-1.5" style="color:#c8893a;">Prix</p>
-          <p class="font-sans text-xs leading-snug" style="color:#f5f0e8;">100 €<br/><span style="color:#9aaa9c;">75 € élèves IRHOV</span></p>
+          <p class="font-sans text-lg leading-snug" style="color:#f5f0e8;">100 €<br/><span style="color:#9aaa9c;">75 € élèves IRHOV</span></p>
         </div>
       </div>
     </div>
