@@ -6,5 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Inscription extends Model
 {
-    protected $fillable = ['nom', 'email', 'personnes'];
+   protected $fillable = [
+    'nom',
+    'prenom',
+    'email',
+    'personnes',
+    'type',
+    'profil',
+    'irhov',
+    'prix',
+];
+
+protected $casts = [
+    'irhov' => 'boolean',
+];
 }

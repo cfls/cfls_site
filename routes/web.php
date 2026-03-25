@@ -88,8 +88,9 @@ Route::get('ue1-themes-11/a-bientôt', fn() => redirect()->away('https://cfls.be
 //});
 
 Route::get('/inscription', [InscriptionController::class, 'index'])->name('inscription.index');
-Route::post('/inscription', [InscriptionController::class, 'store'])->name('inscription.store');;
-
+Route::post('/inscription', [InscriptionController::class, 'store'])->name('inscription.store');
+Route::get('/inscription_visual_vernacular', [InscriptionController::class, 'visualVernacular'])->name('inscription.visual_vernacular');
+Route::post('/inscription_visual_vernacular', [InscriptionController::class, 'storeVisualVernacular'])->name('inscription.visual_vernacular.store');
 // Cloudinary (libre)
 Route::get('/cloudinary/get-video', [VideoController::class, 'getAllVideos']);
 Route::get('/fix-match-clean', function () {
