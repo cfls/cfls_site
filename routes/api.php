@@ -66,7 +66,8 @@ Route::prefix('v1')->group(function () {
     Route::get('/themes/{theme}', [ThemeController::class, 'show']);
     Route::get('/themes/{theme}/{slug}', [ThemeController::class, 'theme']);
     Route::get('/themes/{theme}/{slug}/{id}', [ThemeController::class, 'video']);
-    Route::get('/verify-codes/{user}/{theme?}', [VerifyCodeController::class, 'index']);
+    Route::get('/verify-code/{user}/{theme?}', [VerifyCodeController::class, 'index']);
+    Route::post('/verify-code', [VerifyCodeController::class, 'store']);
     Route::get('/spellings', [SpellingController::class, 'index']);
     Route::get('/questions/{slug}', [QuizController::class, 'index']);
     Route::get('/questions/{slug}/{theme}', [QuizController::class, 'show']);
@@ -94,5 +95,6 @@ Route::prefix('v1')->group(function () {
     Route::get('/letters', [LettersController::class, 'index']);
     Route::get('/video-quiz/{syllabu}/{theme}', [VideoQuizItemController::class, 'index']);
     Route::post('/feedback', [FeedbackController::class, 'store']);
+    
 
 });

@@ -8,6 +8,7 @@ use App\Http\Resources\V1\VerifyCodeResource;
 use App\Models\Syllabu;
 use App\Models\User;
 use App\Models\VerifyCode;
+use Illuminate\Http\Request;
 
 class VerifyCodeController
 {
@@ -23,5 +24,32 @@ class VerifyCodeController
         $verifyCodes = $query->get();
 
         return VerifyCodeResource::collection($verifyCodes);
+    }
+
+
+   public function store(Request $request)
+    {
+        $user = $request->user();
+        $code = $request->input('code');
+        $theme = $request->input('theme');
+
+         $verifyCode = VerifyCode::where('code', $code)
+            ->where('active', 0)
+            ->first();
+
+        if (!$verifyCode) {
+            return response()->json(['message' => 'Code de livre invalide.'], 400);
+        }
+
+         $verifyCode = VerifyCode::updateOrCreate(
+            ['code' => $code],
+            [
+                'user_id'=> $user->id,
+                'active' => 1,
+                'theme'  => $theme,
+            ]
+        );
+
+        return new VerifyCodeResource($verifyCode);
     }
 }

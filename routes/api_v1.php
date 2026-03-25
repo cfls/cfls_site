@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\V1\SubscriptionController;
 use App\Http\Controllers\Api\V1\SyllabusController;
 use App\Http\Controllers\Api\V1\ThemeController;
 use App\Http\Controllers\Api\V1\UsersController;
+use App\Http\Controllers\Api\V1\VerifyCodeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +34,7 @@ Route::middleware('auth:sanctum')->apiResource('subscriptions', SubscriptionCont
 Route::middleware('auth:sanctum')->apiResource('memory-game', MemoryGameController::class);
 Route::middleware('auth:sanctum')->apiResource('letters', LettersController::class);
 Route::middleware('auth:sanctum')->apiResource('crosswords', CrosswordController::class);
+Route::middleware('auth:sanctum')->apiResource('verify-code', VerifyCodeController::class);
 
 
 Route::get('/user', function (Request $request) {
