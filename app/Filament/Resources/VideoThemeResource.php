@@ -67,6 +67,7 @@ class VideoThemeResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->label('Titre')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
                     ->label('Slug')
@@ -90,7 +91,15 @@ class VideoThemeResource extends Resource
 
             ])
             ->filters([
-                //
+            // ✅ AQUÍ
+            Tables\Filters\SelectFilter::make('syllabu_id')
+                ->label('Syllabus')
+                ->options(
+                    Syllabu::all()
+                        ->groupBy('ue')
+                        ->map(fn ($group) => $group->pluck('title', 'id'))
+                        ->toArray()
+                ),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
