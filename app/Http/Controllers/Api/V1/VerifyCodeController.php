@@ -12,14 +12,14 @@ use Illuminate\Http\Request;
 
 class VerifyCodeController
 {
-    public function index(User $user, $theme = null)
+    public function index(User $user, $code)
     {
-        $query = VerifyCode::where('user_id', $user->id);
+        $query = VerifyCode::where('user_id', $user->id)
+            ->where('code', $code)
+            ->where('active', 1);
 
         // Solo filtrar por theme si se proporciona
-        if ($theme !== null) {
-            $query->where('theme', $theme);
-        }
+       
 
         $verifyCodes = $query->get();
 
