@@ -66,7 +66,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/themes/{theme}', [ThemeController::class, 'show']);
     Route::get('/themes/{theme}/{slug}', [ThemeController::class, 'theme']);
     Route::get('/themes/{theme}/{slug}/{id}', [ThemeController::class, 'video']);
-    Route::get('/verify-code/{user}/{code}', [VerifyCodeController::class, 'index']);
+    Route::get('/verify-code/{user}', [VerifyCodeController::class, 'index']);
     Route::post('/verify-code', [VerifyCodeController::class, 'store']);
     Route::get('/spellings', [SpellingController::class, 'index']);
     Route::get('/questions/{slug}', [QuizController::class, 'index']);

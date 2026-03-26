@@ -12,10 +12,9 @@ use Illuminate\Http\Request;
 
 class VerifyCodeController
 {
-    public function index(User $user, $code)
+    public function index(User $user)
     {
         $query = VerifyCode::where('user_id', $user->id)
-            ->where('code', $code)
             ->where('active', 1);
 
         // Solo filtrar por theme si se proporciona
