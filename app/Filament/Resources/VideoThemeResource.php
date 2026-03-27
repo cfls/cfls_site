@@ -91,15 +91,55 @@ class VideoThemeResource extends Resource
 
             ])
             ->filters([
-            // ✅ AQUÍ
-            Tables\Filters\SelectFilter::make('syllabu_id')
-                ->label('Syllabus')
-                ->options(
-                    Syllabu::all()
-                        ->groupBy('ue')
-                        ->map(fn ($group) => $group->pluck('title', 'id'))
-                        ->toArray()
-                ),
+                Tables\Filters\Filter::make('syllabu_theme')
+                    ->form([
+                        Forms\Components\Select::make('syllabu_id')
+                            ->label('Syllabus')
+                            ->options(
+                                Syllabu::all()
+                                    ->groupBy('ue')
+                                    ->map(fn ($group) => $group->pluck('title', 'id'))
+                                    ->toArray()
+                            )
+                            ->live() // 👈 Reactivo: actualiza el select de temas
+                            ->afterStateUpdated(fn (Forms\Set $set) => $set('theme_id', null)), // 👈 Reset theme al cambiar syllabus
+                        Forms\Components\Select::make('theme_id')
+                            ->label('Thème')
+                            ->options(
+                                fn (Forms\Get $get) =>
+                                \App\Models\Theme::whereHas('videos', function ($query) use ($get) {
+                                    $query->when(
+                                        $get('syllabu_id'),
+                                        fn ($q, $id) => $q->where('syllabu_id', $id)
+                                    );
+                                })
+                                    ->pluck('title', 'id')
+                                    ->toArray()
+                            )
+                            ->searchable(),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when($data['syllabu_id'] ?? null, fn ($q) => $q->where('syllabu_id', $data['syllabu_id']))
+                            ->when($data['theme_id'] ?? null,    fn ($q) => $q->where('theme_id',   $data['theme_id']));
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+
+                        if (!empty($data['syllabu_id'])) {
+                            $indicators[] = Tables\Filters\Indicator::make(
+                                'Syllabus: ' . (Syllabu::find($data['syllabu_id'])?->title ?? '')
+                            )->removeField('syllabu_id');
+                        }
+
+                        if (!empty($data['theme_id'])) {
+                            $indicators[] = Tables\Filters\Indicator::make(
+                                'Thème: ' . (\App\Models\Theme::find($data['theme_id'])?->title ?? '')
+                            )->removeField('theme_id');
+                        }
+
+                        return $indicators;
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
