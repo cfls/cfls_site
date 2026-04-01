@@ -171,6 +171,7 @@ class SyllabusController extends Controller
             ->where([
                 'syllabu_id' => $syllabu->id,
                 'theme_id'   => $themeModel->id,
+                'active'     => 1,
             ])
             ->orderBy('title');
 

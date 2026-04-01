@@ -39,9 +39,8 @@
                                 @ended="handleEnded"
                                 @play="isPlaying = false"
                                 @pause="isPlaying = true"
-                                laysinline
-                                webkit-playsinline
-                                controls
+                                playsinline
+                                webkit-playsinline                               
                                 controlsList="nodownload"
                             >
                                 <source :src="currentVideo" type="video/mp4">
