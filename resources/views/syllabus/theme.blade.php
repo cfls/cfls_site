@@ -5,7 +5,7 @@
 <x-layout>
     <x-slot name="title">Syllabus</x-slot>
 
-    <div class="flex justify-center px-4">
+    <div class="flex justify-center px-4 py-8">
         <h2 class="font-semibold text-gray-800 dark:text-gray-200 mb-5 text-3xl md:text-5xl lg:text-6xl uppercase text-center">
             {{ $syllabu->formatted_title }}
         </h2>

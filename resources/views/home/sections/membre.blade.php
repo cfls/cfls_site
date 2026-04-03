@@ -7,8 +7,8 @@
     <div class="w-full max-w-screen-2xl px-4 md:px-8 mx-auto flex items-center justify-center min-h-screen wow animate__animated animate__backInLeft" data-wow-duration="1s" data-wow-delay="0.2s"">
         <div class="flex flex-col lg:grid lg:grid-cols-2 gap-8 xl:gap-16 items-center w-full mt-10">
 
-           <div>
-               <video
+           <div class="w-full rounded-lg shadow-lg overflow-hidden video-container">
+               <video 
                    src="{{ $members->video_url }}"
                    controls
                    class="w-full h-auto aspect-video video-element"

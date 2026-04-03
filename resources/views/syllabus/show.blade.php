@@ -35,7 +35,7 @@
                         <div class="flex justify-center mb-10">
                             <video
                                 x-ref="videoPlayer"
-                                class="w-[400px] h-[250px] object-cover"
+                                class="w-[480px] h-[300px] object-cover"
                                 @ended="handleEnded"
                                 @play="isPlaying = false"
                                 @pause="isPlaying = true"
@@ -49,7 +49,39 @@
                         </div>
                         <h2 class="mb-4  md:text-2xl  lg:text-4xl  font-extrabold tracking-tight text-gray-900 dark:text-white text-center uppercase mt-10"
                             x-text="currentTitle"></h2>
-                    </div>
+                                       <div class="flex justify-center mb-10 gap-4">
+                                                    <button
+                                                        @click="setSpeed(0.5)"
+                                                        :class="playbackSpeed === 0.5 
+                                                            ? 'bg-yellow-600' 
+                                                            : 'bg-gray-400 dark:bg-gray-600'"
+                                                        class="px-4 py-2 text-white rounded-md transition"
+                                                    >
+                                                        ⏱ Lent
+                                                    </button>
+
+                                                    <button
+                                                        @click="setSpeed(1)"
+                                                        :class="playbackSpeed === 1 
+                                                            ? 'bg-green-600' 
+                                                            : 'bg-gray-400 dark:bg-gray-600'"
+                                                        class="px-4 py-2 text-white rounded-md transition"
+                                                    >
+                                                        ▶ Normal
+                                                    </button>
+
+                                                    <button
+                                                        @click="setSpeed(1.5)"
+                                                        :class="playbackSpeed === 1.5 
+                                                            ? 'bg-red-600' 
+                                                            : 'bg-gray-400 dark:bg-gray-600'"
+                                                        class="px-4 py-2 text-white rounded-md transition"
+                                                    >
+                                                        🚀 Vite
+                                                    </button>
+                                                </div>
+                        </div>
+                  
 
                     <!-- Scrollable List -->
                     <div class="flex flex-col w-full max-w-xs lg:w-80">
@@ -60,11 +92,7 @@
                                 class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
                                 x-text="autoPlayNext ? '🖱 Manuel' : '⏩ Automatique'">
                             </button>
-                            <button
-                                @click="toggleSpeed"
-                                class="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition"
-                                x-text="isSlow ? '🚀 Normal' : '⏱ Lent'">
-                            </button>
+                          
                         </div>
                         <div class="mb-4">
                             <input
@@ -125,7 +153,7 @@
                     isPlaying: true,
                     autoPlayNext: true,
                     repeatCount: 0,
-                    isSlow: false,
+                    playbackSpeed: 1.0,
                     searchQuery: '',
 
                     get filteredVideos() {
@@ -183,7 +211,7 @@
                         player.load();
 
                         player.onloadedmetadata = () => {
-                            player.playbackRate = this.isSlow ? 0.5 : 1.0;
+                            player.playbackRate = this.playbackSpeed;
                             if (this.isPlaying) {
                                 player.play().catch(e => {
                                     console.log('Playback blocked:', e);
@@ -229,12 +257,11 @@
                         }
                     },
 
-                    toggleSpeed() {
-                        const player = this.$refs.videoPlayer;
-                        player.playbackRate = this.isSlow ? 1.0 : 0.5;
-                        this.isSlow = !this.isSlow;
-                    },
-
+                setSpeed(speed) {
+                            const player = this.$refs.videoPlayer;
+                            this.playbackSpeed = speed;
+                            player.playbackRate = speed;
+                        },
                     scrollToActive() {
                         this.$nextTick(() => {
                             const container = this.$refs.scrollContainer;
