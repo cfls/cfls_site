@@ -255,7 +255,7 @@
                  style="border-color:rgba(107,124,110,0.4);color:#f5f0e8;">
             <span class="check-square mt-0.5"></span>
             <div>
-              <p class="font-sans text-sm" style="font-weight:500;">Je suis élève à l'IRHOV</p>
+              <p class="font-sans text-sm" style="font-weight:500;color:#f5f0e8;">Je suis élève à l'IRHOV</p>
               <p class="font-sans text-xs mt-0.5" style="color:#9aaa9c;">Tarif réduit : 75 € — une preuve à fournir</p>
             </div>
           </label>
