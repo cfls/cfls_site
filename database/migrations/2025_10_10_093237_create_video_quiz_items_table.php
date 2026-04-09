@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('video_quiz_items', function (Blueprint $table) {
             $table->id();
             $table->string('title'); // Ejemplo: "Saludo en LESCO"
-            $table->foreignId('video_theme_cloudinary_id')->nullable()->constrained('video_theme_cloudinary')->onDelete('cascade');
+            $table->foreignId('video_theme_cloudinary_id')->nullable()->constrained('video_themes_cloudinary')->onDelete('cascade');
             $table->string('question'); // Pregunta
             $table->json('options'); // Respuestas posibles
             $table->string('correct_answer'); // Respuesta correcta
