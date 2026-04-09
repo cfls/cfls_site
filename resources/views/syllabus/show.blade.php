@@ -8,9 +8,9 @@
 
     <div class="flex flex-col lg:flex-row min-h-screen gap-4 px-4">
         <!-- Main Content -->
-        <div class="flex-1 p-4">
+        <div class="flex-1 px-4 py-8">
             <div class="flex justify-center">
-                <h2 class="font-extrabold tracking-tight text-gray-800 dark:text-gray-200 mb-5 md:text-7xl text-3xl uppercase">{{ $themeModel->title }}</h2>
+               <h2 class="font-semibold text-gray-800 dark:text-gray-200 mb-5 text-3xl md:text-5xl lg:text-6xl uppercase text-center">{{ $themeModel->title }}</h2>
             </div>
 
             <div class="flex flex-col lg:flex-row justify-center items-start gap-x-4 w-full"
@@ -77,7 +77,7 @@
                                                             : 'bg-gray-400 dark:bg-gray-600'"
                                                         class="px-4 py-2 text-white rounded-md transition"
                                                     >
-                                                        🚀 Vite
+                                                        🚀 Rapide
                                                     </button>
                                                 </div>
                         </div>
