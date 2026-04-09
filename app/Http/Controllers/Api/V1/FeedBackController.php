@@ -7,6 +7,8 @@ use App\Models\Feedback;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponses;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\FeedbackReceived;
 
 class FeedBackController extends Controller
 {
@@ -28,12 +30,15 @@ class FeedBackController extends Controller
             'question_id' => 'nullable|integer',
         ]);
 
-        Feedback::create([
+        $feedback =  Feedback::create([
             'user_id' => $request->input('user_id'),
             'type' => $request->input('type'),
             'message' => $request->input('message'),
             'question_id' => $request->input('question_id'),
         ]);
+
+
+        Mail::to('support@cfls.be')->send(new FeedbackReceived($feedback));
 
         return $this->ok('Feedback submitted successfully');
     }
