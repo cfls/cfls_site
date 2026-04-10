@@ -71,6 +71,7 @@ class QuizController
             $questions = $query
                 ->with(['video:id,title,url'])
                 ->select(['id', 'theme_id', 'type', 'question_text', 'answer', 'video_id', 'options', 'status'])
+                ->where('status', true)
                 ->inRandomOrder() // ✅ Aleatorio real a nivel DB
                 ->limit(15)
                 ->get();
