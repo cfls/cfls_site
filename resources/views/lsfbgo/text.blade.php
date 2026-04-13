@@ -462,18 +462,7 @@
                                         value="{{ $question->answer }}"
                                         class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"
                                         required>
-                            </div>
-
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Réponse correcte</label>
-                                <input
-                                        type="text"
-                                        name="answer"
-                                        value="{{ $question->answer }}"
-                                        class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"
-                                        required>
-                            </div>
+                            </div>                          
 
                             <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
                                 <div class="flex">
