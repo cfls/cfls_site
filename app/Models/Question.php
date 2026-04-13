@@ -25,7 +25,7 @@ class Question extends Model
 
     protected $casts = [
         'options' => 'array', // convierte JSON a array automáticamente
-        'status' => 'boolean',
+        
     ];
 
     public function syllabus(): \Illuminate\Database\Eloquent\Relations\BelongsTo

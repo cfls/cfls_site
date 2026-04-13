@@ -27,6 +27,7 @@ class QuizController
 
         $questions = Question::with('video')
             ->where('syllabu_id', $syllabu->id) // ✅ Usar directamente
+            ->whereStatus(1) // ✅ Filtrar solo preguntas activas           
             ->offset($randomOffset)
             ->limit($limit)
             ->get()
@@ -56,9 +57,10 @@ class QuizController
             }
 
             $type = $request->input('type');
+            
 
-            $query = Question::where('theme_id', $themeId)
-                ->whereStatus(true);
+            $query = Question::where('theme_id', $themeId)->whereStatus(1);
+           
 
             if ($type) {
                 $query->where('type', $type);
