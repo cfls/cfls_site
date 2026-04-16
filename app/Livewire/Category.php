@@ -18,9 +18,14 @@ class Category extends Component
     public function mount()
     {
         // Actualizar productos que ya no son nuevos
-        Product::where('status', 2)
-            ->where('created_at', '<=', now()->subMonths(2))
-            ->update(['status' => 1]);
+       Product::where('status', 2)
+    ->get()
+    ->each(function ($product) {
+        if (now()->diffInMonths($product->created_at) >= 2) {
+            $product->update(['status' => 1]);
+            // Log, notificación, evento, etc.
+        }
+    });
 
 
 

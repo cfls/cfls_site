@@ -98,7 +98,7 @@ class ProductResource extends Resource
                     ->numeric(),
                 Forms\Components\Select::make('status')
                     ->label('Statut')
-                    ->boolean()
+                    
                     ->options([
                         3 => 'Épuisé',
                         2 => 'Nouveau',
