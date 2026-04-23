@@ -38,27 +38,25 @@ class ThemeController extends Controller
         return ThemeResource::collection($themes);
     }
 
-    public function theme($slugTheme, $slugVideo)
+    public function theme($slugSyllabu, $slugTheme)
     {
-        $cacheKey = "theme.{$slugTheme}.{$slugVideo}";
 
-        return Cache::remember($cacheKey, now()->addHours(24), function() use ($slugTheme, $slugVideo) {
-            // ✅ Obtener IDs directamente
-            $syllabusId = Syllabu::where('slug', $slugTheme)->value('id');
+        // ✅ Obtener IDs directamente
+        $syllabusId = Syllabu::where('slug', $slugSyllabu)->value('id');
 
-            if (!$syllabusId) {
-                abort(404, 'Syllabus not found');
-            }
+        if (!$syllabusId) {
+            abort(404);
+        }
+        $theme = Theme::with('videos:id,theme_id,title,url')
+            ->select('id', 'slug', 'title', 'syllabu_id')
+            ->where('syllabu_id', $syllabusId)
+            ->where('slug', $slugTheme)
+            ->firstOrFail();
 
-            // ✅ Buscar theme
-            $theme = Theme::with('videos:id,theme_id,title,url')
-                ->select('id', 'slug', 'title', 'syllabu_id')
-                ->where('syllabu_id', $syllabusId)
-                ->where('slug', $slugVideo)
-                ->firstOrFail();
+        return new ThemeResource($theme);
 
-            return new ThemeResource($theme);
-        });
+
+
     }
 
     /**

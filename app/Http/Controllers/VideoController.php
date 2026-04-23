@@ -22,7 +22,7 @@ class VideoController extends Controller
             'url' => ['secure' => true]
         ]);
         // Replace 'your-folder-name' with your actual folder name
-        $folderPath = "Syllabus_1_2026/THEME 1";
+        $folderPath = "Syllabus_2_2026/THEME 10";
 
         $search = new SearchApi();
 
@@ -41,8 +41,8 @@ class VideoController extends Controller
                 ['slug' => $slug], // condición única
                 [
                     'title'      => $title,
-                    'theme_id'   => 1,
-                    'syllabu_id' => 1,
+                    'theme_id'   => 10,
+                    'syllabu_id' => 2,
                     'url'        => $video['url'],
                     'active'     => 1,
                     'updated_at' => now(),

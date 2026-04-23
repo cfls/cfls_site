@@ -57,9 +57,16 @@ class QuizController
             }
 
             $type = $request->input('type');
-            
 
-            $query = Question::where('theme_id', $themeId)->whereStatus(1);
+
+//            REVISAR
+//            $query = Question::where('theme_id', $themeId)
+//                               ->where('syllabu_id', $syllabusId)
+//                                ->where('type', '=', 'text')
+//                                ->where('id', '=', 755)
+//                                ->whereStatus(1);
+
+           $query = Question::where('theme_id', $themeId)->whereStatus(1);
            
 
             if ($type) {

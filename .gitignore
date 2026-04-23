@@ -28,3 +28,7 @@ composer.phar
 default.php
 wix/
 googleb53b59f155246ae1.html
+app/Console/Commands/FixQuestionOptionVideos.php
+app/Console/Commands/FixTitles.php
+fix_csv.py
+fix_titles.php
