@@ -10,7 +10,9 @@ class SpellingController
 
      public function index()
      {
-         $spellings = Spelling::whereActive(1)->get();
+         $spellings = Spelling::whereActive(1)
+             ->inRandomOrder()
+             ->get();
          return SpellingResource::collection($spellings);
 
      }

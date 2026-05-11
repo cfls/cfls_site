@@ -63,7 +63,7 @@ class QuizController
 //            $query = Question::where('theme_id', $themeId)
 //                               ->where('syllabu_id', $syllabusId)
 //                                ->where('type', '=', 'text')
-//                                ->where('id', '=', 755)
+//                                ->where('id', '=', 9912)
 //                                ->whereStatus(1);
 
            $query = Question::where('theme_id', $themeId)->whereStatus(1);
