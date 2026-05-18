@@ -12,7 +12,7 @@
     <x-slot name="title">Poésie et contes signés</x-slot>
 
     <h1 class="flex justify-center uppercase text-5xl font-bold dark:text-white">
-        Poésie et contes signés
+        Poésie et contes signés dddd
     </h1>
 
     <section class="flex justify-evenly flex-wrap gap-4 mt-8">

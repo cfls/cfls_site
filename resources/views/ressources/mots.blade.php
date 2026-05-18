@@ -1,7 +1,7 @@
 <x-layout>
     <x-slot name="title">Mots croisés</x-slot>
 
-    <h1 class="flex justify-center mb-4 mt-8 md:text-3xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-extrabold tracking-tight text-gray-900 dark:text-white text-center uppercase">
+    <h1 class="flex justify-center mb-4 mt-8 text-3xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-extrabold tracking-tight text-gray-900 dark:text-white text-center uppercase">
         Mots croisés
     </h1>
 

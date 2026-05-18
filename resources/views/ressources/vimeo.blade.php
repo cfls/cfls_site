@@ -2,9 +2,9 @@
     <x-slot name="title">{!! $video->title !!}</x-slot>
     <section class="bg-white dark:bg-gray-900 mb-4">
         <div class="max-w-screen-2xl px-4 py-8 mx-auto space-y-12">
-            <h2 class="mb-4 sm:text-sm  md:text-2xl lg:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white text-center uppercase">
+            <h1 class="flex justify-center mb-4 mt-8 text-3xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-extrabold tracking-tight text-gray-900 dark:text-white text-center uppercase">
                 {{ $video->title }}
-            </h2>
+            </h1>
 
 
 

@@ -10,7 +10,7 @@
 
 
     <form class="max-w-sm mx-auto justify-end mb-6">
-        <label for="products" class="block mb-2 font-medium text-gray-900 dark:text-white text-2xl text-center">
+        <label for="products" class="block mb-2 font-medium text-gray-900 dark:text-white text-3xl text-center mb-5">
             Sélectionner le produit
         </label>
         <select id="products" wire:model.live="selectedCategory"
