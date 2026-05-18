@@ -137,31 +137,7 @@ p {
     gap: 1rem;
 }
 
-.bg-fond-one {
-     background-image: url('/public/img/FOND_CLAIR_1.png');
 
- }
-
-
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    .bg-fond-one {
-        background-image: url('/public/img/fond_movil_1.png');
-    }
-}
-
-.bg-fond-two {
-    background-image: url('/public/img/fond_movil_2.png');
-
-}
-
-@media (max-width: 1023px) {
-    .bg-fond-one {
-        background-image: url('/public/img/fond_movil_1.png');
-    }
-    .bg-fond-two {
-        background-image: url('/public/img/fond_movil_2.png');
-    }
-}
 
 /* High-resolution display support */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {

@@ -1,4 +1,15 @@
-<section class="w-full min-h-screen bg-cover bg-center sm:bg-top bg-no-repeat px-6 py-12 text-white bg-fond-one {{ $mission->status ? '' : 'hidden' }}">
+<style>
+    .bg-commander-one {
+        background-image: url('{{ asset('img/fond_movil_1.png') }}');
+    }
+    @media (min-width: 1024px) {
+        .bg-commander-one {
+            background-image: url('{{ asset('img/FOND_CLAIR_1.png') }}');
+        }
+    }
+</style>
+
+<section class="w-full min-h-screen bg-cover bg-center sm:bg-top bg-no-repeat px-6 py-12 text-white bg-commander-one {{ $mission->status ? '' : 'hidden' }}">
 
     <div class="w-full max-w-screen-2xl px-4 md:px-8 mx-auto flex items-center justify-center min-h-screen wow animate__animated animate__backInRight" data-wow-duration="1s" data-wow-delay="0.2s">
         <div class="flex flex-col lg:grid lg:grid-cols-2 gap-8 xl:gap-16 items-center w-full">

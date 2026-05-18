@@ -1,8 +1,20 @@
 @push('css')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <style>
+        .bg-commander {
+            background-image: url('{{ asset('img/fond_movil_2.png') }}');
+        }
+        @media (min-width: 1024px) {
+            .bg-commander {
+                background-image: url('{{ asset('img/FOND_CLAIR_2.png') }}');
+            }
+        }
+    </style>
 @endpush
 
-<section class="w-full min-h-screen bg-cover bg-center sm:bg-top bg-no-repeat px-6 py-12  bg-fond-two {{ $mission->status ? '' : 'hidden' }}">
+
+
+<section class="w-full min-h-screen bg-cover bg-center sm:bg-top bg-no-repeat px-6 py-12 bg-commander {{ $mission->status ? '' : 'hidden' }}">
 
     <div class="w-full max-w-screen-2xl px-4 md:px-8 mx-auto flex items-center justify-center min-h-screen wow animate__animated animate__backInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
         <div class="flex flex-col lg:grid lg:grid-cols-2 gap-8 xl:gap-16 items-center w-full mt-10">
