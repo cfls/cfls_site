@@ -4,7 +4,7 @@
 
 <section class="w-full min-h-screen bg-cover bg-center sm:bg-top bg-no-repeat px-6 py-12  bg-fond-two {{ $mission->status ? '' : 'hidden' }}">
 
-    <div class="w-full max-w-screen-2xl px-4 md:px-8 mx-auto flex items-center justify-center min-h-screen wow animate__animated animate__backInLeft" data-wow-duration="1s" data-wow-delay="0.2s"">
+    <div class="w-full max-w-screen-2xl px-4 md:px-8 mx-auto flex items-center justify-center min-h-screen wow animate__animated animate__backInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
         <div class="flex flex-col lg:grid lg:grid-cols-2 gap-8 xl:gap-16 items-center w-full mt-10">
 
            <div class="w-full rounded-lg shadow-lg overflow-hidden video-container">
