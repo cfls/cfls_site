@@ -8,7 +8,11 @@
         <!-- Responsive Row -->
         <div class="flex flex-col lg:grid lg:grid-cols-2 gap-8 xl:gap-12 items-center">
             <!-- Video Player -->
-            <div class="order-1 lg:order-2 w-full wow animate__animated animate__backInRight" data-wow-duration="1s" data-wow-delay="0.2s">
+            <div class="order-1 lg:order-2 w-full"
+                 x-data
+                 :class="window.innerWidth >= 1024 ? 'wow animate__animated animate__backInRight' : ''"
+                 data-wow-duration="1s"
+                 data-wow-delay="0.2s">
                 <div class="w-full rounded-lg shadow-lg overflow-hidden video-container">
                     <video
                         src="{{ $don->video_url }}"
@@ -21,7 +25,11 @@
             </div>
 
             <!-- Description and Image -->
-            <div class="order-2 lg:order-1 w-full px-4 wow animate__animated animate__backInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
+            <div class="order-2 lg:order-1 w-full px-4 "
+                 x-data
+                 :class="window.innerWidth >= 1024 ? 'wow animate__animated animate__backInLeft' : ''"
+                 data-wow-duration="1s"
+                 data-wow-delay="0.2s">>
                 <h2 class="text-center uppercase font-extrabold tracking-tight text-gray-900 dark:text-white text-3xl sm:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl">
                     {{ $don->title }}
                 </h2>
