@@ -22,7 +22,7 @@
          :class="window.innerWidth >= 1024 ? 'wow animate__animated animate__backInLeft' : ''"
          data-wow-duration="1s"
          data-wow-delay="0.2s">
-        <div class="flex lg:grid lg:grid-cols-2 gap-8 xl:gap-16 items-center w-full mt-20">
+        <div class="flex flex-col lg:grid lg:grid-cols-2 gap-8 xl:gap-16 items-center w-full mt-20">
 
             <div class="w-full rounded-lg shadow-lg overflow-hidden video-container">
                 <video
