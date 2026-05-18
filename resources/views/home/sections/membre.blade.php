@@ -15,14 +15,14 @@
 
 
 
-<section class="w-full bg-cover bg-center sm:bg-top bg-no-repeat px-6 py-16 bg-commander {{ $mission->status ? '' : 'hidden' }}">
-
+<section class="w-full bg-cover bg-center sm:bg-top bg-no-repeat px-6 py-16 bg-commander {{ $mission->status ? '' : 'hidden' }} mt-10">
+<div class="mt-10">
     <div class="w-full max-w-screen-2xl px-4 md:px-8 mx-auto flex items-center justify-center py-16"
          x-data
          :class="window.innerWidth >= 1024 ? 'wow animate__animated animate__backInLeft' : ''"
          data-wow-duration="1s"
          data-wow-delay="0.2s">
-        <div class="flex flex-col lg:grid lg:grid-cols-2 gap-8 xl:gap-16 items-center w-full mt-20">
+        <div class="flex lg:grid lg:grid-cols-2 gap-8 xl:gap-16 items-center w-full mt-20">
 
             <div class="w-full rounded-lg shadow-lg overflow-hidden video-container">
                 <video
@@ -69,6 +69,7 @@
 
         </div>
     </div>
+</div>
 </section>
 
 @push('scripts')
