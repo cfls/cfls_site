@@ -17,6 +17,7 @@ class AuthController extends Controller
 
     public function login(LoginUserRequest $request): JsonResponse
     {
+
         $request->validated($request->all());
 
         if (!Auth::attempt($request->only('email', 'password'))) {
@@ -183,4 +184,6 @@ class AuthController extends Controller
             ? response()->json(['message' => 'Reset link sent'])
             : response()->json(['message' => 'Unable to send reset link'], 500);
     }
+
+
 }

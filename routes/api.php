@@ -46,7 +46,8 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/user/{user}', [UsersController::class,'show'])->middleware('auth:sanctum');
-
+Route::delete('/user/{user}', [UsersController::class,'destroy'])->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->post('/auth/password', [AuthController::class, 'updatePassword']);
 
 
 
