@@ -6,9 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\StoreUserRequest;
 use App\Http\Requests\Api\V1\UpdateUserRequest;
 use App\Http\Resources\V1\UserResource;
+use App\Mail\AccountDeletedMail;
+use App\Models\QuizResult;
 use App\Models\User;
+use App\Models\VerifyCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Laravel\Jetstream\Contracts\DeletesUsers;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -77,7 +81,15 @@ class UsersController extends Controller
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        // Notificación por correo
+        Mail::to('info@cfls.be')
+            ->cc($user->email)
+            ->send(new AccountDeletedMail($user));
+
+
         app(DeletesUsers::class)->delete($user);
+        VerifyCode::where('user_id', $user->id)->delete();
+        QuizResult::where('user_id', $user->id)->delete();
 
         return response()->noContent();
     }
