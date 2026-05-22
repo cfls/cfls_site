@@ -82,7 +82,7 @@ class UsersController extends Controller
         }
 
         // Notificación por correo
-        Mail::to('info@cfls.be')
+        Mail::to('support@cfls.be')
             ->cc($user->email)
             ->send(new AccountDeletedMail($user));
 
