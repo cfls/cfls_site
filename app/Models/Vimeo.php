@@ -28,8 +28,9 @@ class Vimeo extends Model
         return $this->belongsTo(User::class, 'users_id');
     }
 
-    public function question_lsfb(): hasMany
+    public function getHasSubtitledVersionAttribute(): bool
     {
-        return $this->hasMany(QuestionLsfb::class);
+        return !empty($this->url_cloudinary_subtitled);
     }
+
 }
