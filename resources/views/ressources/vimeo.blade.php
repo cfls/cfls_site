@@ -22,7 +22,7 @@
                 $urlToPlay = $useSubtitled ? $video->url_cloudinary_subtitled : $video->url_cloudinary;
                 $publicId = $extractPublicId($urlToPlay);
 
-                $hasSubtitled = !empty($video->url_cloudinary_subtitled);
+                $hasSubtitled = !empty($video->url_cloudinary_subtitled) && !empty($video->url_cloudinary);
             @endphp
 
             {{-- Toggle dentro de la página (solo si existe versión subtitulada) --}}

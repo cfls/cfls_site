@@ -33,15 +33,5 @@ app/Console/Commands/FixQuestionOptionVideos.php
 app/Console/Commands/FixTitles.php
 fix_csv.py
 fix_titles.php
-fix_options.php
-fix_options2.php
-fix_options3.php
-storage/log_pasada3.txt
-storage/sin_match.txt
-storage/sin_match2.txt
-storage/sin_match3.txt
-fix_match.php
-storage/log_match.txt
-storage/sin_match_match.txt
 
 
