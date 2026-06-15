@@ -160,17 +160,21 @@ class AdminLsfbgoController extends Controller
 
     public function updateStatusQuestion(Question $question)
     {
+
+
+
         $newStatus = $question->status ? 0 : 1;
 
         DB::transaction(function () use ($question, $newStatus) {
 
+
             // 🔹 Actualizar todas las questions del mismo video
-            Question::where('video_id', $question->video_id)
+            Question::where('id', $question->id)
                 ->update(['status' => $newStatus]);
 
             // 🔹 Actualizar todos los themes del mismo video
-            VideoTheme::where('id', $question->video_id)
-                ->update(['active' => $newStatus]);
+//            VideoTheme::where('id', $question->video_id)
+//                ->update(['active' => $newStatus]);
         });
 
         $message = $newStatus

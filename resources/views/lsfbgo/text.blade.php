@@ -204,8 +204,9 @@
                                 @foreach($questions as $question)
 
                                     @php
-                                        $options = json_decode($question->options, true);
-
+                                        $options = is_array($question->options)
+                                            ? $question->options
+                                            : json_decode($question->options, true);
                                     @endphp
 
                                     <tr class="hover:bg-gray-50 transition">
@@ -329,7 +330,9 @@
     <!-- MODALES FUERA DEL CONTENEDOR PRINCIPAL -->
     @foreach($questions as $question)
         @php
-            $options = json_decode($question->options, true);
+            $options = is_array($question->options)
+                ? $question->options
+                : json_decode($question->options, true);
         @endphp
 
                 <!-- Modal de Visualización -->
