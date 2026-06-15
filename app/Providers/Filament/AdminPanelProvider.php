@@ -28,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandLogo('https://cfls.testweb.website/img/cfls.png')
+            ->brandLogo('https://cfls.be/img/cfls.png')
             ->brandLogoHeight('40px')
             ->colors([
                 'primary' => Color::Indigo,
