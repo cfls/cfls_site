@@ -30,6 +30,9 @@ class VimeoResource extends Resource
                 Forms\Components\TextInput::make('url_cloudinary')
                     ->required()
                     ->label('URL Cloudinary'),
+                Forms\Components\TextInput::make('url_cloudinary_subtitled')
+                    ->required()
+                    ->label('URL Cloudinary avec sous-titres'),
                 Forms\Components\TextInput::make('title')
                     ->label('Titre')
                     ->required()

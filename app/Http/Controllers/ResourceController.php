@@ -44,6 +44,7 @@ class ResourceController extends Controller
             }
 
 
+
             return view($specialViews[$slug], compact('videos'));
         }
 
@@ -72,19 +73,20 @@ class ResourceController extends Controller
 
     public function vimeo($category, $slug)
     {
+        $category = Category::where('slug', $category)->firstOrFail();
 
-        $category = Category::where('slug', $category)->first();
-
-        $video = Vimeo::where('slug', $slug)->first();
-
+        $video = Vimeo::where('slug', $slug)
+            ->where('status', 1)
+            ->firstOrFail();
 
         $videos = $category->videos->sortBy('title');
 
-        if (!$video) {
-            // Handle case where no videos exist
-            $video = null; // Or set a default video object if desired
-        }
-        return view('ressources.vimeo', compact('category','video', 'videos'));
+
+        // Decidir qué versión reproducir según el toggle del listado
+        $useSubtitled = request('st') == 1 && !empty($video->code_vimeo_subtitled);
+        $codeToPlay = $useSubtitled ? $video->code_vimeo_subtitled : $video->code_vimeo;
+
+        return view('ressources.vimeo', compact('category', 'video', 'videos', 'codeToPlay', 'useSubtitled'));
     }
 
 

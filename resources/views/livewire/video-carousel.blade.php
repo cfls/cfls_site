@@ -66,7 +66,7 @@ x-data="{
                         >
                     <img class="w-full" src="{{ asset('storage/'.$vimeo['image']) }}" alt="{{ $vimeo['title'] }}">
                     <div class="text-center mt-2">
-                        <h3 class="text-lg font-semibold text-gray-800">{{ $vimeo['title'] }}</h3>
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $vimeo['title'] }}</h3>
                     </div>
                     </a>
                 </li>
