@@ -87,6 +87,37 @@ class QuizController
             return QuestionResource::collection($questions);
         }
 
+    public function themes($slug)
+    {
+
+
+
+        $syllabusId = Syllabu::where('slug', $slug)->value('id');
+
+
+
+        if (!$syllabusId) {
+            abort(404);
+        }
+
+
+
+        $query = Question::where('syllabu_id', $syllabusId)->whereStatus(1);
+
+        if ($query->count() === 0) {
+            return response()->json(['data' => []]);
+        }
+
+        $questions = $query
+            ->with(['video:id,title,url'])
+            ->select(['id', 'theme_id', 'type', 'question_text', 'answer', 'video_id', 'options', 'status'])
+            ->inRandomOrder() // ✅ Aleatorio real a nivel DB
+            ->limit(20)
+            ->get();
+
+        return QuestionResource::collection($questions);
+    }
+
     public function setting(Request $request)
     {
         $syllabus = Syllabu::all();

@@ -66,4 +66,12 @@ class QuizResult extends Model
             ->limit($limit)
             ->get();
     }
+
+    public static function getQuizResultForTopic($userId, $slug, $type)
+    {
+        return self::where('user_id', $userId)
+            ->where('syllabus', $slug)
+            ->where('type', $type)
+            ->count('type');
+    }
 }

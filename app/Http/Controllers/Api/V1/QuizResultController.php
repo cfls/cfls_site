@@ -118,5 +118,16 @@ class QuizResultController extends Controller
 
     }
 
+    public function getQuizResultForTopic($userId, $slug, $type)
+    {
+        $count = QuizResult::getQuizResultForTopic($userId, $slug, $type);
+
+        return response()->json([
+            'data' => [
+                'count' => $count,
+            ],
+        ]);
+    }
+
 
 }

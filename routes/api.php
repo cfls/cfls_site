@@ -70,6 +70,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/verify-codes/{user}/{theme?}', [VerifyCodeController::class, 'index']);
     Route::post('/verify-code', [VerifyCodeController::class, 'store']);
     Route::get('/spellings', [SpellingController::class, 'index']);
+    Route::get('/questions/all/{slug}', [QuizController::class, 'themes']);
     Route::get('/questions/{slug}', [QuizController::class, 'index']);
     Route::get('/questions/{slug}/{theme}', [QuizController::class, 'show']);
     Route::get('/dictionnaire', [DictionaryController::class, 'index']);
@@ -79,6 +80,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/quiz-results/check/{user_id}/{slug}/{slug_theme}/{type}', [QuizResultController::class, 'check']);
     Route::get('/quiz-results/{user_id}/daily', [QuizResultController::class, 'participationDays']);
     Route::get('/quiz-results/{user_id}/total', [QuizResultController::class, 'total']);
+    Route::get('/quiz-results/check/{user_id}/{slug}/{type}', [QuizResultController::class, 'getQuizResultForTopic']);
     Route::get('/quiz-results/ranking/daily', [QuizResultController::class, 'rankingDaily']);
     Route::get('/quiz-results/ranking/total', [QuizResultController::class, 'rankingTotal']);
     Route::get('/syllabus-progress/{user_id}', [ProgressController::class, 'index']);
