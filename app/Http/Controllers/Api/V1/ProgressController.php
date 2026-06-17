@@ -12,10 +12,10 @@ class ProgressController extends Controller
     {
         // 1️⃣ Obtener todos los temas completados por el usuario
         $completedThemes = QuizResult::where('user_id', $userId)
-            ->get(['theme', 'syllabus','type']); // ej. syllabus = ue1-themes, ue2-themes
+            ->get(['theme', 'syllabus', 'type']); // ej. syllabus = ue1-themes, ue2-themes
 
         // 2️⃣ Agrupar por syllabus
-        $groupedByType= $completedThemes
+        $groupedByType = $completedThemes
             ->groupBy('type') // agrupa por columna "Type"
             ->map(function ($themes) {
                 $list = $themes->pluck('theme')->toArray();
@@ -32,4 +32,36 @@ class ProgressController extends Controller
             ],
         ]);
     }
+
+    public function show($userId, $slug): JsonResponse
+    {
+
+
+            // Obtener todos los temas completados por el usuario para un tipo específico
+            $completedThemes = QuizResult::where('user_id', $userId)
+                ->where('syllabus', $slug)
+                ->where('type', 'recap')
+                ->where('theme', 'final-exam')
+                ->get();
+
+            // Agrupar por syllabus
+            $groupedBySyllabus = $completedThemes
+                ->groupBy('syllabus')
+                ->map(function ($themes) {
+                    $list = $themes->pluck('theme')->toArray();
+                    return [
+
+                        'total_completed' => count($list),
+                    ];
+                });
+
+            // Retornar JSON bien estructurado
+            return response()->json([
+                'data' => [
+                    'progress' => $groupedBySyllabus,
+                ],
+            ]);
+
+        }
+
 }

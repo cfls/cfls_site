@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\DictionaryController;
 use App\Http\Controllers\Api\V1\LettersController;
 use App\Http\Controllers\Api\V1\MemoryGameController;
 use App\Http\Controllers\Api\V1\PlanController;
+use App\Http\Controllers\Api\V1\ProgressController;
 use App\Http\Controllers\Api\V1\QuizController;
 use App\Http\Controllers\Api\V1\QuizResultController;
 use App\Http\Controllers\Api\V1\SectionController;
@@ -35,7 +36,7 @@ Route::middleware('auth:sanctum')->apiResource('memory-game', MemoryGameControll
 Route::middleware('auth:sanctum')->apiResource('letters', LettersController::class);
 Route::middleware('auth:sanctum')->apiResource('crosswords', CrosswordController::class);
 Route::middleware('auth:sanctum')->apiResource('verify-code', VerifyCodeController::class);
-
+Route::middleware('auth:sanctum')->apiResource('exam', ProgressController::class);
 
 Route::get('/user', function (Request $request) {
     return $request->user();
