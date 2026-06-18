@@ -1,5 +1,4 @@
-<div class="flex flex-col h-screen md:h-auto md:min-h-screen md:max-w-2xl md:mx-auto md:my-8 md:rounded-2xl md:shadow-xl overflow-hidden">
-
+<div class="flex flex-col w-full h-screen md:h-auto md:min-h-screen md:my-8 md:rounded-2xl md:shadow-xl overflow-hidden">
     <div class="bg-gradient-to-br from-teal-600 to-purple-600 text-white pt-[var(--inset-top)] md:pt-0 rounded-none md:rounded-t-2xl border-none">
         <div class="px-4 py-3 md:px-6 md:py-5">
             <div class="flex items-center gap-3">
@@ -120,7 +119,7 @@
                     Aucun résultat trouvé
                 </div>
             @else
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pb-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pb-6">
                     @foreach ($items as $item)
                         <button
                                 type="button"

@@ -61,7 +61,7 @@ x-data="{
             <ul class="glide__slides">
                 @foreach ($vimeos as $vimeo)
                 <li class="glide__slide flex flex-col items-center justify-center pb-6">
-                    <a wire:navigate href="{{ route('ressources.vimeo', ['category' => $vimeo->category->slug, 'slug' => $vimeo->slug]) }}"
+                    <a wire:navigate href="{{ route('videos.vimeo', ['category' => $vimeo->category->slug, 'slug' => $vimeo->slug]) }}"
                         @click="localStorage.setItem('glidePosition', glide.index)"
                         >
                     <img class="w-full" src="{{ asset('storage/'.$vimeo['image']) }}" alt="{{ $vimeo['title'] }}">

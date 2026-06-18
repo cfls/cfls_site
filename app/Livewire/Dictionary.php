@@ -16,7 +16,7 @@ class Dictionary extends Component
     public string $search = '';
     public string $letter = 'tous';
 
-    public int $perPage = 20;
+    public int $perPage = 40;
 
     public ?array $selectedItem = null;
     public bool $showModal = false;

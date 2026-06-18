@@ -3,14 +3,14 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <img
                     src="{{ asset('img/promotion/lsbfgo.png') }}"
-                    alt="LSBFGO Promotion"
-                    class="w-full rounded-lg"
+                    alt="LSFBGO Promotion"
+                    class="w-full h-full object-cover rounded-lg"
             >
 
             <img
                     src="{{ asset('img/promotion/diccionariolsfb.png') }}"
                     alt="Diccionario LSFB"
-                    class="w-full rounded-lg"
+                    class="w-full h-full object-cover rounded-lg"
             >
         </div>
     </div>
