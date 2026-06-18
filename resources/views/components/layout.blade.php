@@ -102,6 +102,7 @@
         });
     </script>
     <!-- End Google Analytics -->
+    @fluxAppearance
 </head>
 
 <body
@@ -141,7 +142,7 @@
         @stack('scripts')
 
         @livewireScripts
-
+         @fluxScripts
 
      <x-top/>
      <!-- Banner de preferencias de accesibilidad -->

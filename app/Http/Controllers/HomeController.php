@@ -51,6 +51,11 @@ class HomeController extends Controller
         return view('home.general', compact('data'));
     }
 
+    public function dictionnaire()
+    {
+        return view('home.dictionnaire');
+    }
+
 
 
 

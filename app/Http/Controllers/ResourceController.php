@@ -89,6 +89,44 @@ class ResourceController extends Controller
         return view('ressources.vimeo', compact('category', 'video', 'videos', 'codeToPlay', 'useSubtitled'));
     }
 
+    public function resource($slug)
+    {
+        // Array de vistas especiales
+        $specialViews = [
+            'mots-croises' => 'ressources.mots',
+            // 'vocabulaire' => 'ressources.vocabulaire',
+        ];
+
+        // Si es una vista especial, retornarla directamente
+
+            switch ($slug) {
+//                case 'vocabulaire':
+//                    $category = Category::where('slug', $slug)
+//                               ->where('status', 1)
+//                               ->get();
+//
+//                    $videos = Vimeo::where('status', 1)
+//                              ->where('categories_id', $category[0]->id)
+//                              ->get();
+//                    break;
+                case 'mots-croises':
+                    $videos = MotsCroise::where('status', 1)
+                        ->orderBy('created_at', 'desc')
+                        ->get();;
+                    break;
+                default:
+                    abort(404);
+            }
+
+
+
+
+            return view($specialViews[$slug], compact('videos'));
+
+
+
+    }
+
 
 
 

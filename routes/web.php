@@ -24,6 +24,7 @@ Route::get('/equipe', [TeamController::class, 'index'])->name('equipe');
 Route::get('/contact', [HomeController::class, 'contacto'])->name('contact');
 Route::get('/general-4', [HomeController::class, 'general'])->name('general-4');
 Route::get('/telechargements-gratuits', [DownloadController::class, 'index'])->name('telechargements-gratuits');
+Route::get('/dictionnaire-lsfb', [HomeController::class, 'dictionnaire'])->name('dictionnaire.home');
 Route::prefix('admin-lsfbgo')
     ->name('admin-lsfbgo.')
     ->group(function () {
@@ -74,9 +75,11 @@ Route::get('ue1-themes-11/a-bientôt', fn() => redirect()->away('https://cfls.be
     Route::get('/formations/{slug}/{id}', [FormationsController::class, 'inscription'])->name('inscription');
 
     // Resource Routes
-    Route::get('/ressources/{slug}', [ResourceController::class, 'index'])->name('ressources.slug');
-    Route::get('/ressources/{category}/{slug}', [ResourceController::class, 'vimeo'])->name('ressources.vimeo');
 
+    Route::get('/videos/{slug}', [ResourceController::class, 'index'])->name('videos.slug');
+
+    Route::get('/videos/{category}/{slug}', [ResourceController::class, 'vimeo'])->name('videos.vimeo');
+     Route::get('/ressource/{slug}', [ResourceController::class, 'resource'])->name('resource.slug');
     // Boutique Routes
     Route::get('/boutique', [BoutiqueController::class, 'index'])->name('boutique.index');
     Route::get('/boutique/{slug}', [BoutiqueController::class, 'detail'])->name('boutique.detail');

@@ -48,7 +48,7 @@
                     @endphp
                     @foreach ($categories as $category)
                         <li>
-                            <a href="{{ route('ressources.slug', $category->slug) }}"
+                            <a href="{{ route('videos.slug', $category->slug) }}"
                                class="block p-2 text-gray-900 rounded-lg dark:text-white hover:bg-csfl dark:hover:bg-gray-700">
                                 {{ $category->name }}
                             </a>
@@ -56,16 +56,37 @@
                     @endforeach
                 </ul>
             </li>
-            <li>
-                <a href="/ressources/mots-croises" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-csfl dark:hover:bg-gray-700 group">
-                    <span class="ms-3">Mots croisés</span>
-                </a>
+            <li x-data="{ openVideos: false }">
+                <button
+                        @click="openVideos = !openVideos"
+                        class="flex items-center justify-between w-full p-2 text-gray-900 rounded-lg dark:text-white hover:bg-csfl dark:hover:bg-gray-700 group"
+                >
+                    <span class="ms-3">Ressources</span>
+                    <svg :class="{ 'rotate-90': openVideos }" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor"
+                         stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+
+                <ul x-show="openVideos" x-collapse class="pl-6 mt-2 space-y-1">
+                    <li>
+                        <a href="{{route('resource.slug', ['slug' => 'mots-croises'])}}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-csfl dark:hover:bg-gray-700 group">
+                            <span class="ms-3">Mots croisés</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('telechargements-gratuits') }}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-csfl dark:hover:bg-gray-700 group">
+                            <span class="ms-3">Téléchargements gratuits</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
             <li>
-                <a href="{{ route('telechargements-gratuits') }}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-csfl dark:hover:bg-gray-700 group">
-                    <span class="ms-3">Téléchargements gratuits</span>
+                <a href="{{route('dictionnaire.home')}}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-csfl dark:hover:bg-gray-700 group">
+                    <span class="ms-3">Dictionnaire LSFB</span>
                 </a>
             </li>
+
             <li>
                 <a href="{{ route('boutique.index') }}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-csfl dark:hover:bg-gray-700 group">
                     <span class="ms-3">Boutique</span>
