@@ -84,33 +84,30 @@
 
     {{-- Script directo, sin @push --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-
-            const modal     = document.getElementById('imageModal');
-            const modalImg  = document.getElementById('modalImage');
+        document.addEventListener('livewire:navigated', function () {
+            const modal      = document.getElementById('imageModal');
+            const modalImg   = document.getElementById('modalImage');
             const modalTitle = document.getElementById('modalTitle');
             const modalClose = document.getElementById('modalClose');
 
-            // Abrir modal al hacer clic en cualquier miniatura
+            if (!modal) return;
+
             document.querySelectorAll('.modal-trigger').forEach(function (img) {
                 img.addEventListener('click', function () {
-                    modalImg.src       = this.dataset.src;
-                    modalImg.alt       = this.dataset.title;
+                    modalImg.src           = this.dataset.src;
+                    modalImg.alt           = this.dataset.title;
                     modalTitle.textContent = this.dataset.title;
                     modal.classList.remove('hidden');
                     modal.classList.add('flex');
                 });
             });
 
-            // Cerrar con el botón ✕
             modalClose.addEventListener('click', closeModal);
 
-            // Cerrar al hacer clic en el fondo
             modal.addEventListener('click', function (e) {
                 if (e.target === modal) closeModal();
             });
 
-            // Cerrar con Escape
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape') closeModal();
             });
