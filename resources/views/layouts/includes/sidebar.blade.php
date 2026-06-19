@@ -71,7 +71,7 @@
                 <ul x-show="openVideos" x-collapse class="pl-6 mt-2 space-y-1">
                     <li>
                         <a href="{{route('archive')}}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-csfl dark:hover:bg-gray-700 group">
-                            <span class="ms-3">Archive</span>
+                            <span class="ms-3">Archives</span>
                         </a>
                     </li>
                     <li>
