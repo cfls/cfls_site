@@ -68,7 +68,12 @@
                  role="list"
                  class="absolute top-full left-0 mt-2 w-60 bg-white rounded-lg shadow-lg dark:bg-gray-800 z-10"
             >
-
+                    <div role="listitem">
+                        <a wire:navigate href="{{route('archive')}}"
+                           class="block px-4 py-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 text-center ">
+                            Archive
+                        </a>
+                    </div>
                     <div role="listitem">
                         <a wire:navigate href="{{route('resource.slug', ['slug' => 'mots-croises'])}}"
                            class="block px-4 py-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 text-center ">

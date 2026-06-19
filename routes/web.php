@@ -2,19 +2,20 @@
 
 use App\Http\Controllers\AdminLsfbgo\AdminLsfbgoController;
 use App\Http\Controllers\Api\V1\QuizController;
+use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\BoutiqueController;
 use App\Http\Controllers\DownloadController;
-use App\Http\Controllers\OrderController;
+use App\Http\Controllers\FormationsController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InscriptionController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ResourceController;
+use App\Http\Controllers\SyllabusController;
+use App\Http\Controllers\TeamController;
 use App\Http\Controllers\VideoController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\TeamController;
-use App\Http\Controllers\ResourceController;
-use App\Http\Controllers\FormationsController;
-use App\Http\Controllers\SyllabusController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 
 // Home Routes
@@ -24,6 +25,7 @@ Route::get('/equipe', [TeamController::class, 'index'])->name('equipe');
 Route::get('/contact', [HomeController::class, 'contacto'])->name('contact');
 Route::get('/general-4', [HomeController::class, 'general'])->name('general-4');
 Route::get('/telechargements-gratuits', [DownloadController::class, 'index'])->name('telechargements-gratuits');
+Route::get('/archive', [ArchiveController::class, 'index'])->name('archive');
 Route::get('/dictionnaire-lsfb', [HomeController::class, 'dictionnaire'])->name('dictionnaire.home');
 Route::prefix('admin-lsfbgo')
     ->name('admin-lsfbgo.')
