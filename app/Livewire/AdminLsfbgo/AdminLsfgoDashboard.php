@@ -52,6 +52,11 @@ class AdminLsfgoDashboard extends Component
                 'type' => 'video-choice',
                 'img' => 'video-choice.jpeg'
             ],
+            [
+                'title' => 'Association',
+                'type' => 'match',
+                'img' => 'association.jpeg'
+            ],
 
         ];
 

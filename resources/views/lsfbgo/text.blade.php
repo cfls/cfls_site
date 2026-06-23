@@ -61,6 +61,7 @@
                     <option value="choice" {{ $type === 'choice' ? 'selected' : '' }}>☑️ Choix</option>
                     <option value="yes-no" {{ $type === 'yes-no' ? 'selected' : '' }}>✅ Oui/Non</option>
                     <option value="video-choice" {{ $type === 'video-choice' ? 'selected' : '' }}>🎥 Vidéos</option>
+                    <option value="match" {{ $type === 'match' ? 'selected' : '' }}>🔗 Association</option>
                 </select>
 
                 <svg class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -43,7 +43,7 @@ class AdminLsfbgoController extends Controller
             $rules = [
                 'syllabu_id'   => 'required|exists:syllabus,id',
                 'theme_id'     => 'required|exists:themes,id',
-                'type'         => 'required|in:text,choice,yes-no,video-choice',
+                'type'         => 'required|in:text,choice,yes-no,video-choice,match',
                 'video_url'    => 'nullable|url|max:500',
                 'question_text'=> 'nullable|string|max:500',
                 'answer'       => 'required|string|max:255',
@@ -82,6 +82,15 @@ class AdminLsfbgoController extends Controller
                 $messages['options.min'] = 'Au moins 2 options sont requises';
                 $messages['options.max'] = 'Maximum 4 options autorisées';
                 $messages['options.*.required'] = 'Le texte de l\'option est obligatoire';
+            } elseif ($type === 'match') {
+
+                $rules['options'] = 'required|array|min:2|max:4';
+                $rules['options.*.word'] = 'required|string|max:255';
+                $rules['options.*.video'] = 'required|url|max:500';
+
+                $messages['options.required'] = 'Au moins 2 options sont requises';
+                $messages['options.*.word.required'] = 'Le mot est obligatoire';
+                $messages['options.*.video.required'] = 'La vidéo est obligatoire';
             }
 
             $validated = $request->validate($rules, $messages);
@@ -95,7 +104,7 @@ class AdminLsfbgoController extends Controller
 
             // 🔹 Generar opciones finales según tipo
             $optionsForApi = match ($validated['type']) {
-                'choice', 'video-choice' => $cleanOptions,
+                'choice', 'video-choice', 'match' => $cleanOptions,
                 'yes-no'                 => ['oui', 'non'],
                 default                  => null,
             };
@@ -149,6 +158,15 @@ class AdminLsfbgoController extends Controller
             ));
         }
 
+        if ($type === 'match') {
+            return array_values(array_filter(
+                $options,
+                fn($opt) =>
+                    !empty(trim($opt['word'] ?? '')) &&
+                    !empty(trim($opt['video'] ?? ''))
+            ));
+        }
+
         if ($type === 'choice') {
             return array_values(array_filter($options, function ($opt) {
                 return !empty(trim($opt));
@@ -157,6 +175,7 @@ class AdminLsfbgoController extends Controller
 
         return [];
     }
+
 
     public function updateStatusQuestion(Question $question)
     {
@@ -187,6 +206,8 @@ class AdminLsfbgoController extends Controller
 
     public function type($type, Request $request)
     {
+
+
         // Obtener los 3 parámetros
         $syllabusId = $request->query('syllabus');
         $themeId = $request->query('theme');
@@ -271,16 +292,19 @@ class AdminLsfbgoController extends Controller
 
     public function updateQuestion(Request $request, Question $question)
     {
-        // Validación base
         $rules = [
-            'answer' => 'required|string|max:255',
             'question_text' => 'nullable|string|max:500',
             'video_url' => 'nullable|url|max:500',
         ];
 
+        if ($question->type !== 'match') {
+            $rules['answer'] = 'required|string|max:255';
+        }
+
         $messages = [
             'answer.required' => 'La réponse est obligatoire',
         ];
+
 
 
         // Validación según tipo de opciones
@@ -291,6 +315,10 @@ class AdminLsfbgoController extends Controller
             $rules['options.*.video'] = 'required_with:options|url|max:500';
             $messages['options.*.value.required_with'] = 'Le texte de l\'option est obligatoire';
             $messages['options.*.video.required_with'] = 'L\'URL de la vidéo d\'option est obligatoire';
+        } elseif ($question->type === 'match'){
+            $rules['options'] = 'nullable|array';
+            $rules['options.*.word'] = 'required_with:options|string|max:255';
+            $rules['options.*.video'] = 'required_with:options|url|max:500';
         } elseif ($question->type === 'choice') {
             // Para opciones simples (texto)
             $rules['options'] = 'nullable|array';
@@ -298,12 +326,16 @@ class AdminLsfbgoController extends Controller
             $messages['options.*.required'] = 'Le texte de l\'option est obligatoire';
         }
 
+
+
         $validated = $request->validate($rules, $messages);
 
 
 
         // Actualizar campos básicos
-        $question->answer = $validated['answer'];
+        if ($question->type !== 'match') {
+            $question->answer = $validated['answer'];
+        }
 
         if (isset($validated['question_text'])) {
             $question->question_text = $validated['question_text'];
@@ -319,23 +351,37 @@ class AdminLsfbgoController extends Controller
 
         // Actualizar opciones
         if (isset($validated['options']) && is_array($validated['options'])) {
+
             if ($question->type === 'video-choice') {
-                // Para video-choice: guardar array de objetos
+
                 $cleanOptions = array_values(array_filter(
                     $validated['options'],
-                    fn($opt) => !empty(trim($opt['value'] ?? ''))
+                    fn($opt) =>
+                        !empty(trim($opt['value'] ?? '')) &&
+                        !empty(trim($opt['video'] ?? ''))
                 ));
+
+            } elseif ($question->type === 'match') {
+
+                $cleanOptions = array_values(array_filter(
+                    $validated['options'],
+                    fn($opt) =>
+                        !empty(trim($opt['word'] ?? '')) &&
+                        !empty(trim($opt['video'] ?? ''))
+                ));
+
             } else {
-                // Para choice: guardar array simple
+
                 $cleanOptions = array_values(array_filter(
                     $validated['options'],
                     fn($opt) => !empty(trim($opt))
                 ));
             }
 
-            // Asignar directamente si tienes cast 'array' en el modelo
-            $question->options = json_encode($cleanOptions, JSON_UNESCAPED_UNICODE);
-
+            $question->options = json_encode(
+                $cleanOptions,
+                JSON_UNESCAPED_UNICODE
+            );
         }
 
 
