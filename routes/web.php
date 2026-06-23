@@ -69,7 +69,7 @@ Route::get('ue1-themes-11/a-bientôt', fn() => redirect()->away('https://cfls.be
     Route::get('/formations', [FormationsController::class, 'index'])->name('formations.index');
     Route::get('/formations/{slug}', [FormationsController::class, 'formations'])->name('formations.slug');
     Route::get('/formations/{slug}/calendrier', [FormationsController::class, 'calendrier'])->name('calendrier');
-    Route::get('/formations/{slug}/calendrier/{formation}', [FormationsController::class, 'formation'])->name('formation');
+    Route::get('/formations/{slug}/calendrier/{formation}/{id}', [FormationsController::class, 'formation'])->name('formation');
     Route::post('/formations/{id}', [FormationsController::class, 'inscrits'])->name('inscription.formation');
     Route::post('/tabledeconversation', [FormationsController::class, 'tabledeconversation'])->name('inscription.tabledeconversation');
     Route::get('/formations/{slug}/courses', [FormationsController::class, 'courses'])->name('courses');

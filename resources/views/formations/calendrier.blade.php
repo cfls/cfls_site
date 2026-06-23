@@ -9,7 +9,7 @@
 
           <a
               @if($calendar->quota)
-                  href={{ route('formation', ['slug' => $slug ,'formation' => $calendar->slug]) }}
+                  href={{ route('formation', ['slug' => $slug ,'formation' => $calendar->slug, 'id'=>$calendar->id]) }}
               @endif
               class="flex flex-col items-center rounded-lg border border-gray-200 bg-gray-200 px-4 py-6 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700
              {{ !$calendar->quota ? 'cursor-not-allowed  opacity-50 pointer-events-auto' : 'opacity-100 pointer-events-auto' }}"

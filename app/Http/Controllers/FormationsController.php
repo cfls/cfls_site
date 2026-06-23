@@ -216,6 +216,7 @@ class FormationsController extends Controller
 
 
 
+
         $formation = Formations::where('slug', $slug)->first();
         if ($slug == 'tables-de-conversation') {
              return view('formations.tabledeconversation', compact('formation', 'slug'));
@@ -229,10 +230,10 @@ class FormationsController extends Controller
 
 
 
-    public function formation($slug, $formation){
+    public function formation($slug, $formation, $id){
 
 
-        $inscription = Calendar::where('slug', $formation)->whereStatus(1)->first();
+        $inscription = Calendar::where('slug', $formation)->where('id', $id)->whereStatus(1)->first();
         $formation = Formations::where('slug', $slug)->whereStatus(1)->first();
 
 
