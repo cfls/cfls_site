@@ -10,7 +10,7 @@ class ArchiveController extends Controller
     {
         $features = Feature::where('status', 0)
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate(5);
 
         return view('ressources.archive', compact('features'));
     }
