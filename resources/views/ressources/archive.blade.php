@@ -13,7 +13,7 @@
                         <div class="mb-4">
         <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold
                      bg-blue-100 text-blue-800
-                     dark:bg-blue-900 dark:text-blue-100">
+                     dark:bg-blue-900 dark:text-white">
             📅 {{ $feature->created_at->translatedFormat('d F Y') }}
         </span>
                         </div>
@@ -24,7 +24,7 @@
 
                         <hr class="border-gray-200 dark:border-gray-700 my-4">
 
-                        <div class="responsive-text prose prose-p:my-1 mb-6 font-light md:text-2xl text-gray-800 dark:text-white">
+                        <div class="responsive-text prose prose-p:my-1 prose-strong:text-gray-900 dark:prose-invert dark:prose-strong:text-white mb-6 font-light md:text-2xl text-gray-800 dark:text-white">
                             {!! $feature->description !!}
                         </div>
 
