@@ -1,4 +1,11 @@
 <x-app-layout>
+    @php
+        function cleanWord(string $word): string {
+            $word = preg_replace('/\s*\(.*?\)/', '', $word);
+            $word = explode('/', $word)[0];
+            return trim($word);
+        }
+    @endphp
     <!-- Modal de Éxito Personalizado -->
     <div id="success-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen px-4">
@@ -280,7 +287,7 @@
 
                                         <td class="px-6 py-4">
                                             <div class="text-sm font-medium text-gray-900">
-                                                {{ $question->answer ?? 'N/A' }}
+                                                {{ cleanWord($question->answer ?? '') }}
                                             </div>
                                         </td>
 
@@ -396,7 +403,7 @@
                                     <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                     </svg>
-                                    {{ $question->answer }}
+                                    {{ cleanWord($question->answer ?? '') }}
                                 </div>
                             </div>
                         @endif
@@ -416,7 +423,7 @@
                                                     </span>
                                                     @if(isset($option['value']))
                                                         <p class="text-sm font-medium text-gray-900 flex-1">
-                                                            {{ $option['value'] }}
+                                                            {{ cleanWord($option['value']) }}
                                                             @if($option['value'] == $question->answer)
                                                                 <span class="ml-2 text-green-600">✓</span>
                                                             @endif

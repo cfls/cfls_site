@@ -1,11 +1,4 @@
 <x-app-layout>
-    @php
-        function cleanWord(string $word): string {
-            $word = preg_replace('/\s*\(.*?\)/', '', $word);
-            $word = explode('/', $word)[0];
-            return trim($word);
-        }
-    @endphp
     <!-- Modal de Éxito Personalizado -->
     <div id="success-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen px-4">
@@ -104,15 +97,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
             </div>
-            <!-- Título principal -->
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-900">
-                    Gestion des {{ ucfirst($type) }}
-                </h1>
-                <p class="mt-2 text-sm text-gray-600">
-                    Gérer et modifier les questions de type {{ $type }}
-                </p>
-            </div>
+
 
             <!-- Card de información -->
             <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg shadow-sm border border-blue-100 p-6 mb-6">
@@ -144,13 +129,10 @@
                     <div class="flex items-start space-x-3">
                         <div class="flex-shrink-0">
                             <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                             </svg>
                         </div>
-                        <div>
-                            <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Type</p>
-                            <p class="mt-1 text-sm font-semibold text-gray-900">{{ ucfirst($type) }}</p>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -177,7 +159,7 @@
                                             type="text"
                                             name="search"
                                             value="{{ request('search') }}"
-                                            placeholder="Rechercher une question..."
+                                            placeholder="Rechercher par réponse..."
                                             class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm w-64"
                                     >
                                     <svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -229,88 +211,39 @@
                                 <thead class="bg-gray-50">
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vidéo</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Question</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Réponse</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Options</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">videos</th>
                                     <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
 
-
                                 @foreach($questions as $question)
-
-
                                     @php
-
-                                        $options = $question->options;
-
-
+                                        $options = is_string($question->options)
+                                            ? json_decode($question->options, true)
+                                            : $question->options;
                                     @endphp
 
                                     <tr class="hover:bg-gray-50 transition">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                            {{ $loop->iteration }}
+                                            {{$question->id}}
                                         </td>
 
-                                        <!-- Columna de Video -->
-                                        <td class="px-6 py-4">
-                                            @if($question->video && $question->video->url)
-                                                <div class="flex items-center space-x-3">
-                                                    <div class="relative group cursor-pointer"
-                                                         onclick="document.getElementById('video-thumb-{{ $question->id }}').play()">
-                                                        <video
-                                                                id="video-thumb-{{ $question->id }}"
-                                                                class="h-24 w-40 rounded-lg object-cover bg-black shadow-sm hover:shadow-md transition-shadow"
-                                                                preload="none"
-                                                                muted>
-                                                            <source src="{{ $question->video->url }}" type="video/mp4">
-                                                        </video>
-                                                        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg pointer-events-none">
-                                                            <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                                                <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="text-sm font-medium text-gray-900">Vidéo #{{ $question->video_id }}</div>
-                                                        <div class="text-xs text-gray-500">Cliquez pour lire</div>
-                                                    </div>
-                                                </div>
-                                            @else
-                                                <div class="flex items-center">
-                                                    <div class="flex-shrink-0 h-20 w-32 bg-gray-100 rounded-lg flex items-center justify-center">
-                                                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                                                        </svg>
-                                                    </div>
-                                                    <span class="ml-3 text-sm text-gray-500">Pas de vidéo</span>
-                                                </div>
-                                            @endif
-                                        </td>
+                                        <!-- Columna de Video de la pregunta -->
 
                                         <td class="px-6 py-4">
-                                            <div class="text-sm text-gray-900 max-w-md">
-                                                {{ $question->question ?? 'Pas de question' }}
+                                            <div class="flex flex-wrap gap-2">
+                                                @foreach($options as $option)
+                                                    <div class="flex flex-col items-center">
+                                                        <img src="{{ $question->getVideoThumbnail($option['video'], 3) }}" class="w-32 h-20 rounded" />
+                                                        @if($question->type === 'video-choice')
+                                                        <span class="text-sm text-gray-500">{{ $option['value'] }}</span>
+                                                        @else
+                                                          <span class="text-sm text-gray-500">{{ $option['word'] }}</span>
+                                                        @endif
+                                                    </div>
+                                                @endforeach
                                             </div>
-                                        </td>
-
-                                        <td class="px-6 py-4">
-                                            <div class="text-sm text-gray-900">
-                                                {{ cleanWord($question->answer ?? '') }}
-                                            </div>
-                                        </td>
-
-                                        <td class="px-6 py-4">
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                @php
-                                                    $optionsArray = is_array($question->options)
-                                                        ? $question->options
-                                                        : json_decode($question->options, true);
-                                                @endphp
-                                                {{ count($optionsArray) }} options
-                                            </span>
                                         </td>
 
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -334,6 +267,7 @@
                                                 </button>
                                                 <form action="{{ route('admin-lsfbgo.update-status-question', $question->id) }}" method="POST">
                                                     @csrf @method('PUT')
+
                                                     <button type="submit"
                                                             onclick="return confirm('{{ $question->status ? 'Désactiver' : 'Activer' }} cette question ?')"
                                                             class="{{ $question->status ? 'text-green-600 hover:text-green-900' : 'text-red-600 hover:text-red-900' }} transition"
@@ -362,13 +296,12 @@
                         <!-- Estado vacío -->
                         <div class="text-center py-12">
                             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                             </svg>
                             <h3 class="mt-2 text-sm font-medium text-gray-900">Aucune question</h3>
                             <p class="mt-1 text-sm text-gray-500">
                                 Commencez par créer une nouvelle question pour ce type.
                             </p>
-
                         </div>
                     @endif
                 </div>
@@ -379,17 +312,20 @@
     <!-- MODALES -->
     @foreach($questions as $question)
         @php
-            $options = $question->options;
+            $options = is_string($question->options)
+                ? json_decode($question->options, true)
+                : $question->options;
         @endphp
-        <!-- Modal de Visualización -->
+
+                <!-- Modal de Visualización -->
         <div id="modal-{{ $question->id }}" class="hidden fixed inset-0 z-50 overflow-y-auto">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                 <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeModal({{ $question->id }})"></div>
 
-                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
-                    <div class="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4">
+                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-5xl sm:w-full">
+                    <div class="bg-gradient-to-r from-purple-500 to-indigo-600 px-6 py-4">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-lg font-semibold text-white">Question #{{ $loop->iteration }}</h3>
+                            <h3 class="text-lg font-semibold text-white">Question Vidéo #{{ $loop->iteration + ($questions->currentPage() - 1) * $questions->perPage() }}</h3>
                             <button onclick="closeModal({{ $question->id }})" class="text-white hover:text-gray-200 transition">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -410,50 +346,55 @@
                             </div>
                         @endif
 
-                        <div class="mb-6">
-                            <h4 class="text-sm font-medium text-gray-700 mb-2">Question</h4>
-                            <p class="text-base text-gray-900 bg-gray-50 p-4 rounded-lg">
-                                {{ $question->question ?? 'Pas de question' }}
-                            </p>
-                        </div>
 
                         @if($question->answer)
                             <div class="mb-6">
-                                <h4 class="text-sm font-medium text-gray-700 mb-2">Réponse correcte</h4>
+                                <h4 class="text-sm font-medium text-gray-700 mb-2">Réponse correcte  </h4>
                                 <div class="inline-flex items-center px-4 py-2 rounded-full bg-green-100 text-green-800 font-medium">
                                     <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                     </svg>
-                                    {{ cleanWord($question->answer ?? '') }}
+                                    {{ $question->answer }}
                                 </div>
                             </div>
                         @endif
 
-
-                            @if($options && is_array($options) && count($options) > 0)
-                                <div>
-                                    <h4 class="text-sm font-medium text-gray-700 mb-3">
-                                        Options disponibles ({{ count($options) }})
-                                    </h4>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                        @foreach($options as $index => $option)
-                                            <div class="bg-gray-50 rounded-lg p-3 border-2 {{ $option == $question->answer ? 'border-green-500 bg-green-50' : 'border-gray-200' }}">
-                                                <div class="flex items-center gap-3">
-                                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white font-bold text-sm flex-shrink-0">
+                        @if($options && is_array($options) && count($options) > 0)
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-3">
+                                    Options vidéo disponibles ({{ count($options) }})
+                                </h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    @foreach($options as $index => $option)
+                                        <div class="bg-gray-50 rounded-lg p-4 border-2 {{ isset($option['value']) && $option['value'] == $question->answer ? 'border-green-500 bg-green-50' : 'border-gray-200' }}">
+                                            <div class="space-y-3">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-500 text-white font-bold text-sm flex-shrink-0">
                                                         {{ $index + 1 }}
-                                                    </span>
-                                                    <p class="text-sm font-medium text-gray-900 flex-1">
-                                                        {{ cleanWord($option) }}
-                                                        @if($option == $question->answer)
-                                                            <span class="ml-2 text-green-600">✓</span>
-                                                        @endif
-                                                    </p>
-                                                </div>
+                                                    </div>
+
+                                                    @if($question->type === 'video-choice')
+                                                        <span class="font-medium text-gray-900">
+                                                          {{ $option['value'] }}
+                                                     </span>
+                                                    @elseif ($question->type === 'match')
+                                                    <span class="font-medium text-gray-900">
+                                                          {{ $option['word'] }}
+                                                     </span>
+                                                    @endif
+                                                 </div>
+
+                                                @if(isset($option['video']))
+                                                    <video controls class="w-full h-48 rounded-lg object-cover bg-black" preload="metadata">
+                                                        <source src="{{ $option['video'] }}" type="video/mp4">
+                                                    </video>
+                                                @endif
                                             </div>
-                                        @endforeach
-                                    </div>
+                                        </div>
+                                    @endforeach
                                 </div>
-                            @endif
+                            </div>
+                        @endif
                     </div>
 
                     <div class="bg-gray-50 px-6 py-4 flex justify-end space-x-3">
@@ -465,12 +406,12 @@
             </div>
         </div>
 
-        <!-- Modal de Edición MEJORADO PARA CHOICE -->
+        <!-- Modal de Edición -->
         <div id="edit-modal-{{ $question->id }}" class="hidden fixed inset-0 z-50 overflow-y-auto">
             <div class="flex items-center justify-center min-h-screen px-4 py-8">
                 <div class="fixed inset-0 bg-gray-500 bg-opacity-75" onclick="closeEditModal({{ $question->id }})"></div>
 
-                <div class="relative bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="relative bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto">
                     <form action="{{ route('admin-lsfbgo.update-question', $question->id) }}" method="POST">
                         @csrf
                         @method('PUT')
@@ -481,7 +422,7 @@
                                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                     </svg>
-                                    Modifier la question #{{ $loop->iteration }}
+                                    Modifier la question vidéo #{{ $loop->iteration + ($questions->currentPage() - 1) * $questions->perPage() }}
                                 </h3>
                                 <button type="button" onclick="closeEditModal({{ $question->id }})" class="text-white hover:text-gray-200">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -492,93 +433,56 @@
                         </div>
 
                         <div class="px-6 py-6 space-y-6">
+                            <!-- Réponse correcta -->
 
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                                    </svg>
-                                    Question
-                                </label>
-                                <input
-                                        type="text"
-                                        name="question_text"
-                                        value="{{ $question->question_text ?? '' }}"
-                                        placeholder="https://example.com/video.mp4"
-                                        class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
-                                <p class="mt-1 text-xs text-gray-500">Laissez vide si pas de changement</p>
-                            </div>
-                            <!-- URL del Video -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                                    </svg>
-                                    URL de la vidéo
-                                </label>
-                                <input
-                                        type="url"
-                                        name="video_url"
-                                        value="{{ $question->video->url ?? '' }}"
-                                        placeholder="https://example.com/video.mp4"
-                                        class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
-                                <p class="mt-1 text-xs text-gray-500">Laissez vide si pas de changement</p>
-                            </div>
 
-                            <!-- Réponse correcte -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    <svg class="w-4 h-4 inline mr-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                    </svg>
-                                    Réponse correcte
-                                </label>
-                                <input
-                                        type="text"
-                                        name="answer"
-                                        value="{{ $question->answer }}"
-                                        class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"
-                                        required>
-                            </div>
-
-                            <!-- Options -->
+                            <!-- Options con video -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-3">
                                     <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                                     </svg>
-                                    Options de réponse
+                                    Options vidéo
                                 </label>
 
-                                <div id="options-container-{{ $question->id }}" class="space-y-3">
-                                    @if(!empty($question->options))
-                                        @php
-                                            $options = is_array($question->options)
-                                                ? $question->options
-                                                : json_decode($question->options, true);
-                                        @endphp
-
+                                <div id="options-container-{{ $question->id }}" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    @if($options && is_array($options))
                                         @foreach($options as $index => $option)
                                             <div class="option-item bg-gray-50 rounded-lg p-4 border border-gray-200">
-                                                <div class="flex items-center gap-3">
-                                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white font-bold text-sm flex-shrink-0">
-                                                        {{ $index + 1 }}
-                                                    </span>
+                                                <div class="space-y-3">
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-500 text-white font-bold text-sm flex-shrink-0">
+                                                            {{ $index + 1 }}
+                                                        </span>
+                                                        <button
+                                                                type="button"
+                                                                onclick="this.closest('.option-item').remove(); updateOptionNumbers({{ $question->id }})"
+                                                                class="ml-auto text-red-600 hover:text-red-800">
+                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                            </svg>
+                                                        </button>
+                                                    </div>
                                                     <input
                                                             type="text"
-                                                            name="options[]"
-                                                            value="{{ $option }}"
+                                                            name="options[{{ $index }}][word]"
+                                                            value="{{ $option['word'] ?? '' }}"
                                                             placeholder="Texte de l'option"
-                                                            class="flex-1 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                                            class="w-full rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500 text-sm"
                                                             required>
-                                                    <button
-                                                            type="button"
-                                                            onclick="this.closest('.option-item').remove(); updateOptionNumbers({{ $question->id }})"
-                                                            class="text-red-600 hover:text-red-800">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                                        </svg>
-                                                    </button>
+                                                    <input
+                                                            type="url"
+                                                            name="options[{{ $index }}][video]"
+                                                            value="{{ $option['video'] ?? '' }}"
+                                                            placeholder="URL de la vidéo"
+                                                            class="w-full rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500 text-sm"
+                                                            required>
+
+                                                    @if(isset($option['video']))
+                                                        <video controls class="max-w-md w-full h-auto rounded-lg bg-black shadow-lg" preload="metadata">
+                                                            <source src="{{ $option['video'] }}" type="video/mp4">
+                                                        </video>
+                                                    @endif
                                                 </div>
                                             </div>
                                         @endforeach
@@ -587,12 +491,12 @@
 
                                 <button
                                         type="button"
-                                        onclick="addOption({{ $question->id }})"
-                                        class="mt-3 inline-flex items-center px-3 py-2 border border-blue-300 rounded-lg text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition">
+                                        onclick="addVideoOption({{ $question->id }})"
+                                        class="mt-4 inline-flex items-center px-3 py-2 border border-purple-300 rounded-lg text-sm font-medium text-purple-700 bg-purple-50 hover:bg-purple-100 transition">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                     </svg>
-                                    Ajouter une option
+                                    Ajouter une option vidéo
                                 </button>
                             </div>
                         </div>
@@ -618,17 +522,20 @@
             </div>
         </div>
     @endforeach
-    <!--- Modal de Creacion -->
+    <!-- Model Creacion -->
     <div id="create-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen px-4 py-8">
             <div class="fixed inset-0 bg-gray-500 bg-opacity-75" onclick="closeCreateModal()"></div>
 
-            <div class="relative bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="relative bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto">
                 <form action="{{ route('admin-lsfbgo.create-question') }}" method="POST">
                     @csrf
                     <input type="hidden" name="type" value="{{ $type }}">
                     <input type="hidden" name="syllabu_id" value="{{ $syllabus->id }}">
                     <input type="hidden" name="theme_id" value="{{ $theme->id }}">
+                    <input type="hidden" name="question_text" value="null">
+                    <input type="hidden" name="video_url" value="null">
+
 
                     <div class="bg-gradient-to-r from-green-500 to-teal-600 px-6 py-4 sticky top-0 z-10">
                         <div class="flex items-center justify-between">
@@ -636,7 +543,7 @@
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                 </svg>
-                                Créer une nouvelle question de type {{$type}}
+                                Créer une nouvelle question
                             </h3>
                             <button type="button" onclick="closeCreateModal()" class="text-white hover:text-gray-200">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -647,38 +554,6 @@
                     </div>
 
                     <div class="px-6 py-6 space-y-6">
-                        <!-- URL del Video -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                                </svg>
-                                Question
-                            </label>
-                            <input
-                                    type="text"
-                                    name="question_text"
-                                    value="Quel est le mot ?"
-                                    placeholder="https://example.com/video.mp4"
-                                    class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
-                            <p class="mt-1 text-xs text-gray-500">Optionnel</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                                </svg>
-                                URL de la vidéo
-                            </label>
-                            <input
-                                    type="url"
-                                    name="video_url"
-                                    value=""
-                                    placeholder="https://example.com/video.mp4"
-                                    class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
-                            <p class="mt-1 text-xs text-gray-500">Optionnel</p>
-                        </div>
-
                         <!-- Réponse correcte -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -688,35 +563,32 @@
                                 Réponse correcte
                             </label>
                             <input
-                                    type="text"
+                                    type="hidden"
                                     name="answer"
-                                    value=""
-                                    placeholder="Entrez la réponse correcte"
-                                    class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"
-                                    required>
+                                    value="association" />
                         </div>
 
-                        <!-- Options -->
+                        <!-- Options vidéo -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-3">
                                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                                 </svg>
-                                Options de réponse
+                                Options vidéo
                             </label>
 
-                            <div id="options-container-create" class="space-y-3">
-                                <!-- Las opciones se agregarán aquí dinámicamente -->
+                            <div id="options-container-create" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Las opciones se agregarán dinámicamente aquí -->
                             </div>
 
                             <button
                                     type="button"
-                                    onclick="addOptionCreate()"
-                                    class="mt-3 inline-flex items-center px-3 py-2 border border-blue-300 rounded-lg text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition">
+                                    onclick="addVideoOptionCreate()"
+                                    class="mt-4 inline-flex items-center px-3 py-2 border border-purple-300 rounded-lg text-sm font-medium text-purple-700 bg-purple-50 hover:bg-purple-100 transition">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                 </svg>
-                                Ajouter une option
+                                Ajouter une option vidéo
                             </button>
                         </div>
                     </div>
@@ -734,18 +606,15 @@
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                             </svg>
-                            Enregistrer
+                            Créer
                         </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+    <!-- Scripts -->
     <script>
-        /* ======================================================
-           UTILIDADES GENERALES
-        ====================================================== */
-
         function toggleBodyScroll(disable = true) {
             document.body.style.overflow = disable ? 'hidden' : 'auto';
         }
@@ -758,36 +627,22 @@
             toggleBodyScroll(show);
         }
 
-        /* ======================================================
-           MODALES
-        ====================================================== */
-
-        function openModal(id) {
-            toggleModal(`modal-${id}`, true);
+        function openModal(questionId) {
+            document.getElementById('modal-' + questionId).classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
         }
 
-        function closeModal(id) {
-            const modalId = `modal-${id}`;
-            const modal = document.getElementById(modalId);
+        function closeModal(questionId) {
+            document.getElementById('modal-' + questionId).classList.add('hidden');
+            document.body.style.overflow = 'auto';
 
-            if (!modal) return;
-
-            modal.querySelectorAll('video').forEach(video => {
+            const modal = document.getElementById('modal-' + questionId);
+            const videos = modal.querySelectorAll('video');
+            videos.forEach(video => {
                 video.pause();
                 video.currentTime = 0;
             });
-
-            toggleModal(modalId, false);
         }
-
-        function openEditModal(id) {
-            toggleModal(`edit-modal-${id}`, true);
-        }
-
-        function closeEditModal(id) {
-            toggleModal(`edit-modal-${id}`, false);
-        }
-
         function openCreateModal() {
             toggleModal('create-modal', true);
         }
@@ -796,9 +651,15 @@
             toggleModal('create-modal', false);
         }
 
-        /* ======================================================
-           SUCCESS MODAL
-        ====================================================== */
+        function openEditModal(questionId) {
+            document.getElementById('edit-modal-' + questionId).classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeEditModal(questionId) {
+            document.getElementById('edit-modal-' + questionId).classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
 
         function showSuccessModal(message) {
             const modal = document.getElementById('success-modal');
@@ -807,217 +668,278 @@
             if (!modal || !messageEl) return;
 
             messageEl.textContent = message;
-            toggleModal('success-modal', true);
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
 
-            setTimeout(closeSuccessModal, 3000);
+            setTimeout(() => {
+                closeSuccessModal();
+            }, 3000);
         }
 
         function closeSuccessModal() {
-            toggleModal('success-modal', false);
+            const modal = document.getElementById('success-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
         }
 
-        /* ======================================================
-           OPTIONS (CREATE)
-        ====================================================== */
+        function updateTableRow(questionId, newAnswer, optionsCount) {
+            const editButton = document.querySelector(`button[onclick="openEditModal(${questionId})"]`);
 
-        function addOptionCreate() {
+            if (editButton) {
+                const row = editButton.closest('tr');
+
+                if (row) {
+                    const cells = row.querySelectorAll('td');
+
+                    // Actualizar respuesta (columna 3)
+                    const answerCell = cells[2];
+                    if (answerCell) {
+                        const textDiv = answerCell.querySelector('div');
+                        if (textDiv) {
+                            textDiv.textContent = newAnswer;
+
+                            answerCell.classList.add('bg-green-100');
+                            setTimeout(() => {
+                                answerCell.classList.remove('bg-green-100');
+                            }, 2000);
+                        }
+                    }
+
+                    // Actualizar contador de options (columna 4)
+                    if (optionsCount !== undefined) {
+                        const optionsCell = cells[3];
+                        if (optionsCell) {
+                            const badge = optionsCell.querySelector('span');
+                            if (badge) {
+                                badge.textContent = `${optionsCount} options vidéo`;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function addVideoOption(questionId) {
+            const container = document.getElementById(`options-container-${questionId}`);
+            const currentOptions = container.querySelectorAll('.option-item').length;
+            const newIndex = currentOptions;
+
+            const newOption = `
+                <div class="option-item bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-500 text-white font-bold text-sm flex-shrink-0">
+                                ${newIndex + 1}
+                            </span>
+                            <button
+                                type="button"
+                                onclick="this.closest('.option-item').remove(); updateOptionNumbers(${questionId})"
+                                class="ml-auto text-red-600 hover:text-red-800">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <input
+                            type="text"
+                            name="options[${createOptionIndex}][word]"
+                            placeholder="Texte de l'option"
+                            class="w-full rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500 text-sm"
+                            required>
+                        <input
+                            type="url"
+                            name="options[${newIndex}][video]"
+                            placeholder="URL de la vidéo"
+                            class="w-full rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500 text-sm"
+                            required>
+                    </div>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', newOption);
+            updateOptionNumbers(questionId);
+        }
+
+        function updateOptionNumbers(questionId) {
+            const container = document.getElementById(`options-container-${questionId}`);
+            const options = container.querySelectorAll('.option-item');
+
+            options.forEach((option, index) => {
+                const numberSpan = option.querySelector('span');
+                if (numberSpan) {
+                    numberSpan.textContent = index + 1;
+                }
+            });
+        }
+
+
+        // Agregar nuevo question
+        let createOptionIndex = 0;
+
+        function addVideoOptionCreate() {
             const container = document.getElementById('options-container-create');
-            const index = container.children.length + 1;
-
-            container.insertAdjacentHTML('beforeend', `
+            const optionHtml = `
         <div class="option-item bg-gray-50 rounded-lg p-4 border border-gray-200">
-            <div class="flex items-center gap-3">
-                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white font-bold text-sm">
-                    ${index}
-                </span>
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-500 text-white font-bold text-sm flex-shrink-0">
+                        ${createOptionIndex + 1}
+                    </span>
+                    <button
+                        type="button"
+                        onclick="this.closest('.option-item').remove(); updateCreateOptionNumbers()"
+                        class="ml-auto text-red-600 hover:text-red-800">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                    </button>
+                </div>
                 <input
                     type="text"
-                    name="options[]"
+                   name="options[${createOptionIndex}][word]"
                     placeholder="Texte de l'option"
-                    class="flex-1 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    class="w-full rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500 text-sm"
                     required>
-                <button
-                    type="button"
-                    onclick="this.closest('.option-item').remove(); updateOptionNumbersCreate()"
-                    class="text-red-600 hover:text-red-800">
-                    ✕
-                </button>
-            </div>
-        </div>
-    `);
-        }
-
-        function updateOptionNumbersCreate() {
-            document.querySelectorAll('#options-container-create .option-item')
-                .forEach((el, i) => {
-                    el.querySelector('span').textContent = i + 1;
-                });
-        }
-
-        /* ======================================================
-           OPTIONS (EDIT)
-        ====================================================== */
-
-        function addOption(id) {
-            const container = document.getElementById(`options-container-${id}`);
-            const index = container.querySelectorAll('.option-item').length + 1;
-
-            container.insertAdjacentHTML('beforeend', `
-        <div class="option-item bg-gray-50 rounded-lg p-4 border border-gray-200">
-            <div class="flex items-center gap-3">
-                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white font-bold text-sm">
-                    ${index}
-                </span>
                 <input
-                    type="text"
-                    name="options[]"
-                    placeholder="Texte de l'option"
-                    class="flex-1 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    type="url"
+                    name="options[${createOptionIndex}][video]"
+                    placeholder="URL de la vidéo"
+                    class="w-full rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500 text-sm"
                     required>
-                <button
-                    type="button"
-                    onclick="this.closest('.option-item').remove(); updateOptionNumbers(${id})"
-                    class="text-red-600 hover:text-red-800">
-                    ✕
-                </button>
             </div>
         </div>
-    `);
+    `;
+
+            container.insertAdjacentHTML('beforeend', optionHtml);
+            createOptionIndex++;
         }
 
-        function updateOptionNumbers(id) {
-            document.querySelectorAll(`#options-container-${id} .option-item`)
-                .forEach((el, i) => {
-                    el.querySelector('span').textContent = i + 1;
+        function updateCreateOptionNumbers() {
+            const container = document.getElementById('options-container-create');
+            const options = container.querySelectorAll('.option-item');
+
+            options.forEach((option, index) => {
+                const numberSpan = option.querySelector('span');
+                if (numberSpan) {
+                    numberSpan.textContent = index + 1;
+                }
+
+                const inputs = option.querySelectorAll('input');
+                inputs.forEach(input => {
+                    const name = input.getAttribute('name');
+                    if (name) {
+                        const newName = name.replace(/\[\d+\]/, `[${index}]`);
+                        input.setAttribute('name', newName);
+                    }
                 });
+            });
+
+            createOptionIndex = options.length;
         }
 
-        /* ======================================================
-           TABLE UPDATE
-        ====================================================== */
 
-        function updateTableRow(id, newAnswer, optionsCount) {
-            const btn = document.querySelector(`button[onclick="openEditModal(${id})"]`);
-            if (!btn) return;
+        /// FIN
 
-            const row = btn.closest('tr');
-            if (!row) return;
+        // Manejo de formularios con AJAX
+        document.addEventListener('DOMContentLoaded', function() {
+            const forms = document.querySelectorAll('form[action*="update-question"]');
 
-            const cells = row.querySelectorAll('td');
-
-            // Update answer
-            const answerCell = cells[3]?.querySelector('.text-sm');
-            if (answerCell) {
-                answerCell.textContent = newAnswer;
-                cells[3].classList.add('bg-green-100');
-                setTimeout(() => cells[3].classList.remove('bg-green-100'), 2000);
-            }
-
-            // Update options badge
-            if (optionsCount !== undefined) {
-                const badge = cells[4]?.querySelector('span');
-                if (badge) badge.textContent = `${optionsCount} options`;
-            }
-        }
-
-        /* ======================================================
-           DOM READY
-        ====================================================== */
-
-        document.addEventListener('DOMContentLoaded', () => {
-
-            /* ===== UPDATE QUESTION (AJAX) ===== */
-
-            document.querySelectorAll('form[action*="update-question"]').forEach(form => {
-                form.addEventListener('submit', async function (e) {
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
                     e.preventDefault();
 
                     const formData = new FormData(this);
                     const url = this.action;
-                    const id = url.split('/').pop();
-                    const button = this.querySelector('button[type="submit"]');
+                    const questionId = url.split('/').pop();
+                    const submitButton = this.querySelector('button[type="submit"]');
 
-                    button.disabled = true;
-                    button.innerHTML = 'Enregistrement...';
+                    submitButton.disabled = true;
+                    submitButton.innerHTML = `
+                        <svg class="animate-spin h-4 w-4 mr-2 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Enregistrement...
+                    `;
 
-                    try {
-                        const response = await fetch(url, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': formData.get('_token')
-                            }
-                        });
-
-                        const data = await response.json();
-
-                        if (data.success) {
-                            closeEditModal(id);
-                            updateTableRow(id, formData.get('answer'),
-                                this.querySelectorAll('.option-item').length);
-                            showSuccessModal(data.message || 'Question mise à jour!');
-                        } else {
-                            alert(data.message || 'Erreur');
+                    fetch(url, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': formData.get('_token')
                         }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                closeEditModal(questionId);
 
-                    } catch (error) {
-                        alert('Erreur lors de la mise à jour');
-                    }
-
-                    button.disabled = false;
-                    button.innerHTML = 'Enregistrer';
+                                const optionsCount = form.querySelectorAll('.option-item').length;
+                                updateTableRow(questionId, formData.get('answer'), optionsCount);
+                                showSuccessModal(data.message || 'Question mise à jour avec succès!');
+                            } else {
+                                alert('Erreur: ' + (data.message || 'Une erreur est survenue'));
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Une erreur est survenue lors de la mise à jour');
+                        })
+                        .finally(() => {
+                            submitButton.disabled = false;
+                            submitButton.innerHTML = `
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Enregistrer
+                        `;
+                        });
                 });
             });
-
-            /* ===== CHANGE TYPE ===== */
-
-            document.getElementById('changeType').addEventListener('change', function () {
-                const newType = this.value;
-                if (!newType) return;
-
-                const urlParams = new URLSearchParams(window.location.search);
-
-                let syllabusId = urlParams.get('syllabus');
-                let themeId = urlParams.get('theme');
-
-                // Si no vienen por query string, los tomamos del path
-                if (!syllabusId || !themeId) {
-                    const parts = window.location.pathname.split('/');
-                    syllabusId = parts[3] ?? null;
-                    themeId = parts[4] ?? null;
-                }
-
-                if (!syllabusId || !themeId) return;
-
-                window.location.href =
-                    `/admin-lsfbgo/${newType}?syllabus=${syllabusId}&theme=${themeId}`;
-            });
-
-            /* ===== OPEN CREATE MODAL ===== */
 
             const openBtn = document.getElementById('open-create-modal');
             if (openBtn) {
                 openBtn.addEventListener('click', openCreateModal);
             }
-
         });
 
-        /* ======================================================
-           ESC KEY
-        ====================================================== */
+        document.getElementById('changeType').addEventListener('change', function () {
+            const newType = this.value;
+            if (!newType) return;
 
-        document.addEventListener('keydown', e => {
+            const urlParams = new URLSearchParams(window.location.search);
+
+            let syllabusId = urlParams.get('syllabus');
+            let themeId = urlParams.get('theme');
+
+            // Si no vienen por query string, los tomamos del path
+            if (!syllabusId || !themeId) {
+                const parts = window.location.pathname.split('/');
+                syllabusId = parts[3] ?? null;
+                themeId = parts[4] ?? null;
+            }
+
+            if (!syllabusId || !themeId) return;
+
+            window.location.href =
+                `/admin-lsfbgo/${newType}?syllabus=${syllabusId}&theme=${themeId}`;
+        });
+
+        document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                document.querySelectorAll('[id^="modal-"], [id^="edit-modal-"]')
-                    .forEach(m => m.classList.add('hidden'));
-
+                document.querySelectorAll('[id^="modal-"]').forEach(modal => {
+                    modal.classList.add('hidden');
+                });
+                document.querySelectorAll('[id^="edit-modal-"]').forEach(modal => {
+                    modal.classList.add('hidden');
+                });
                 closeSuccessModal();
-                toggleBodyScroll(false);
+                document.body.style.overflow = 'auto';
             }
         });
     </script>
-
-
 </x-app-layout>

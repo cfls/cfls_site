@@ -1,4 +1,11 @@
 <x-app-layout>
+    @php
+        function cleanWord(string $word): string {
+            $word = preg_replace('/\s*\(.*?\)/', '', $word);
+            $word = explode('/', $word)[0];
+            return trim($word);
+        }
+    @endphp
     <!-- Mensaje de éxito -->
     @if(session('success'))
             <div id="session-success-alert" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 transition-opacity duration-500">
@@ -259,7 +266,7 @@
 
                                         <td class="px-6 py-4">
                                             <div class="text-sm text-gray-900">
-                                                {{ $question->answer ?? 'N/A' }}
+                                                {{ cleanWord($question->answer ?? '') }}
                                             </div>
                                         </td>
 
@@ -379,7 +386,7 @@
                                     <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                     </svg>
-                                    {{ $question->answer }}
+                                    {{ cleanWord($question->answer ?? '') }}
                                 </div>
                             </div>
                         @endif
@@ -399,7 +406,7 @@
                                                 <div class="flex-1">
                                                     @if(isset($option['value']))
                                                         <p class="text-sm font-medium text-gray-900 mb-2">
-                                                            {{ $option['value'] }}
+                                                            {{ cleanWord($option['value']) }}
                                                             @if($option['value'] == $question->answer)
                                                                 <span class="ml-2 text-green-600">✓</span>
                                                             @endif
@@ -463,7 +470,7 @@
                                 <input
                                         type="text"
                                         name="answer"
-                                        value="{{ $question->answer }}"
+                                        value="{{ cleanWord($question->answer ?? '') }}"
                                         class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"
                                         required>
                             </div>                          

@@ -31,6 +31,14 @@
         </div>
     </div>
 
+    @php
+        function cleanWord(string $word): string {
+            $word = preg_replace('/\s*\(.*?\)/', '', $word);
+            $word = explode('/', $word)[0];
+            return trim($word);
+        }
+    @endphp
+
     <!-- Mensaje de éxito de sesión -->
     @if(session('success'))
         <div id="session-success-alert" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 transition-opacity duration-500">
@@ -255,7 +263,7 @@
                                             <div class="flex flex-wrap gap-2">
                                                 @foreach($options as $option)
                                                     <span class="px-2 py-1 text-sm bg-purple-100 text-purple-800 rounded-full">
-                                                      {{ $option['word'] }}
+                                                      {{ cleanWord($option['word'] ?? '') }}
                                                      </span>
                                                 @endforeach
                                             </div>
@@ -389,7 +397,7 @@
                                                     </div>
 
                                                     <span class="font-medium text-gray-900">
-                                                          {{ $option['word'] }}
+                                                         {{ cleanWord($option['word']) }}
                                                      </span>
                                                  </div>
 

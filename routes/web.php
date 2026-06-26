@@ -32,6 +32,7 @@ Route::prefix('admin-lsfbgo')
     ->group(function () {
         Route::get('/', [AdminLsfbgoController::class, 'index'])->name('index');
         Route::get('/{type}', [AdminLsfbgoController::class, 'type'])->name('type');
+        Route::get('/list/{type}', [AdminLsfbgoController::class, 'list'])->name('list');
         Route::get('/questions/{syllabu_id}/{theme_id}/{type}', [AdminLsfbgoController::class, 'showQuestions'])->name('show-questions');
         Route::post('/questions/create', [AdminLsfbgoController::class, 'createQuestion'])->name('create-question');
         Route::put('/question/{question}', [AdminLsfbgoController::class, 'updateQuestion'])->name('update-question');

@@ -33,7 +33,9 @@ class QuestionResource extends JsonResource
             'id'            => $this->id,
            // 'slug'          => $this->syllabus->slug ?? '',
             'theme'         => $this->theme->title ?? '',
-            'question_text' => $this->question_text ?? '',
+            'question_text' => $this->type === 'yes-no'
+                ? $this->cleanQuestionText($this->question_text ?? '')
+                : $this->cleanWord($this->question_text ?? ''),
             'type'          => $this->type ?? '',
             'video'         => $publicId
                 ? $cloudinary->video($publicId, [
@@ -45,27 +47,63 @@ class QuestionResource extends JsonResource
                 ])->toUrl()
                 : null,
             'options'       => $this->formatOptions(),
-            'answer'        => $this->answer ?? '',
+            'answer'        => $this->cleanWord($this->answer ?? ''),
             'status'        => $this->status
         ];
     }
 
-    private function formatOptions()
+private function formatOptions()
+{
+    $options = is_array($this->options)
+        ? $this->options
+        : json_decode($this->options, true);
+
+    if (!is_array($options)) {
+        return $options;
+    }
+
+    if ($this->type === 'match') {
+        return array_map(function ($option) {
+            return array_merge($option, [
+                'word' => $this->cleanWord($option['word'] ?? ''),
+            ]);
+        }, $options);
+    }
+
+
+    if ($this->type === 'video-choice') {
+        return array_map(function ($option) {
+            return array_merge($option, [
+                'value' => $this->cleanWord($option['value'] ?? ''),
+            ]);
+        }, $options);
+    }
+
+    if ($this->type === 'choice') {
+        return array_map(function ($option) {
+            return $this->cleanWord($option);
+        }, $options);
+    }
+
+    return $options;
+}
+
+    private function cleanWord(string $word): string
     {
+        // Quitar todo lo que está entre paréntesis
+        $word = preg_replace('/\s*\(.*?\)/', '', $word);
 
+        // Quitar todo lo que está después del /
+        $word = explode('/', $word)[0];
 
-        // Normalizar
-        $options = is_array($this->options)
-            ? $this->options
-            : json_decode($this->options, true);
+        return trim($word);
+    }
 
-
-
-        if ($this->type === 'choice') {
-            return $options;
-        }
-
-        // Si es otro tipo, mapear el video
-        return  $options;
+    private function cleanQuestionText(string $text): string
+    {
+        // Busca todo lo que está después de "signifie '" hasta el "' ?"
+        return preg_replace_callback("/signifie '(.+)' \?/u", function ($matches) {
+            return "signifie '" . $this->cleanWord($matches[1]) . "' ?";
+        }, $text);
     }
 }

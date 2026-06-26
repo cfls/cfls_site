@@ -203,6 +203,51 @@ class AdminLsfbgoController extends Controller
         return redirect()->back()->with('success', $message);
     }
 
+    public function list($type, Request $request)
+    {
+
+
+        // Obtener los 3 parámetros
+        $syllabusId = $request->query('syllabus');
+        $themeId = $request->query('theme');
+
+
+
+        // Validaciones
+        if (!$syllabusId) {
+            return redirect()->back()
+                ->withErrors(['error' => 'Veuillez sélectionner un programme']);
+        }
+
+        if (!$themeId) {
+            return redirect()->back()
+                ->withErrors(['error' => 'Veuillez sélectionner un thème']);
+        }
+
+        // Obtener los objetos
+        $syllabus = Syllabu::findOrFail($syllabusId);
+        $theme = Theme::findOrFail($themeId);
+
+
+        // Habilitar query log
+
+
+        $questions = Question::with('video')
+            ->where('syllabu_id', $syllabusId)
+            ->where('theme_id', $themeId)
+            ->where('type', $type)
+            ->paginate(20);
+
+
+
+
+
+
+        // Retornar vista con los datos
+        return view('lsfbgo.list', compact('type', 'syllabus', 'theme', 'questions'));
+    }
+
+
 
     public function type($type, Request $request)
     {
@@ -250,6 +295,7 @@ class AdminLsfbgoController extends Controller
 
     public function showQuestions($syllabus_id, $theme_id, $type)
     {
+
 
 
 
