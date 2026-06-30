@@ -12,6 +12,7 @@ class VideoResource extends JsonResource
         return [
             'id'    => $this->id,
             'title' => $this->title,
+            'type'  => $this->type,
             'url'   => $this->url, // already aliased as url in DB
         ];
     }

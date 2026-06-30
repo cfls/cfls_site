@@ -12,19 +12,21 @@ class ThemeResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+    // ThemeResource.php
+
     public function toArray(Request $request): array
     {
         return [
             'type' => 'themes',
-            'id' => $this->id,
+            'id'   => $this->id,
             'attributes' => [
-                "title" => $this->title,
-                "slug" => $this->slug,
-                "slug_syllabu" => $this->syllabus->slug,
-                "image" => asset('storage/' . $this->image),
-                "videos" => VideoResource::collection($this->whenLoaded('videos'))
-                ]
-
+                'title'        => $this->title,
+                'slug'         => $this->slug,
+                'slug_syllabu' => $this->syllabus->slug,
+                'image'        => asset('storage/' . $this->image),
+                'videos'       => VideoResource::collection($this->whenLoaded('mainVideos')), // ✅
+                'annexes'      => VideoResource::collection($this->whenLoaded('annexes')),    // ✅
+            ]
         ];
     }
 }

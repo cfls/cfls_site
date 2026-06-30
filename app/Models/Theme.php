@@ -27,5 +27,17 @@ class Theme extends Model
             ->orderBy('title', 'asc');
     }
 
+    // Solo videos principales
+    public function mainVideos(): HasMany
+    {
+        return $this->hasMany(VideoTheme::class)->where('type', 'principal');
+    }
+
+    // Solo anexos
+    public function annexes(): HasMany
+    {
+        return $this->hasMany(VideoTheme::class)->where('type', '!=', 'principal');
+    }
+
 
 }

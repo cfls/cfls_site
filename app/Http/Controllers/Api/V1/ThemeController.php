@@ -40,23 +40,22 @@ class ThemeController extends Controller
 
     public function theme($slugSyllabu, $slugTheme)
     {
-
-        // ✅ Obtener IDs directamente
         $syllabusId = Syllabu::where('slug', $slugSyllabu)->value('id');
 
         if (!$syllabusId) {
             abort(404);
         }
-        $theme = Theme::with('videos:id,theme_id,title,url')
+
+        $theme = Theme::with([
+            'mainVideos:id,theme_id,title,url,type',  // ✅ solo principales
+            'annexes:id,theme_id,title,url,type',     // ✅ solo anexos
+        ])
             ->select('id', 'slug', 'title', 'syllabu_id')
             ->where('syllabu_id', $syllabusId)
             ->where('slug', $slugTheme)
             ->firstOrFail();
 
         return new ThemeResource($theme);
-
-
-
     }
 
     /**

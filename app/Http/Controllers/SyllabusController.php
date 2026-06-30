@@ -135,7 +135,6 @@ class SyllabusController extends Controller
 
         // 🔐 Validar acceso solo si NO es admin
         if ($user->role !== 'admin') {
-
             $hasAccess = VerifyCode::where([
                 'user_id' => $user->id,
                 'theme'   => $slug,
@@ -147,43 +146,45 @@ class SyllabusController extends Controller
             }
         }
 
-        // 📚 Base query syllabus
+        // 📚 Syllabus
         $syllabuQuery = Syllabu::where('slug', $slug);
-
         if ($user->role !== 'admin') {
             $syllabuQuery->where('status', 1);
         }
-
         $syllabu = $syllabuQuery->firstOrFail();
 
-        // 📂 Base query theme
-        $themeQuery = $syllabu->themes()
-            ->where('slug', $theme);
-
+        // 📂 Theme
+        $themeQuery = $syllabu->themes()->where('slug', $theme);
         if ($user->role !== 'admin') {
             $themeQuery->where('status', 1);
         }
-
         $themeModel = $themeQuery->firstOrFail();
 
-        // 🎥 Videos (admin ve todo)
-        $videosQuery = DB::table('video_themes_cloudinary')
+        // 🎥 Base query reutilizable
+        $baseQuery = fn() => DB::table('video_themes_cloudinary')
             ->where([
                 'syllabu_id' => $syllabu->id,
                 'theme_id'   => $themeModel->id,
                 'active'     => 1,
-            ])
-            ->orderBy('title');
+            ]);
 
-        if ($user->role !== 'admin') {
-            $videosQuery->where('active', 1);
-        }
-
-        $videos = $videosQuery
+        // Videos principales
+        $videos = $baseQuery()
+            ->where('type', 'principal')
+            ->orderBy('title')
             ->get(['id', 'url as url_video', 'title'])
             ->toArray();
 
-        return view('syllabus.show', compact('syllabu', 'themeModel', 'videos'));
+// Videos del anexo (puede ser lista)
+        $annexVideos = $baseQuery()
+            ->where('type', 'pour_en_savoir_plus')
+            ->orderBy('title')
+            ->get(['id', 'url as url_video', 'title'])
+            ->toArray();
+
+        return view('syllabus.show', compact('syllabu', 'themeModel', 'videos', 'annexVideos'));
+
+
     }
 
 
