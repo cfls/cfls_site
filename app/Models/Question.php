@@ -52,5 +52,13 @@ class Question extends Model
         );
     }
 
+    function getVideoThumbnail2($id){
+        $video = VideoTheme::where('id', $id)->first();
+        if ($video) {
+            return $this->getVideoThumbnail($video->url);
+        }
+        return '';
+    }
+
 
 }

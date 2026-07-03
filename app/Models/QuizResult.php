@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class QuizResult extends Model
 {
-    protected $fillable = ['user_id','syllabus','theme','slug','score','played_at'];
+    protected $fillable = ['user_id','syllabus','theme','theme_variant','type','score','played_at'];
 
     protected $casts = [
         'played_at' => 'date',
@@ -72,6 +72,7 @@ class QuizResult extends Model
         return self::where('user_id', $userId)
             ->where('syllabus', $slug)
             ->where('type', $type)
-            ->count('type');
+            ->distinct()
+            ->count(DB::raw('theme, theme_variant')); // no funciona igual en todos los drivers
     }
 }

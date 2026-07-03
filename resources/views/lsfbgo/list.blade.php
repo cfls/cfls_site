@@ -233,16 +233,18 @@
 
                                         <td class="px-6 py-4">
                                             <div class="flex flex-wrap gap-2">
-                                                @foreach($options as $option)
+                                                @if($question->type === 'yes-no')
                                                     <div class="flex flex-col items-center">
-                                                        <img src="{{ $question->getVideoThumbnail($option['video'], 3) }}" class="w-32 h-20 rounded" />
-                                                        @if($question->type === 'video-choice')
-                                                        <span class="text-sm text-gray-500">{{ $option['value'] }}</span>
-                                                        @else
-                                                          <span class="text-sm text-gray-500">{{ $option['word'] }}</span>
-                                                        @endif
+                                                       <img src="{{ $question->getVideoThumbnail2($question->video_id) }}" class="w-32 h-20 rounded" />
+                                                        <span class="text-sm text-gray-500">Question</span>
                                                     </div>
-                                                @endforeach
+                                                @endif
+{{--                                                @foreach($options as $option)--}}
+{{--                                                    <div class="flex flex-col items-center">--}}
+{{--                                                        <img src="{{ $question->getVideoThumbnail($option['video'], 3) }}" class="w-32 h-20 rounded" />--}}
+{{--                                                        <span class="text-sm text-gray-500">{{ $option['value'] }}</span>--}}
+{{--                                                    </div>--}}
+{{--                                                @endforeach--}}
                                             </div>
                                         </td>
 

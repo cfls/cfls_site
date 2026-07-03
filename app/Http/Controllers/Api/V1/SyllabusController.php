@@ -20,6 +20,8 @@ class SyllabusController extends Controller
             ->orderBy('id')
             ->get();
 
+
+
         return SyllabusResource::collection($syllabus);
     }
 
@@ -65,6 +67,8 @@ class SyllabusController extends Controller
 
     public function settings($slug)
     {
+
+
         $syllabu = Syllabu::where('slug', $slug)->firstOrFail();
 
         return new SyllabusResource($syllabu);

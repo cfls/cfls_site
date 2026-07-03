@@ -3,16 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Syllabu extends Model
 {
-    public function themes(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function themes(): HasMany
     {
         return $this->hasMany(Theme::class, 'syllabu_id');
     }
 
-    public function videos(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function videos(): HasMany
     {
         return $this->hasMany(VideoTheme::class, 'syllabu_id');
     }

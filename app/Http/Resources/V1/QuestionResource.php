@@ -37,6 +37,7 @@ class QuestionResource extends JsonResource
                 ? $this->cleanQuestionText($this->question_text ?? '')
                 : $this->cleanWord($this->question_text ?? ''),
             'type'          => $this->type ?? '',
+            'subtheme'      => $this->subtheme ?? '',
             'video'         => $publicId
                 ? $cloudinary->video($publicId, [
                     'transformation' => [

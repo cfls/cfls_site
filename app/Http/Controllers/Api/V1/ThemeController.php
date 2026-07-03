@@ -32,9 +32,16 @@ class ThemeController extends Controller
      */
     public function show($theme)
     {
-
         $syllabu = Syllabu::where('slug', $theme)->firstOrFail();
+
         $themes = Theme::where('syllabu_id', $syllabu->id)->get();
+
+        foreach ($themes as $item) {   // ← renombra la variable del loop
+            $item->mainVideos = $item->mainVideos()->get();
+            $item->annexes = $item->annexes()->get();
+        }
+
+
         return ThemeResource::collection($themes);
     }
 
