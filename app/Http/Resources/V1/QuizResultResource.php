@@ -22,6 +22,7 @@ class QuizResultResource extends JsonResource
                 'syllabus'  => $this->syllabus,
                 'theme'     => $this->theme,
                 'type'      => $this->type,
+                'theme_variant' => $this->theme_variant,
                 'score'     => $this->score,
                 'played_at' => $this->played_at?->format('Y-m-d'), // formato limpio
             ]

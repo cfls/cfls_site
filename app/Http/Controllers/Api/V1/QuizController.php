@@ -104,30 +104,27 @@ class QuizController
 
     public function themes($slug)
     {
-
-
-
         $syllabusId = Syllabu::where('slug', $slug)->value('id');
-
-
 
         if (!$syllabusId) {
             abort(404);
         }
 
+        $ids = Question::where('syllabu_id', $syllabusId)
+            ->where('status', 1)
+            ->pluck('id')
+            ->all();
 
-
-        $query = Question::where('syllabu_id', $syllabusId)->whereStatus(1);
-
-        if ($query->count() === 0) {
+        if (empty($ids)) {
             return response()->json(['data' => []]);
         }
 
-        $questions = $query
-            ->with(['video:id,title,url'])
+        shuffle($ids);
+        $randomIds = array_slice($ids, 0, 20);
+
+        $questions = Question::whereIn('id', $randomIds)
+            ->with('video:id,title,url')
             ->select(['id', 'theme_id', 'type', 'question_text', 'answer', 'video_id', 'options', 'status'])
-            ->inRandomOrder() // ✅ Aleatorio real a nivel DB
-            ->limit(20)
             ->get();
 
         return QuestionResource::collection($questions);
