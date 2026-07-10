@@ -73,6 +73,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/questions/all/{slug}', [QuizController::class, 'themes']);
     Route::get('/questions/{slug}', [QuizController::class, 'index']);
     Route::get('/questions/{slug}/{theme}', [QuizController::class, 'show']);
+    Route::get('/synthesis/{slug}/{type}', [QuizController::class, 'synthesis']);
     Route::get('/dictionnaire', [DictionaryController::class, 'index']);
     Route::get('/dictionnaire/{id}', [DictionaryController::class, 'show']);
     Route::post('/quiz-results', [QuizResultController::class, 'store']);

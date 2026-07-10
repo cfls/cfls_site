@@ -102,6 +102,64 @@ class QuizController
         return QuestionResource::collection($questions);
     }
 
+    public function synthesis($slug,$type) {
+        $syllabusId = Syllabu::where('slug', $slug)->value('id');
+
+        if (!$syllabusId) {
+            abort(404);
+        }
+
+        $theme = Theme::where('syllabu_id', $syllabusId)
+            ->firstOrFail();
+
+        $theme->mainVideos = $theme->mainVideos()->get();
+        foreach ($theme->mainVideos as $mainVideo) {
+            $mainVideo->videos = $mainVideo->videos()->get();
+        }
+
+        $theme->annexes = $theme->annexes()->get();
+        foreach ($theme->annexes as $annex) {
+            $annex->videos = $annex->videos()->get();
+        }
+
+
+
+
+
+        $query = Question::query()
+            ->leftJoin('video_themes_cloudinary as vc', 'vc.id', '=', 'questions.video_id')
+            ->where('questions.syllabu_id', $syllabusId)
+            ->where('questions.status', 1);
+
+
+
+        if ($type) {
+            $query->where('questions.type', $type);
+        }
+
+        if ($query->count() === 0) {
+            return response()->json(['data' => []]);
+        }
+
+        $questions = $query
+            ->select([
+                'questions.id',
+                'questions.theme_id',
+                'questions.type',
+                'vc.type as subtheme',
+                'questions.question_text',
+                'questions.answer',
+                'questions.video_id',
+                'questions.options',
+                'questions.status',
+            ])
+            ->inRandomOrder()
+            ->limit(15)
+            ->get();
+
+        return QuestionResource::collection($questions);
+    }
+
     public function themes($slug)
     {
         $syllabusId = Syllabu::where('slug', $slug)->value('id');
