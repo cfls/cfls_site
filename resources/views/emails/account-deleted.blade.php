@@ -36,6 +36,16 @@
                             Merci d’avoir utilisé LSFBGO.
                         </p>
 
+                        <div style="background-color: #eef2ff; padding: 20px; border-radius: 6px; margin: 25px 0; text-align: center;">
+                            <p style="margin: 0 0 15px; color: #374151;">
+                                Avant de partir, pourriez-vous nous dire pourquoi ? Cela nous aide à améliorer LSFBGO.
+                            </p>
+                            <a href="{{ $surveyUrl }}"
+                               style="display: inline-block; background-color: #4f46e5; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600;">
+                                Répondre à l'enquête (2 min)
+                            </a>
+                        </div>
+
                         <p style="color: #4b5563; margin-top: 20px;">
                             Cordialement,<br>
                             Équipe {{ config('app.name') }}<br>

@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\DictionaryResource;
-use App\Http\Resources\V1\VideoResource;
+use App\Mail\NewSuggestionMail;
+use App\Models\Suggestion;
 use App\Models\VideoTheme;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class DictionaryController extends Controller
 {
@@ -87,6 +89,33 @@ class DictionaryController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * Store a new suggestion for a missing sign.
+     */
+    public function storeSuggestion(Request $request)
+    {
+        $validated = $request->validate([
+            'word'    => ['required', 'string', 'min:2', 'max:100'],
+            'user_id' => ['required', 'integer', 'exists:users,id'],
+        ]);
+
+        $suggestion = Suggestion::create([
+            'word'    => $validated['word'],
+            'ip'      => $request->ip(),
+            'user_id' => $validated['user_id'],
+        ]);
+
+        Mail::to('support@cfls.be')->send(new NewSuggestionMail($suggestion));
+
+        return response()->json([
+            'message' => 'Suggestion reçue avec succès.',
+            'data'    => [
+                'id'   => $suggestion->id,
+                'word' => $suggestion->word,
+            ],
+        ], 201);
     }
 
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountDeletionSurveyController;
 use App\Http\Controllers\AdminLsfbgo\AdminLsfbgoController;
 use App\Http\Controllers\Api\V1\QuizController;
 use App\Http\Controllers\ArchiveController;
@@ -174,7 +175,12 @@ Route::post('/email/verification-notification', function (Request $request) {
     return back()->with('status', 'verification-link-sent');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.confirmation');
 
+Route::get('/enquete-suppression/{name}/{email}', [AccountDeletionSurveyController::class, 'show'])
+    ->name('deletion-survey.show')
+    ->middleware('signed');
 
+Route::post('/enquete-suppression', [AccountDeletionSurveyController::class, 'store'])
+    ->name('deletion-survey.store');
 
 // Questions
 
