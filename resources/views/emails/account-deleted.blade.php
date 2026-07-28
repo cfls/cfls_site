@@ -40,7 +40,7 @@
                             <p style="margin: 0 0 15px; color: #374151;">
                                 Avant de partir, pourriez-vous nous dire pourquoi ? Cela nous aide à améliorer LSFBGO.
                             </p>
-                            <a href="{{ $surveyUrl }}"
+                        <a href="{{ $surveyUrl }}"
                                style="display: inline-block; background-color: #4f46e5; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600;">
                                 Répondre à l'enquête (2 min)
                             </a>
@@ -51,7 +51,7 @@
                             Équipe {{ config('app.name') }}<br>
                             Avenue du Four à Briques, 3A<br>
                             1140 Evere (Bruxelles)<br>
-                            <a href="mailto:info@cfls.be">info@cfls.be</a>
+                            <a href="mailto:support@cfls.be">support@cfls.be</a>
                         </p>
 
                     </td>
