@@ -29,7 +29,7 @@
         </div>
         <div role="listitem" x-data="{ open: false }" class="px-4 py-2 min-w-[120px] text-center relative">
             <a href="#" @click.prevent="open = !open"
-               class="transition-colors duration-200 {{ request()->is('ressources/*') ? 'text-white' : 'text-black hover:text-gray-700' }}">
+               class="transition-colors duration-200 {{ request()->is('videos/*')  ? 'text-white' : 'text-black hover:text-gray-700' }}">
                 Vidéos
             </a>
             <div x-show="open" x-cloak @click.outside="open = false"
@@ -55,7 +55,7 @@
 
         <div role="listitem" x-data="{ open: false }" class="px-4 py-2 min-w-[120px] text-center relative">
             <a href="#" @click.prevent="open = !open"
-               class="transition-colors duration-200 {{ request()->routeIs('resource.slug', 'telechargements-gratuits') ? 'text-white' : 'text-black hover:text-gray-700' }}">
+               class="transition-colors duration-200 {{  request()->is('archive') || request()->routeIs('resource.slug', 'telechargements-gratuits') || request()->is('interactif-virtuel') ? 'text-white' : 'text-black hover:text-gray-700' }}">
                 Ressources
             </a>
             <div x-show="open" x-cloak @click.outside="open = false"
@@ -86,6 +86,12 @@
                         Téléchargements gratuits
                     </a>
                  </div>
+                <div role="listitem">
+                    <a wire:navigate href="{{route('interactif-virtuel')}}"
+                       class="block px-4 py-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 text-center">
+                        Interactif virtuel
+                    </a>
+                </div>
 
             </div>
         </div>

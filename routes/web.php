@@ -26,6 +26,12 @@ Route::get('/equipe', [TeamController::class, 'index'])->name('equipe');
 Route::get('/contact', [HomeController::class, 'contacto'])->name('contact');
 Route::get('/general-4', [HomeController::class, 'general'])->name('general-4');
 Route::get('/telechargements-gratuits', [DownloadController::class, 'index'])->name('telechargements-gratuits');
+Route::get('/interactif-virtuel', function() {
+    return view('interactif-virtuel.index');
+})->name('interactif-virtuel');
+Route::get('/systeme-solaire', function() {
+    return view('interactif-virtuel.systeme-solaire');
+})->name('systeme-solaire');
 Route::get('/archive', [ArchiveController::class, 'index'])->name('archive');
 Route::get('/dictionnaire-lsfb', [HomeController::class, 'dictionnaire'])->name('dictionnaire.home');
 Route::prefix('admin-lsfbgo')
