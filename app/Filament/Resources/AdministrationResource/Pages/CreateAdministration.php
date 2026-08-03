@@ -25,7 +25,8 @@ class CreateAdministration extends CreateRecord
             'name' => $userName,
             'email' => $userEmail,
             'password' => Hash::make($userPassword),
-            'role' => 'user', // ← corregido aquí
+            'role' => 'user',
+            'is_active' => true // ← corregido aquí
         ]);
 
         // Asignamos user_id al administration
