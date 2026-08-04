@@ -23,5 +23,14 @@
                 <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Carte interactive des provinces de Belgique.</p>
             </div>
         </a>
+
+        {{-- Tarjeta 3 --}}
+        <a href="https://paysdumonde.cfls.be" target="_blank" class="block rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800">
+            <img src="{{ asset('img/interactives/mapworld.png') }}" alt="Les Pays du Monde" class="w-full h-56 object-cover">
+            <div class="p-4">
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Les Pays du Monde</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Explorez le monde avec notre carte interactive.</p>
+            </div>
+        </a>
     </section>
 </x-layout>
