@@ -105,4 +105,25 @@ class ThemeController extends Controller
             ]
         ]);
     }
+
+
+    public function sync(Request $request)
+    {
+        $query = Theme::query();
+
+
+
+        if ($request->filled('desde')) {
+            $query->where('updated_at', '>', $request->date('desde'));
+        }
+
+        $items = $query->orderBy('updated_at')->get([
+            'id', 'title', 'slug', 'syllabu_id', 'image', 'status', 'updated_at',
+        ]);
+
+        return response()->json([
+            'data'          => $items,
+            'servidor_hora' => now()->toIso8601String(),
+        ]);
+    }
 }

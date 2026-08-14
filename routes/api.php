@@ -16,8 +16,9 @@ use App\Http\Controllers\Api\V1\SectionController;
 use App\Http\Controllers\Api\V1\SpellController;
 use App\Http\Controllers\Api\V1\SpellingController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
-use App\Http\Controllers\Api\V1\SyllabusController;
 use App\Http\Controllers\Api\V1\ThemeController;
+use App\Http\Controllers\Api\V1\SyllabusController;
+use App\Http\Controllers\Api\V1\VideoController as ApiVideoController;
 use App\Http\Controllers\Api\V1\UsersController;
 use App\Http\Controllers\Api\V1\VerifyCodeController;
 use App\Http\Controllers\Api\V1\VideoQuizItemController;
@@ -59,10 +60,13 @@ Route::get('/product/{id}', function ($id) {
 
 Route::prefix('v1')->group(function () {
 
+    // Sync
+    Route::get('/syllabus/sync', [SyllabusController::class, 'sync']);
     Route::get('/syllabus/settings/{slug}', [SyllabusController::class, 'settings']);
     Route::get('/sections/{slug?}', [SectionController::class, 'index']);
     Route::get('/sections/show/{section}', [SectionController::class, 'show']);
     Route::post('/sections', [SectionController::class, 'store']);
+    Route::get('/themes/sync', [ThemeController::class, 'sync']);
     Route::get('/themes', [ThemeController::class, 'index']);
     Route::get('/themes/{theme}', [ThemeController::class, 'show']);
     Route::get('/themes/{theme}/{slug}', [ThemeController::class, 'theme']);
@@ -101,6 +105,13 @@ Route::prefix('v1')->group(function () {
     Route::get('/letters', [LettersController::class, 'index']);
     Route::get('/video-quiz/{syllabu}/{theme}', [VideoQuizItemController::class, 'index']);
     Route::post('/feedback', [FeedbackController::class, 'store']);
-    
+    Route::get('/videos/sync', [ApiVideoController::class, 'sync']);
+
+
+
 
 });
+
+//Route::middleware('auth:sanctum')->group(function () {
+//    Route::get('/video-themes/sync', [VideoController::class, 'sync']);
+//});

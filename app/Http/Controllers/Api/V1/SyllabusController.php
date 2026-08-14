@@ -73,4 +73,27 @@ class SyllabusController extends Controller
 
         return new SyllabusResource($syllabu);
     }
+
+    /**
+     * Endpoint de sincronizacion incremental.
+     * El movil manda "desde" (hora del servidor de la ultima sync)
+     * y recibe solo lo que cambio, mas la hora actual del servidor.
+     */
+    public function sync(Request $request)
+    {
+        $query = Syllabu::query();
+
+        if ($request->filled('desde')) {
+            $query->where('updated_at', '>', $request->date('desde'));
+        }
+
+        $items = $query->orderBy('updated_at')->get([
+            'id', 'title', 'slug', 'image', 'link', 'status', 'hex_color', 'updated_at',
+        ]);
+
+        return response()->json([
+            'data'          => $items,
+            'servidor_hora' => now()->toIso8601String(),
+        ]);
+    }
 }
