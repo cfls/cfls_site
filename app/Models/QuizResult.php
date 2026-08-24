@@ -72,7 +72,7 @@ class QuizResult extends Model
         return self::where('user_id', $userId)
             ->where('syllabus', $slug)
             ->where('type', $type)
-            ->distinct()
-            ->count(DB::raw('theme, theme_variant')); // no funciona igual en todos los drivers
+            ->selectRaw('COUNT(DISTINCT CONCAT(theme, ":", COALESCE(theme_variant, "principal"))) as cnt')
+            ->value('cnt') ?? 0;
     }
 }

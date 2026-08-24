@@ -80,6 +80,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/questions/{slug}', [QuizController::class, 'index']);
     Route::get('/questions/{slug}/{theme}', [QuizController::class, 'show']);
     Route::get('/synthesis/{slug}/{type}', [QuizController::class, 'synthesis']);
+    Route::get('/dictionnaire/sync', [DictionaryController::class, 'sync']);
     Route::get('/dictionnaire', [DictionaryController::class, 'index']);
     Route::get('/dictionnaire/{id}', [DictionaryController::class, 'show']);
     Route::post('/dictionnaire/suggestions', [DictionaryController::class, 'storeSuggestion']);
@@ -88,6 +89,8 @@ Route::prefix('v1')->group(function () {
     Route::get('/quiz-results/check/{user_id}/{slug}/{slug_theme}/{type}', [QuizResultController::class, 'check']);
     Route::get('/quiz-results/{user_id}/daily', [QuizResultController::class, 'participationDays']);
     Route::get('/quiz-results/{user_id}/total', [QuizResultController::class, 'total']);
+    Route::get('/quiz-results/{user_id}/sync', [QuizResultController::class, 'sync']);
+    Route::post('/quiz-results/batch', [QuizResultController::class, 'batch']);
     Route::get('/quiz-results/check/{user_id}/{slug}/{type}', [QuizResultController::class, 'getQuizResultForTopic']);
     Route::get('/quiz-results/ranking/daily', [QuizResultController::class, 'rankingDaily']);
     Route::get('/quiz-results/ranking/total', [QuizResultController::class, 'rankingTotal']);
@@ -101,6 +104,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/subscriptions/{user_id}/active', [SubscriptionController::class, 'active']);
     Route::patch('/subscriptions/update-status', [SubscriptionController::class, 'update']);
     Route::post('/subscriptions/cancel', [SubscriptionController::class, 'cancel']);
+    Route::get('/memory-game/sync', [MemoryGameController::class, 'sync']);
     Route::get('/memory-game/{syllabu}/{theme}', [MemoryGameController::class, 'index']);
 
     Route::get('/spell/sync', [SpellController::class, 'sync']);
@@ -110,6 +114,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/letters/sync', [LettersController::class, 'sync']);
     Route::get('/letters', [LettersController::class, 'index']);
 
+    Route::get('/video-quiz/sync', [VideoQuizItemController::class, 'sync']);
     Route::get('/video-quiz/{syllabu}/{theme}', [VideoQuizItemController::class, 'index']);
     Route::post('/feedback', [FeedbackController::class, 'store']);
     Route::get('/videos/sync', [ApiVideoController::class, 'sync']);

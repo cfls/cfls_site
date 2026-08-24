@@ -129,5 +129,66 @@ class QuizResultController extends Controller
         ]);
     }
 
+    public function sync($userId, Request $request)
+    {
+        $limit   = min((int) $request->query('limit', 500), 1000);
+        $desde   = $request->filled('desde') ? $request->date('desde') : null;
+        $desdeId = (int) $request->query('desde_id', 0);
+
+        $query = QuizResult::where('user_id', $userId);
+
+        if ($desde) {
+            $query->where(function ($q) use ($desde, $desdeId) {
+                $q->where('updated_at', '>', $desde)
+                  ->orWhere(function ($q) use ($desde, $desdeId) {
+                      $q->where('updated_at', $desde)
+                        ->where('id', '>', $desdeId);
+                  });
+            });
+        }
+
+        $total = $query->count();
+        $items = $query->orderBy('updated_at')->orderBy('id')->limit($limit)->get([
+            'id', 'user_id', 'syllabus', 'theme', 'theme_variant', 'type', 'score', 'played_at', 'updated_at',
+        ]);
+
+        return response()->json([
+            'data'          => $items,
+            'total'         => $total,
+            'has_more'      => $total > $limit,
+            'servidor_hora' => now()->toIso8601String(),
+        ]);
+    }
+
+    public function batch(Request $request)
+    {
+        $results = $request->input('results', []);
+        $saved   = 0;
+
+        foreach ($results as $item) {
+            $exists = QuizResult::where([
+                'user_id'       => $item['user_id'],
+                'syllabus'      => $item['syllabus'],
+                'theme'         => $item['theme'],
+                'theme_variant' => $item['theme_variant'] ?? 'principal',
+                'type'          => $item['type'],
+            ])->exists();
+
+            if (! $exists) {
+                QuizResult::create([
+                    'user_id'       => $item['user_id'],
+                    'syllabus'      => $item['syllabus'],
+                    'theme'         => $item['theme'],
+                    'theme_variant' => $item['theme_variant'] ?? 'principal',
+                    'type'          => $item['type'],
+                    'score'         => $item['score'] ?? 0,
+                    'played_at'     => $item['played_at'] ?? now()->toDateString(),
+                ]);
+                $saved++;
+            }
+        }
+
+        return response()->json(['saved' => $saved, 'total' => count($results)]);
+    }
 
 }

@@ -81,18 +81,31 @@ class SyllabusController extends Controller
      */
     public function sync(Request $request)
     {
+        $limit   = min((int) $request->query('limit', 500), 1000);
+        $desde   = $request->filled('desde') ? $request->date('desde') : null;
+        $desdeId = (int) $request->query('desde_id', 0);
+
         $query = Syllabu::query();
 
-        if ($request->filled('desde')) {
-            $query->where('updated_at', '>', $request->date('desde'));
+        if ($desde) {
+            $query->where(function ($q) use ($desde, $desdeId) {
+                $q->where('updated_at', '>', $desde)
+                  ->orWhere(function ($q) use ($desde, $desdeId) {
+                      $q->where('updated_at', $desde)
+                        ->where('id', '>', $desdeId);
+                  });
+            });
         }
 
-        $items = $query->orderBy('updated_at')->get([
+        $total = $query->count();
+        $items = $query->orderBy('updated_at')->orderBy('id')->limit($limit)->get([
             'id', 'title', 'slug', 'image', 'link', 'status', 'hex_color', 'updated_at',
         ]);
 
         return response()->json([
             'data'          => $items,
+            'total'         => $total,
+            'has_more'      => $total > $limit,
             'servidor_hora' => now()->toIso8601String(),
         ]);
     }

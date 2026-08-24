@@ -10,7 +10,7 @@ class VideoQuizItem extends Model
     protected $fillable = [
 
         'title',
-        'video_quiz_cloudinary_id',
+        'video_theme_cloudinary_id',
         'question',
         'options',
         'correct_answer',
