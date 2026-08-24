@@ -7,7 +7,6 @@ use App\Models\Question;
 use App\Models\Syllabu;
 use App\Models\Theme;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 
 class QuizController
 {
@@ -15,11 +14,9 @@ class QuizController
     {
         $limit = 25;
 
-
-
         $syllabu = Syllabu::where('slug', $slug)->firstOrFail();
 
-// ✅ Usar directamente $syllabu->id
+        // ✅ Usar directamente $syllabu->id
         $totalQuestions = Question::where('syllabu_id', $syllabu->id)->count();
 
         $maxOffset = max(0, $totalQuestions - $limit);
@@ -27,16 +24,15 @@ class QuizController
 
         $questions = Question::with('video')
             ->where('syllabu_id', $syllabu->id) // ✅ Usar directamente
-            ->whereStatus(1) // ✅ Filtrar solo preguntas activas           
+            ->whereStatus(1) // ✅ Filtrar solo preguntas activas
             ->offset($randomOffset)
             ->limit($limit)
             ->get()
             ->shuffle();
 
-
         return response()->json([
             'status' => 'success',
-            'data'   => QuestionResource::collection($questions),
+            'data' => QuestionResource::collection($questions),
         ]);
     }
 
@@ -44,7 +40,7 @@ class QuizController
     {
         $syllabusId = Syllabu::where('slug', $slug)->value('id');
 
-        if (!$syllabusId) {
+        if (! $syllabusId) {
             abort(404);
         }
 
@@ -102,10 +98,11 @@ class QuizController
         return QuestionResource::collection($questions);
     }
 
-    public function synthesis($slug,$type) {
+    public function synthesis($slug, $type)
+    {
         $syllabusId = Syllabu::where('slug', $slug)->value('id');
 
-        if (!$syllabusId) {
+        if (! $syllabusId) {
             abort(404);
         }
 
@@ -122,16 +119,10 @@ class QuizController
             $annex->videos = $annex->videos()->get();
         }
 
-
-
-
-
         $query = Question::query()
             ->leftJoin('video_themes_cloudinary as vc', 'vc.id', '=', 'questions.video_id')
             ->where('questions.syllabu_id', $syllabusId)
             ->where('questions.status', 1);
-
-
 
         if ($type) {
             $query->where('questions.type', $type);
@@ -164,7 +155,7 @@ class QuizController
     {
         $syllabusId = Syllabu::where('slug', $slug)->value('id');
 
-        if (!$syllabusId) {
+        if (! $syllabusId) {
             abort(404);
         }
 
@@ -231,13 +222,13 @@ class QuizController
             return response()->json([
                 'success' => true,
                 'message' => 'Réponse mise à jour avec succès',
-                'question' => $question
+                'question' => $question,
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur: ' . $e->getMessage()
+                'message' => 'Erreur: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -245,11 +236,21 @@ class QuizController
     public function sync(Request $request)
     {
         $limit = min((int) $request->query('limit', 500), 1000);
+        $desde = $request->filled('desde') ? $request->date('desde') : null;
+        $desdeId = (int) $request->query('desde_id', 0);
 
         $query = Question::query();
 
-        if ($request->filled('desde')) {
-            $query->where('updated_at', '>', $request->date('desde'));
+        if ($desde) {
+            // Cursor compuesto (updated_at, id): evita perder registros cuando
+            // varios comparten el mismo updated_at en el límite de una página.
+            $query->where(function ($q) use ($desde, $desdeId) {
+                $q->where('updated_at', '>', $desde)
+                    ->orWhere(function ($q) use ($desde, $desdeId) {
+                        $q->where('updated_at', $desde)
+                            ->where('id', '>', $desdeId);
+                    });
+            });
         }
 
         $total = $query->count();
@@ -259,11 +260,10 @@ class QuizController
         ]);
 
         return response()->json([
-            'data'          => $items,
-            'total'         => $total,
-            'has_more'      => $total > $limit,
+            'data' => $items,
+            'total' => $total,
+            'has_more' => $total > $limit,
             'servidor_hora' => now()->toIso8601String(),
         ]);
     }
-
 }
