@@ -241,4 +241,29 @@ class QuizController
             ], 500);
         }
     }
+
+    public function sync(Request $request)
+    {
+        $limit = min((int) $request->query('limit', 500), 1000);
+
+        $query = Question::query();
+
+        if ($request->filled('desde')) {
+            $query->where('updated_at', '>', $request->date('desde'));
+        }
+
+        $total = $query->count();
+
+        $items = $query->orderBy('updated_at')->orderBy('id')->limit($limit)->get([
+            'id', 'syllabu_id', 'theme_id', 'video_id', 'question_text', 'type', 'options', 'answer', 'status', 'updated_at',
+        ]);
+
+        return response()->json([
+            'data'          => $items,
+            'total'         => $total,
+            'has_more'      => $total > $limit,
+            'servidor_hora' => now()->toIso8601String(),
+        ]);
+    }
+
 }

@@ -75,6 +75,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/verify-codes/{user}/{theme?}', [VerifyCodeController::class, 'index']);
     Route::post('/verify-code', [VerifyCodeController::class, 'store']);
     Route::get('/spellings', [SpellingController::class, 'index']);
+    Route::get('/questions/sync', [QuizController::class, 'sync']);
     Route::get('/questions/all/{slug}', [QuizController::class, 'themes']);
     Route::get('/questions/{slug}', [QuizController::class, 'index']);
     Route::get('/questions/{slug}/{theme}', [QuizController::class, 'show']);
