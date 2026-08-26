@@ -2,7 +2,10 @@
 
 namespace App\Livewire;
 
+use App\Mail\NewSuggestionMail;
+use App\Models\Suggestion;
 use App\Models\VideoTheme;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -20,6 +23,11 @@ class Dictionary extends Component
 
     public ?array $selectedItem = null;
     public bool $showModal = false;
+
+    /** Modal suggestion */
+    public bool $showSuggestModal = false;
+    public string $suggestWord = '';
+    public bool $suggestionSent = false;
 
     protected $paginationTheme = 'tailwind';
 
@@ -86,6 +94,42 @@ class Dictionary extends Component
         ];
 
         $this->showModal = true;
+    }
+
+    public function openSuggestModal(): void
+    {
+        $this->suggestWord = $this->search;
+        $this->suggestionSent = false;
+        $this->showSuggestModal = true;
+    }
+
+    public function closeSuggestModal(): void
+    {
+        $this->showSuggestModal = false;
+        $this->suggestWord = '';
+        $this->suggestionSent = false;
+    }
+
+    public function submitSuggestion(): void
+    {
+        $this->validate([
+            'suggestWord' => 'required|string|min:2|max:100',
+        ], [
+            'suggestWord.required' => "Merci d'indiquer un mot.",
+            'suggestWord.min'      => 'Le mot est trop court.',
+            'suggestWord.max'      => 'Le mot est trop long.',
+        ]);
+
+        $suggestion = Suggestion::create([
+            'word'    => trim($this->suggestWord),
+            'user_id' => auth()->id(),
+            'ip'      => request()->ip(),
+        ]);
+
+        Mail::to('support@cfls.be')->send(new NewSuggestionMail($suggestion));
+
+        $this->suggestionSent = true;
+        $this->suggestWord = '';
     }
 
     public function render()
