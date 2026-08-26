@@ -7,7 +7,7 @@
 
     <section class="grid grid-cols-1 sm:grid-cols-2 gap-6 px-4 py-12 max-w-7xl mx-auto">
         {{-- Tarjeta 1 --}}
-        <a href="{{ route('systeme-solaire') }}" target="_blank" class="block rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800">
+        <a href="{{ route('systeme-solaire') }}" target="_blank" class="hidden rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800">
             <img src="{{ asset('img/interactives/sisteme-solaire.png') }}" alt="Le système solaire" class="w-full h-56 object-cover">
             <div class="p-4">
                 <h2 class="text-xl font-bold text-gray-900 dark:text-white">Le système solaire</h2>
@@ -16,7 +16,7 @@
         </a>
 
         {{-- Tarjeta 2 --}}
-        <a href="https://visit-lsfb.cfls.be" target="_blank" class="block rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800">
+        <a href="https://visit-lsfb.cfls.be" target="_blank" class="hidden rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800">
             <img src="{{ asset('img/interactives/visit-lsfb.png') }}" alt="Découvrez la Belgique en LSFB" class="w-full h-56 object-cover">
             <div class="p-4">
                 <h2 class="text-xl font-bold text-gray-900 dark:text-white">Découvrez la Belgique en LSFB</h2>

@@ -33,5 +33,9 @@ app/Console/Commands/FixQuestionOptionVideos.php
 app/Console/Commands/FixTitles.php
 fix_csv.py
 fix_titles.php
+lsfbgo/
+paysdumonde/
+test/
+visit-lsfb/
 
 
