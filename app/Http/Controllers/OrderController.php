@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\OrderConfirmationMail;
+use App\Models\Newsletter;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -115,6 +116,13 @@ class OrderController extends Controller
         }
 
 
+
+        if ($request->boolean('newsletter')) {
+            Newsletter::updateOrCreate(
+                ['email' => $user->email],
+                ['date' => now()->toDateString(), 'newsletter' => true]
+            );
+        }
 
         Mail::to($user->email)
             ->cc(config('mail.from.address'))

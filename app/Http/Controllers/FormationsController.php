@@ -9,6 +9,7 @@ use App\Models\Company;
 use App\Models\Formations;
 use App\Models\InscriptionFormation;
 use App\Models\InscriptionTableConversation;
+use App\Models\Newsletter;
 use Illuminate\Http\Request;
 use App\Models\TableConversation;
 use Illuminate\Support\Facades\Mail;
@@ -107,6 +108,13 @@ class FormationsController extends Controller
             'status'         => 0, // Par défaut, le statut est 0 (non confirmé)
         ]);
 
+        if ($request->boolean('newsletter')) {
+            Newsletter::updateOrCreate(
+                ['email' => $user->email],
+                ['date' => now()->toDateString(), 'newsletter' => true]
+            );
+        }
+
         // Enviar correo de confirmación
         Mail::to($user->email)
             ->cc(config('mail.from.address'))
@@ -203,11 +211,16 @@ class FormationsController extends Controller
             'inscription_message'  => $dateFr .' à ' . $heure,
             'status'     => 0, // Par défaut, le statut est 0 (non confirmé)
         ]);
-        // Guardar o enviar email aquí...
+        if ($request->boolean('newsletter')) {
+            Newsletter::updateOrCreate(
+                ['email' => $request->email],
+                ['date' => now()->toDateString(), 'newsletter' => true]
+            );
+        }
+
         Mail::to($request->email)
             ->cc(config('mail.from.address'))
             ->send(new InscriptionTableConversationMail($inscription, $tableconvertation));
-
 
         return redirect()->back()->with('success', 'Inscription à la table de conversation réussie !');
     }

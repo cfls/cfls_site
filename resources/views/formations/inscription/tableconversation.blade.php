@@ -252,6 +252,22 @@
                             </div>
 
                         </div>
+                        <div class="flex items-start mb-5">
+                            <div class="flex items-center h-5">
+                                <input
+                                    id="newsletter"
+                                    name="newsletter"
+                                    type="checkbox"
+                                    value="1"
+                                    class="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-0 dark:bg-gray-700 dark:border-gray-600"
+                                >
+                            </div>
+                            <div class="ms-2 text-sm">
+                                <label for="newsletter" class="font-medium text-gray-900 dark:text-white">
+                                    Je souhaite recevoir la <strong>newsletter</strong> de CFLS par e-mail.
+                                </label>
+                            </div>
+                        </div>
                         <button type="submit"
                                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                             Réserver

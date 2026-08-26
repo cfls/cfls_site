@@ -255,6 +255,20 @@
                             </div>
                         </div>
 
+                        <!-- Newsletter opt-in -->
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                            <label class="flex items-start space-x-3 cursor-pointer">
+                                <input type="checkbox"
+                                       name="newsletter"
+                                       id="newsletter"
+                                       x-model="newsletter"
+                                       class="mt-1 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
+                                <span class="text-sm text-gray-700 dark:text-gray-300">
+                                    Je souhaite recevoir la <strong>newsletter</strong> de CFLS par e-mail.
+                                </span>
+                            </label>
+                        </div>
+
                         <!-- Comprobante de paiement -->
                         <div class="md:col-span-2">
                             <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">
@@ -407,6 +421,7 @@
                     discountAmount: {{ $discountAmount }},
                     baseTotal: {{ $baseTotal }},
                     loading: false,
+                    newsletter: false,
 
                     get totalWeight() {
                         return this.cart.reduce((sum, item) => sum + (item.weight * item.quantity), 0);
@@ -520,6 +535,7 @@
                             formData.append('base_total', this.baseTotal.toFixed(2));
                             formData.append('deliveryFee', this.deliveryFee.toFixed(2));
                             formData.append('total', this.finalTotal.toFixed(2));
+                            formData.append('newsletter', this.newsletter ? '1' : '0');
                             formData.append('products', JSON.stringify(@json($cart)));
 
                             if (this.delivery === 'livraison') {
