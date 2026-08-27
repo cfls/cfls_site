@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Newsletter;
 use Livewire\Component;
 use App\Models\Subscribe;
 use Illuminate\Support\Str;
@@ -27,15 +28,17 @@ class SubscribeForm extends Component
         ]);
 
         // Vérifier si l’e-mail existe déjà
-        if (Subscribe::where('email', $this->email)->exists()) {
+        if (Newsletter::where('email', $this->email)->exists()) {
 
             $this->addError('email', 'Cet e-mail est déjà inscrit.');
             return;
         }
 
         // Enregistrer l’inscription
-        Subscribe::create([
+        Newsletter::create([
             'email' => $this->email,
+            'date' => now(),
+            'newsletter' => 1,
         ]);
 
         $this->successMessage = 'Inscription réussie !';
