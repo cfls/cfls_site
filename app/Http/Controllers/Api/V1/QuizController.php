@@ -251,6 +251,9 @@ class QuizController
                             ->where('id', '>', $desdeId);
                     });
             });
+        } elseif ($desdeId > 0) {
+            // Full sync sin timestamp: paginar solo por id.
+            $query->where('id', '>', $desdeId);
         }
 
         $total = $query->count();
