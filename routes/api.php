@@ -22,6 +22,7 @@ use App\Http\Controllers\Api\V1\VideoController as ApiVideoController;
 use App\Http\Controllers\Api\V1\UsersController;
 use App\Http\Controllers\Api\V1\VerifyCodeController;
 use App\Http\Controllers\Api\V1\VideoQuizItemController;
+use App\Http\Controllers\Api\V1\ShareImageController;
 use App\Http\Controllers\Api\V1\WordController;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -121,6 +122,7 @@ Route::prefix('v1')->group(function () {
 
     Route::get('/words/sync', [WordController::class, 'sync']);
 
+    Route::get('/share-image', [ShareImageController::class, 'generate']);
 
 });
 
