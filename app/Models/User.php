@@ -4,30 +4,27 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Notifications\CustomResetPasswordNotification;
+use Filament\Models\Contracts\FilamentUser;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
-use Filament\Models\Contracts\FilamentUser;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     use HasApiTokens;
-    use Notifiable;
-
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
+
     use HasProfilePhoto;
+
     use Notifiable;
     use TwoFactorAuthenticatable;
-
 
     /**
      * The attributes that are mass assignable.
@@ -40,6 +37,8 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'password',
         'is_active',
         'verification_code',
+        'verification_purpose',
+        'verification_code_expires_at',
         'telephone',
         'address',
         'ville',
@@ -70,8 +69,6 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'profile_photo_url',
     ];
 
-
-
     /**
      * Get the attributes that should be cast.
      *
@@ -82,10 +79,9 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'verification_code_expires_at' => 'datetime',
         ];
     }
-
-
 
     public function administracions(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
@@ -96,8 +92,6 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     {
         return $this->hasMany(Category::class);
     }
-
-
 
     public function canAccessPanel(\Filament\Panel $panel): bool
     {
@@ -124,7 +118,6 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         return $this->hasMany(Subscription::class)->where('status', 'active');
     }
 
-
     public function memberships(): HasMany
     {
         return $this->hasMany(Membership::class);
@@ -148,9 +141,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     public function getMemberDiscount(): float
     {
         $membership = $this->activeMembership;
+
         return $membership ? $membership->discount_percentage : 0;
     }
-
-
-
 }

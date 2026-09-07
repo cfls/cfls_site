@@ -1,9 +1,6 @@
 <?php
 
-
-
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\V1\CrosswordController;
 use App\Http\Controllers\Api\V1\DictionaryController;
 use App\Http\Controllers\Api\V1\FeedBackController;
 use App\Http\Controllers\Api\V1\LettersController;
@@ -13,34 +10,32 @@ use App\Http\Controllers\Api\V1\ProgressController;
 use App\Http\Controllers\Api\V1\QuizController;
 use App\Http\Controllers\Api\V1\QuizResultController;
 use App\Http\Controllers\Api\V1\SectionController;
+use App\Http\Controllers\Api\V1\ShareImageController;
 use App\Http\Controllers\Api\V1\SpellController;
 use App\Http\Controllers\Api\V1\SpellingController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
-use App\Http\Controllers\Api\V1\ThemeController;
 use App\Http\Controllers\Api\V1\SyllabusController;
-use App\Http\Controllers\Api\V1\VideoController as ApiVideoController;
+use App\Http\Controllers\Api\V1\ThemeController;
 use App\Http\Controllers\Api\V1\UsersController;
 use App\Http\Controllers\Api\V1\VerifyCodeController;
+use App\Http\Controllers\Api\V1\VideoController as ApiVideoController;
 use App\Http\Controllers\Api\V1\VideoQuizItemController;
-use App\Http\Controllers\Api\V1\ShareImageController;
 use App\Http\Controllers\Api\V1\WordController;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
-
-
 Route::post('auth/login', [AuthController::class, 'login']);
 Route::post('auth/register', [AuthController::class, 'register']);
 Route::post('auth/verify-code', [AuthController::class, 'verifyCode']);
 Route::post('auth/verify-email', [AuthController::class, 'verifyEmail']);
-Route::post('auth/forgot-password', [AuthController::class, 'forgotPassword' ]);
+Route::post('auth/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('auth/reset-password', [AuthController::class, 'resetPasswordWithCode']);
 Route::middleware('auth:sanctum')->group(function () {
-        Route::get('auth/user', [AuthController::class, 'user']);
-        Route::post('auth/logout', [AuthController::class, 'logout']);
-        Route::put('/auth/profile', [AuthController::class, 'updateProfile' ]);
-        Route::put('/auth/password', [AuthController::class, 'updatePassword' ]);
+    Route::get('auth/user', [AuthController::class, 'user']);
+    Route::post('auth/logout', [AuthController::class, 'logout']);
+    Route::put('/auth/profile', [AuthController::class, 'updateProfile']);
+    Route::put('/auth/password', [AuthController::class, 'updatePassword']);
 
 });
 
@@ -48,17 +43,13 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/user/{user}', [UsersController::class,'show'])->middleware('auth:sanctum');
-Route::delete('/user/{user}', [UsersController::class,'destroy'])->middleware('auth:sanctum');
+Route::get('/user/{user}', [UsersController::class, 'show'])->middleware('auth:sanctum');
+Route::delete('/user/{user}', [UsersController::class, 'destroy'])->middleware('auth:sanctum');
 Route::middleware('auth:sanctum')->post('/auth/password', [AuthController::class, 'updatePassword']);
-
-
 
 Route::get('/product/{id}', function ($id) {
     return Product::with(['images', 'options'])->findOrFail($id);
 });
-
-;
 
 Route::prefix('v1')->group(function () {
 
@@ -126,6 +117,6 @@ Route::prefix('v1')->group(function () {
 
 });
 
-//Route::middleware('auth:sanctum')->group(function () {
+// Route::middleware('auth:sanctum')->group(function () {
 //    Route::get('/video-themes/sync', [VideoController::class, 'sync']);
-//});
+// });
