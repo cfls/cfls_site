@@ -2,8 +2,14 @@
   <x-slot name="title">{{ $formation->bottom }}</x-slot>
   <x-menuformation :slug="$slug" />
 
-  <h2 class="mb-8 text-7xl tracking-tight font-extrabold text-gray-900 dark:text-white text-center">{{ $formation->buttom }}</h2>
-  <div class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+    <h2 class="mb-6 sm:mb-8 px-4
+           text-3xl sm:text-5xl lg:text-7xl
+           leading-tight tracking-tight font-extrabold
+           text-balance break-words hyphens-auto
+           text-gray-900 dark:text-white text-center">
+        {{ $formation->buttom }}
+    </h2>
+    <div class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
 
   @foreach($calendars as $calendar)
 
@@ -37,4 +43,5 @@
     @endforeach
 
 </div>
+    <div class="h-16 sm:h-24" aria-hidden="true"></div>
 </x-layout>
