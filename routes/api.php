@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\AuthControllerV4;
 use App\Http\Controllers\Api\V1\DictionaryController;
 use App\Http\Controllers\Api\V1\FeedBackController;
 use App\Http\Controllers\Api\V1\LettersController;
@@ -25,6 +26,27 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+
+/***  VERSION  4 ***/
+Route::prefix('v4')->group(function () {
+    Route::prefix('auth')->group(function () {
+        Route::post('login', [AuthControllerV4::class, 'login']);
+        Route::post('register', [AuthControllerV4::class, 'register']);
+        Route::post('verify-code', [AuthControllerV4::class, 'verifyCode']);
+        Route::post('verify-email', [AuthControllerV4::class, 'verifyEmail']);
+        Route::post('forgot-password', [AuthControllerV4::class, 'forgotPassword']);
+        Route::post('reset-password', [AuthControllerV4::class, 'resetPasswordWithCode']);
+
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::get('user', [AuthControllerV4::class, 'user']);
+            Route::post('logout', [AuthControllerV4::class, 'logout']);
+            Route::put('profile', [AuthControllerV4::class, 'updateProfile']);
+            Route::put('password', [AuthControllerV4::class, 'updatePassword']);
+        });
+    });
+});
+
+/***   VERSION  3 ***/
 Route::post('auth/login', [AuthController::class, 'login']);
 Route::post('auth/register', [AuthController::class, 'register']);
 Route::post('auth/verify-code', [AuthController::class, 'verifyCode']);
@@ -45,6 +67,7 @@ Route::get('/user', function (Request $request) {
 
 Route::get('/user/{user}', [UsersController::class, 'show'])->middleware('auth:sanctum');
 Route::delete('/user/{user}', [UsersController::class, 'destroy'])->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->post('/auth/password', [AuthControllerV4::class, 'updatePassword']);
 Route::middleware('auth:sanctum')->post('/auth/password', [AuthController::class, 'updatePassword']);
 
 Route::get('/product/{id}', function ($id) {
