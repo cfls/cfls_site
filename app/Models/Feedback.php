@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class Feedback extends Model
 {
@@ -19,6 +20,7 @@ class Feedback extends Model
      * The attributes that are mass assignable.
      */
     protected $fillable = [
+        'uuid',
         'user_id',
         'type',
         'message',
@@ -33,6 +35,15 @@ class Feedback extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $feedback) {
+            if (empty($feedback->uuid)) {
+                $feedback->uuid = (string) Str::uuid();
+            }
+        });
+    }
 
     /**
      * Get the user that submitted the feedback.

@@ -4,12 +4,14 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AuthControllerV4;
 use App\Http\Controllers\Api\V1\DictionaryController;
 use App\Http\Controllers\Api\V1\FeedBackController;
+use App\Http\Controllers\Api\V4\FeedBackController as FeedBackControllerV4;
 use App\Http\Controllers\Api\V1\LettersController;
 use App\Http\Controllers\Api\V1\MemoryGameController;
 use App\Http\Controllers\Api\V1\PlanController;
 use App\Http\Controllers\Api\V1\ProgressController;
 use App\Http\Controllers\Api\V1\QuizController;
 use App\Http\Controllers\Api\V1\QuizResultController;
+use App\Http\Controllers\Api\V1\QuizResultsController;
 use App\Http\Controllers\Api\V1\SectionController;
 use App\Http\Controllers\Api\V1\ShareImageController;
 use App\Http\Controllers\Api\V1\SpellController;
@@ -44,6 +46,8 @@ Route::prefix('v4')->group(function () {
             Route::put('password', [AuthControllerV4::class, 'updatePassword']);
         });
     });
+
+    Route::post('/feedback', [FeedBackControllerV4::class, 'store']);
 });
 
 /***   VERSION  3 ***/
@@ -131,12 +135,14 @@ Route::prefix('v1')->group(function () {
 
     Route::get('/video-quiz/sync', [VideoQuizItemController::class, 'sync']);
     Route::get('/video-quiz/{syllabu}/{theme}', [VideoQuizItemController::class, 'index']);
-    Route::post('/feedback', [FeedbackController::class, 'store']);
+    Route::post('/feedback', [FeedBackController::class, 'store']);
     Route::get('/videos/sync', [ApiVideoController::class, 'sync']);
 
     Route::get('/words/sync', [WordController::class, 'sync']);
 
     Route::get('/share-image', [ShareImageController::class, 'generate']);
+
+    Route::delete('/quiz-results/{user_id}', [QuizResultsController::class, 'destroy']);
 
 });
 

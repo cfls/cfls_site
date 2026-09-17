@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\PlanController;
 use App\Http\Controllers\Api\V1\ProgressController;
 use App\Http\Controllers\Api\V1\QuizController;
 use App\Http\Controllers\Api\V1\QuizResultController;
+use App\Http\Controllers\Api\V1\QuizResultsController;
 use App\Http\Controllers\Api\V1\SectionController;
 use App\Http\Controllers\Api\V1\SpellingController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
@@ -37,6 +38,7 @@ Route::middleware('auth:sanctum')->apiResource('letters', LettersController::cla
 Route::middleware('auth:sanctum')->apiResource('crosswords', CrosswordController::class);
 Route::middleware('auth:sanctum')->apiResource('verify-code', VerifyCodeController::class);
 Route::middleware('auth:sanctum')->apiResource('exam', ProgressController::class);
+Route::middleware('auth:sanctum')->apiResource('quiz-results', QuizResultsController::class);
 
 Route::get('/user', function (Request $request) {
     return $request->user();
