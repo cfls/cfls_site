@@ -149,5 +149,61 @@ class InscriptionController extends Controller
             ->route('inscription.visual_vernacular')
             ->withFragment('resultat')
             ->with('success', true);
-       }    
+       }
+
+    // Mostrar la página de la Journée Immersive
+    public function immersive()
+    {
+        return view('special.journee_immersive');
+    }
+
+    public function storeImmersive(Request $request)
+    {
+        $validated = $request->validate([
+            'nom'       => 'required|string|max:255',
+            'email'     => 'required|email|max:255',
+            'personnes' => 'required|integer|min:1|max:10',
+        ], [
+            'nom.required'       => 'Le nom complet est obligatoire.',
+            'email.required'     => "L'adresse e-mail est obligatoire.",
+            'email.email'        => "L'adresse e-mail n'est pas valide.",
+            'personnes.required' => 'Veuillez indiquer le nombre de personnes.',
+        ]);
+
+        // Vérification d'une inscription existante pour cet événement
+        $dejaInscrit = Inscription::where('email', $validated['email'])
+                                  ->where('type', 'journee_immersive')
+                                  ->exists();
+
+        if ($dejaInscrit) {
+            return redirect()
+                ->route('inscription.journee_immersive')
+                ->withFragment('resultat')
+                ->with('duplicate', true)
+                ->withInput();
+        }
+
+        $inscription = Inscription::create(array_merge($validated, ['type' => 'journee_immersive']));
+
+        // Notification à l'organisateur — un échec d'envoi ne doit pas bloquer l'inscription déjà enregistrée
+        try {
+            Mail::raw(
+                "Nouvelle inscription — Journée Immersive\n\n"
+                . "Nom      : {$inscription->nom}\n"
+                . "E-mail   : {$inscription->email}\n"
+                . "Personnes: {$inscription->personnes}\n"
+                . "Date     : {$inscription->created_at->format('d/m/Y H:i')}\n",
+                fn ($message) => $message
+                    ->to(config('mail.organizer_email'))
+                    ->subject('🎟 Nouvelle inscription — Journée Immersive 14/11/2026')
+            );
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
+        return redirect()
+            ->route('inscription.journee_immersive')
+            ->withFragment('resultat')
+            ->with('success', true);
+    }
 }

@@ -82,13 +82,8 @@ class UsersController extends Controller
         }
 
         // Notificación por correo
-<<<<<<< Updated upstream
         Mail::to($user->email)
             ->cc('support@cfls.be')
-=======
-        Mail::to('support@cfls.be')
-            ->cc($user->email)
->>>>>>> Stashed changes
             ->send(new AccountDeletedMail($user));
 
 

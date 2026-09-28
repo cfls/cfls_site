@@ -104,6 +104,8 @@ Route::get('/inscription', [InscriptionController::class, 'index'])->name('inscr
 Route::post('/inscription', [InscriptionController::class, 'store'])->name('inscription.store');
 Route::get('/inscription_visual_vernacular', [InscriptionController::class, 'visualVernacular'])->name('inscription.visual_vernacular');
 Route::post('/inscription_visual_vernacular', [InscriptionController::class, 'storeVisualVernacular'])->name('inscription.visual_vernacular.store');
+Route::get('/inscription_journee_immersive', [InscriptionController::class, 'immersive'])->name('inscription.journee_immersive');
+Route::post('/inscription_journee_immersive', [InscriptionController::class, 'storeImmersive'])->name('inscription.journee_immersive.store');
 // Cloudinary (libre)
 Route::get('/cloudinary/get-video', [VideoController::class, 'getAllVideos']);
 Route::get('/fix-match-clean', function () {
