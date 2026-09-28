@@ -293,6 +293,115 @@
             max-width: 100%;
             border-radius: 4px;
         }
+
+        /* ══════════════ DARK MODE ══════════════ */
+        .dark .hero-caption {
+            color: #e3d3b5;
+        }
+
+        .dark .hero-caption strong {
+            color: #f7ebd3;
+        }
+
+        .dark .section-title {
+            color: #e6c684;
+        }
+
+        .dark .divider {
+            background: #e6c684;
+        }
+
+        .dark label {
+            color: #ecd9b4;
+        }
+
+        .dark input[type="text"],
+        .dark input[type="email"] {
+            background: #1e293b;
+            border-color: #4b5768;
+            color: #f1f5f9;
+        }
+
+        .dark input::placeholder {
+            color: #94a3b8;
+        }
+
+        .dark input:focus {
+            border-color: #e6c684;
+            box-shadow: 0 0 0 3px rgba(230,198,132,0.25);
+        }
+
+        .dark .counter-btn {
+            background: #1e293b;
+            border-color: #e6c684;
+            color: #e6c684;
+        }
+
+        .dark .counter-btn:hover {
+            background: #334155;
+        }
+
+        .dark .counter-number {
+            color: #e6c684;
+        }
+
+        .dark .formule-option {
+            background: #1e293b;
+            border-color: #4b5768;
+        }
+
+        .dark .formule-option:has(input:checked) {
+            border-color: #e6c684;
+            background: #33302a;
+            box-shadow: 0 0 0 3px rgba(230,198,132,0.25);
+        }
+
+        .dark .formule-prix {
+            color: #e6c684;
+        }
+
+        .dark .formule-label {
+            color: #f1e6d0;
+        }
+
+        .dark .total-line {
+            color: #e3d3b5;
+        }
+
+        .dark .total-line strong {
+            color: #f7ebd3;
+        }
+
+        .dark .paiement-box {
+            background: #1e293b;
+            border-color: #e6c684;
+            color: #e3d3b5;
+        }
+
+        .dark .paiement-box .iban {
+            color: #f7ebd3;
+        }
+
+        .dark .btn-submit {
+            background: #e6c684;
+            color: #2b2113;
+        }
+
+        .dark .btn-submit:hover {
+            background: #f0d79e;
+        }
+
+        .dark .error-msg {
+            color: #f87171;
+        }
+
+        .dark .merci-section h2 {
+            color: #e6c684;
+        }
+
+        .dark .merci-section p {
+            color: #cbd5e1;
+        }
     </style>
 
     <div class="page-wrapper">
