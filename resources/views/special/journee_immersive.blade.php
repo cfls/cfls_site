@@ -147,6 +147,93 @@
             min-height: 34px;
         }
 
+        /* ── FORMULES / TARIFS ── */
+        .formules {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        @media (max-width: 520px) {
+            .formules { grid-template-columns: 1fr; }
+        }
+
+        .formule-option {
+            position: relative;
+            display: block;
+            padding: 18px 16px;
+            border: 1px solid #d8cfc4;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            text-transform: none;
+            letter-spacing: normal;
+            transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+        }
+
+        .formule-option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .formule-option:has(input:checked) {
+            border-color: #c9a96e;
+            background: #f9f3ea;
+            box-shadow: 0 0 0 3px rgba(201,169,110,0.15);
+        }
+
+        .formule-prix {
+            display: block;
+            font-size: 30px;
+            font-weight: 300;
+            color: #c9a96e;
+            line-height: 1.1;
+        }
+
+        .formule-label {
+            display: block;
+            margin-top: 6px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #5a4020;
+        }
+
+        .total-line {
+            text-align: right;
+            font-family: 'Assistant', sans-serif;
+            font-size: 17px;
+            color: #7a6040;
+            margin: -8px 0 20px;
+        }
+
+        .total-line strong {
+            font-size: 22px;
+            color: #5a4020;
+        }
+
+        .paiement-box {
+            border: 1px dashed #c9a96e;
+            border-radius: 4px;
+            background: #fdfaf5;
+            padding: 16px 18px;
+            margin: 0 0 26px;
+            font-family: 'Assistant', sans-serif;
+            font-size: 15px;
+            color: #7a6040;
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        .paiement-box .iban {
+            display: block;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: #5a4020;
+            user-select: all;
+        }
+
         /* ── BOUTON ── */
         .btn-submit {
             width: 100%;
@@ -234,6 +321,15 @@
 
             <div class="divider"></div>
 
+            <p class="section-title">Tarifs</p>
+            <p class="hero-caption">
+                @foreach (\App\Models\Inscription::FORMULES_IMMERSIVE as $f)
+                    <strong>{{ $f['prix'] }} €</strong> — {{ $f['label'] }}<br>
+                @endforeach
+            </p>
+
+            <div class="divider"></div>
+
             <p class="section-title">Inscription</p>
             <p class="hero-caption">Réservez dès maintenant votre place pour la <strong>Journée Immersive</strong> !</p>
 
@@ -250,6 +346,14 @@
                         Votre inscription a bien été enregistrée.<br>
                         Nous avons hâte de vous accueillir à la Journée Immersive.
                     </p>
+                    @if (session('prix'))
+                        <div class="paiement-box">
+                            Montant à régler : <strong>{{ session('prix') }} €</strong><br>
+                            par virement sur le compte
+                            <span class="iban">{{ \App\Models\Inscription::IBAN_IMMERSIVE }}</span>
+                            Communication : « Journée Immersive — votre nom »
+                        </div>
+                    @endif
                     <video src="https://res.cloudinary.com/dmhdsjmzf/video/upload/v1773140164/Merci_icgtsd.mp4" autoplay loop muted></video>
                 </div>
 
@@ -309,6 +413,38 @@
                         <div class="person-icons" id="person-icons">👤</div>
                     </div>
 
+                    {{-- Formule --}}
+                    <div class="form-group">
+                        <label>Formule</label>
+                        <div class="formules">
+                            @foreach (\App\Models\Inscription::FORMULES_IMMERSIVE as $key => $f)
+                                <label class="formule-option">
+                                    <input
+                                            type="radio"
+                                            name="formule"
+                                            value="{{ $key }}"
+                                            data-prix="{{ $f['prix'] }}"
+                                            onchange="updateTotal()"
+                                            @checked(old('formule', 'journee_soiree') === $key)
+                                    />
+                                    <span class="formule-prix">{{ $f['prix'] }} €</span>
+                                    <span class="formule-label">{{ $f['label'] }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                        @error('formule')
+                        <p class="error-msg">⚠ {{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <p class="total-line">Total : <strong id="total-display">75 €</strong></p>
+
+                    <div class="paiement-box">
+                        Paiement par virement sur le compte
+                        <span class="iban">{{ \App\Models\Inscription::IBAN_IMMERSIVE }}</span>
+                        Communication : « Journée Immersive — votre nom »
+                    </div>
+
                     <button type="submit" class="btn-submit">
                         Confirmer mon inscription →
                     </button>
@@ -329,6 +465,14 @@
             display.textContent = count;
             document.getElementById('personnes-input').value = count;
             document.getElementById('person-icons').textContent = '👤'.repeat(count);
+            updateTotal();
+        }
+
+        function updateTotal() {
+            const checked = document.querySelector('input[name="formule"]:checked');
+            const total = document.getElementById('total-display');
+            if (!checked || !total) return;
+            total.textContent = (parseInt(checked.dataset.prix, 10) * count) + ' €';
         }
 
         function changeCount(delta) {

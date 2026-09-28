@@ -163,12 +163,19 @@ class InscriptionController extends Controller
             'nom'       => 'required|string|max:255',
             'email'     => 'required|email|max:255',
             'personnes' => 'required|integer|min:1|max:10',
+            'formule'   => 'required|in:' . implode(',', array_keys(Inscription::FORMULES_IMMERSIVE)),
         ], [
             'nom.required'       => 'Le nom complet est obligatoire.',
             'email.required'     => "L'adresse e-mail est obligatoire.",
             'email.email'        => "L'adresse e-mail n'est pas valide.",
             'personnes.required' => 'Veuillez indiquer le nombre de personnes.',
+            'formule.required'   => 'Veuillez choisir une formule.',
+            'formule.in'         => 'La formule sélectionnée est invalide.',
         ]);
+
+        // Prix total = prix de la formule × nombre de personnes
+        $formule = Inscription::FORMULES_IMMERSIVE[$validated['formule']];
+        $validated['prix'] = $formule['prix'] * $validated['personnes'];
 
         // Vérification d'une inscription existante pour cet événement
         $dejaInscrit = Inscription::where('email', $validated['email'])
@@ -192,6 +199,8 @@ class InscriptionController extends Controller
                 . "Nom      : {$inscription->nom}\n"
                 . "E-mail   : {$inscription->email}\n"
                 . "Personnes: {$inscription->personnes}\n"
+                . "Formule  : {$formule['label']} ({$formule['prix']} € / pers.)\n"
+                . "Total    : {$inscription->prix} €\n"
                 . "Date     : {$inscription->created_at->format('d/m/Y H:i')}\n",
                 fn ($message) => $message
                     ->to(config('mail.organizer_email'))
@@ -201,9 +210,30 @@ class InscriptionController extends Controller
             report($e);
         }
 
+        // E-mail de confirmation au participant avec les modalités de paiement
+        try {
+            Mail::raw(
+                "Bonjour {$inscription->nom},\n\n"
+                . "Votre inscription à la Journée Immersive a bien été enregistrée !\n\n"
+                . "📅 Samedi 14 novembre 2026\n"
+                . "📍 Rue au Bois 365B, 1150 Bruxelles\n"
+                . "🎟 Formule : {$formule['label']} — {$inscription->personnes} personne(s)\n"
+                . "💶 Montant à régler : {$inscription->prix} €\n\n"
+                . "Merci d'effectuer le virement sur le compte " . Inscription::IBAN_IMMERSIVE . "\n"
+                . "avec la communication : Journée Immersive — {$inscription->nom}\n\n"
+                . "À très bientôt,\nL'équipe organisatrice",
+                fn ($message) => $message
+                    ->to($inscription->email)
+                    ->subject('✅ Confirmation — Journée Immersive 14/11/2026')
+            );
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
         return redirect()
             ->route('inscription.journee_immersive')
             ->withFragment('resultat')
-            ->with('success', true);
+            ->with('success', true)
+            ->with('prix', $inscription->prix);
     }
 }
