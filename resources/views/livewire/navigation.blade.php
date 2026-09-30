@@ -86,7 +86,7 @@
                         Téléchargements gratuits
                     </a>
                  </div>
-                <div role="listitem" class="hidden">
+                <div role="listitem">
                     <a wire:navigate href="{{route('interactif-virtuel')}}"
                        class="block px-4 py-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 text-center">
                         Interactif virtuel
