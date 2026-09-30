@@ -18,7 +18,7 @@
                                 </h1>
                                 <hr class="border-b border-gray-200 dark:border-gray-700 my-4"/>
                                 <div
-                                    class="responsive-text prose prose-p:my-1 mb-6 font-light md:text-2xl  text-gray-800 dark:text-white">
+                                    class="responsive-text prose dark:prose-invert prose-p:my-1 mb-6 font-light md:text-2xl text-gray-800 dark:text-white">
                                     {!! $feature->description !!}
                                 </div>
                                 <div class="flex flex-col sm:flex-row sm:space-x-4 mt-4">
