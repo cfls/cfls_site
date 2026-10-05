@@ -7,6 +7,7 @@ use App\Mail\FeedbackReceived;
 use App\Models\Feedback;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class FeedBackController extends Controller
@@ -36,7 +37,14 @@ class FeedBackController extends Controller
         );
 
         if ($feedback->wasRecentlyCreated) {
-            Mail::to('support@cfls.be')->send(new FeedbackReceived($feedback));
+            try {
+                Mail::to('support@cfls.be')->send(new FeedbackReceived($feedback));
+            } catch (\Throwable $e) {
+                Log::error('feedback.mail.failed', [
+                    'feedback_id' => $feedback->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
 
         return $this->ok('Feedback submitted successfully', [
