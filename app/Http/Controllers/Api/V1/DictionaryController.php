@@ -17,8 +17,8 @@ class DictionaryController extends Controller
      */
     public function index(Request $request)
     {
-        $letter  = $request->query('letter');
-        $search  = $request->query('search');
+        $letter = $request->query('letter');
+        $search = $request->query('search');
         $perPage = $request->query('per_page');
 
         $query = VideoTheme::where('active', true);
@@ -27,16 +27,15 @@ class DictionaryController extends Controller
         if ($search) {
             $query->where('title', 'LIKE', "%{$search}%");
         } elseif ($letter) {
-            $query->whereRaw("UPPER(SUBSTRING(title, 1, 1)) = ?", [strtoupper($letter)]);
+            $query->whereRaw('UPPER(SUBSTRING(title, 1, 1)) = ?', [strtoupper($letter)]);
         }
 
         $query->orderBy('title', 'asc');
 
-        $signs = $perPage ? $query->paginate((int)$perPage) : $query->get();
+        $signs = $perPage ? $query->paginate((int) $perPage) : $query->get();
 
         return DictionaryResource::collection($signs);
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -62,7 +61,6 @@ class DictionaryController extends Controller
         $video = VideoTheme::where('id', $id)
             ->where('active', true)
             ->get();
-
 
         return DictionaryResource::collection($video);
     }
@@ -93,8 +91,8 @@ class DictionaryController extends Controller
 
     public function sync(Request $request)
     {
-        $limit   = min((int) $request->query('limit', 500), 1000);
-        $desde   = $request->filled('desde') ? $request->date('desde') : null;
+        $limit = min((int) $request->query('limit', 500), 1000);
+        $desde = $request->filled('desde') ? $request->date('desde') : null;
         $desdeId = (int) $request->query('desde_id', 0);
 
         $query = VideoTheme::query();
@@ -102,10 +100,10 @@ class DictionaryController extends Controller
         if ($desde) {
             $query->where(function ($q) use ($desde, $desdeId) {
                 $q->where('updated_at', '>', $desde)
-                  ->orWhere(function ($q) use ($desde, $desdeId) {
-                      $q->where('updated_at', $desde)
-                        ->where('id', '>', $desdeId);
-                  });
+                    ->orWhere(function ($q) use ($desde, $desdeId) {
+                        $q->where('updated_at', $desde)
+                            ->where('id', '>', $desdeId);
+                    });
             });
         }
 
@@ -115,9 +113,9 @@ class DictionaryController extends Controller
         ]);
 
         return response()->json([
-            'data'          => $items,
-            'total'         => $total,
-            'has_more'      => $total > $limit,
+            'data' => $items,
+            'total' => $total,
+            'has_more' => $total > $limit,
             'servidor_hora' => now()->toIso8601String(),
         ]);
     }
@@ -128,13 +126,13 @@ class DictionaryController extends Controller
     public function storeSuggestion(Request $request)
     {
         $validated = $request->validate([
-            'word'    => ['required', 'string', 'min:2', 'max:100'],
+            'word' => ['required', 'string', 'min:2', 'max:100'],
             'user_id' => ['nullable', 'integer', 'exists:users,id'],
         ]);
 
         $suggestion = Suggestion::create([
-            'word'    => $validated['word'],
-            'ip'      => $request->ip(),
+            'word' => $validated['word'],
+            'ip' => $request->ip(),
             'user_id' => $validated['user_id'] ?? null,
         ]);
 
@@ -142,12 +140,10 @@ class DictionaryController extends Controller
 
         return response()->json([
             'message' => 'Suggestion reçue avec succès.',
-            'data'    => [
-                'id'   => $suggestion->id,
+            'data' => [
+                'id' => $suggestion->id,
                 'word' => $suggestion->word,
             ],
         ], 201);
     }
-
-
 }
