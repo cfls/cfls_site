@@ -98,6 +98,11 @@ class Dictionary extends Component
 
     public function openSuggestModal(): void
     {
+        if (!auth()->check()) {
+            $this->redirect(route('login'));
+            return;
+        }
+
         $this->suggestWord = $this->search;
         $this->suggestionSent = false;
         $this->showSuggestModal = true;
@@ -112,6 +117,8 @@ class Dictionary extends Component
 
     public function submitSuggestion(): void
     {
+        abort_if(!auth()->check(), 403);
+
         $this->validate([
             'suggestWord' => 'required|string|min:2|max:100',
         ], [
