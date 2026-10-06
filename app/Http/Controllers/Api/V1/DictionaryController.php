@@ -129,13 +129,13 @@ class DictionaryController extends Controller
     {
         $validated = $request->validate([
             'word'    => ['required', 'string', 'min:2', 'max:100'],
-            'user_id' => ['required', 'integer', 'exists:users,id'],
+            'user_id' => ['nullable', 'integer', 'exists:users,id'],
         ]);
 
         $suggestion = Suggestion::create([
             'word'    => $validated['word'],
             'ip'      => $request->ip(),
-            'user_id' => $validated['user_id'],
+            'user_id' => $validated['user_id'] ?? null,
         ]);
 
         Mail::to('support@cfls.be')->send(new NewSuggestionMail($suggestion));
