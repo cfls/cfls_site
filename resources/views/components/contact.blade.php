@@ -49,6 +49,14 @@
             <p>{{ $data->scheduler }}</p>
         </div>
 
+        <!-- Rendez-vous -->
+        <div class="mb-4 text-center md:col-span-2 bg-indigo-50 dark:bg-indigo-900 border border-indigo-200 dark:border-indigo-700 rounded-lg p-4">
+            <p class="text-gray-700 dark:text-gray-200 text-base md:text-lg">
+                Pour prendre rendez-vous, veuillez envoyer un e-mail à
+                <a href="mailto:info@cfls.be" class="text-indigo-600 dark:text-indigo-300 font-semibold hover:underline">info@cfls.be</a>
+            </p>
+        </div>
+
         <!-- Nouvelle section Informations légales -->
         <div class="mb-4 text-center md:col-span-2 border-t pt-6">
             <h3 class="md:text-2xl font-semibold dark:text-white mb-4">

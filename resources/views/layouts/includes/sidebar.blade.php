@@ -92,7 +92,7 @@
                 </a>
             </li>
 
-            <li x-data="{ openVideos: false }" class="hidden">
+            <li x-data="{ openVideos: false }">
                 <button
                         @click="openVideos = !openVideos"
                         class="flex items-center justify-between w-full p-2 text-gray-900 rounded-lg dark:text-white hover:bg-csfl dark:hover:bg-gray-700 group"
@@ -107,7 +107,7 @@
                 <ul x-show="openVideos" x-collapse class="pl-6 mt-2 space-y-1">
                     <li>
                         <a href="{{route('ekho-sport')}}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-csfl dark:hover:bg-gray-700 group">
-                            <span class="ms-3">Ekho Sport</span>
+                            <span class="ms-3">Êkhô Sport</span>
                         </a>
                     </li>
                 </ul>

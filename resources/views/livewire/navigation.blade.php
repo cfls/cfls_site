@@ -99,7 +99,7 @@
             <a wire:navigate href="{{route('dictionnaire.home')}}" class="{{ request()->routeIs('dictionnaire.home') ? 'text-white' : 'text-black hover:text-gray-700' }}">Dictionnaire LSFB</a>
         </div>
 
-        <div role="listitem" x-data="{ open: false }" class="px-4 py-2 min-w-[120px] text-center relative hidden">
+        <div role="listitem" x-data="{ open: false }" class="px-4 py-2 min-w-[120px] text-center relative">
             <a href="#" @click.prevent="open = !open"
                class="transition-colors duration-200 {{  request()->is('ekho-sport')  ? 'text-white' : 'text-black hover:text-gray-700' }}">
                 Collaboration
@@ -117,7 +117,7 @@
                 <div role="listitem">
                     <a wire:navigate href="{{route('ekho-sport')}}"
                        class="block px-4 py-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 text-center ">
-                        Ekho Sport
+                        Êkhô Sport
                     </a>
                 </div>
 
