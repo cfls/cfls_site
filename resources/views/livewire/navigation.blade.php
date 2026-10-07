@@ -99,6 +99,34 @@
             <a wire:navigate href="{{route('dictionnaire.home')}}" class="{{ request()->routeIs('dictionnaire.home') ? 'text-white' : 'text-black hover:text-gray-700' }}">Dictionnaire LSFB</a>
         </div>
 
+        <div role="listitem" x-data="{ open: false }" class="px-4 py-2 min-w-[120px] text-center relative hidden">
+            <a href="#" @click.prevent="open = !open"
+               class="transition-colors duration-200 {{  request()->is('ekho-sport')  ? 'text-white' : 'text-black hover:text-gray-700' }}">
+                Collaboration
+            </a>
+            <div x-show="open" x-cloak @click.outside="open = false"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 scale-95"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 scale-100"
+                 x-transition:leave-end="opacity-0 scale-95"
+                 role="list"
+                 class="absolute top-full left-0 mt-2 w-60 bg-white rounded-lg shadow-lg dark:bg-gray-800 z-10"
+            >
+                <div role="listitem">
+                    <a wire:navigate href="{{route('ekho-sport')}}"
+                       class="block px-4 py-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 text-center ">
+                        Ekho Sport
+                    </a>
+                </div>
+
+
+
+            </div>
+        </div>
+
+
 {{--        <div role="listitem" class="px-4 py-2 min-w-[180px] text-center">--}}
 {{--            <a wire:navigate href="/ressources/mots-croises" class="{{ request()->is('ressources/mots-croises') ? 'text-white' : 'text-black hover:text-gray-700' }}">Mots croisés</a>--}}
 {{--        </div>--}}

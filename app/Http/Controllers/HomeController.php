@@ -56,6 +56,11 @@ class HomeController extends Controller
         return view('home.dictionnaire');
     }
 
+    public function ekhoSport()
+    {
+        return view('home.ekho-sport');
+    }
+
 
 
 

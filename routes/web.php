@@ -34,6 +34,7 @@ Route::get('/systeme-solaire', function() {
 })->name('systeme-solaire');
 Route::get('/archive', [ArchiveController::class, 'index'])->name('archive');
 Route::get('/dictionnaire-lsfb', [HomeController::class, 'dictionnaire'])->name('dictionnaire.home');
+Route::get('/ekho-sport', [HomeController::class, 'ekhoSport'])->name('ekho-sport');
 Route::prefix('admin-lsfbgo')
     ->name('admin-lsfbgo.')
     ->group(function () {

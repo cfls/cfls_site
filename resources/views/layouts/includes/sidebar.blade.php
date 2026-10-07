@@ -92,6 +92,26 @@
                 </a>
             </li>
 
+            <li x-data="{ openVideos: false }" class="hidden">
+                <button
+                        @click="openVideos = !openVideos"
+                        class="flex items-center justify-between w-full p-2 text-gray-900 rounded-lg dark:text-white hover:bg-csfl dark:hover:bg-gray-700 group"
+                >
+                    <span class="ms-3">Collaboration</span>
+                    <svg :class="{ 'rotate-90': openVideos }" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor"
+                         stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+
+                <ul x-show="openVideos" x-collapse class="pl-6 mt-2 space-y-1">
+                    <li>
+                        <a href="{{route('ekho-sport')}}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-csfl dark:hover:bg-gray-700 group">
+                            <span class="ms-3">Ekho Sport</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
             <li>
                 <a href="{{ route('boutique.index') }}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-csfl dark:hover:bg-gray-700 group">
                     <span class="ms-3">Boutique</span>
