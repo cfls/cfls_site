@@ -3,54 +3,59 @@
 namespace App\Livewire;
 
 use App\Models\VideoTheme;
-use Illuminate\Support\Facades\Http;
 use Livewire\Component;
 
 class VideoModal extends Component
 {
     public bool $open = false;
-    public ?array $video = null;
+    public array $videos = [];
+    public string $displayTitle = '';
 
-    protected $listeners = ['openVideoModal' => 'open'];
+    protected $listeners = ['openVideoModal' => 'openByTitle'];
 
-    public function open(int $id): void
+    public function openByTitle(string $title): void
     {
+        $stripBase = static function (string $t): string {
+            $pos = mb_strpos($t, ' (');
+            if ($pos === false || $pos === 0) return $t;
+            return preg_match('/^\d/', mb_substr($t, $pos + 2)) ? trim(mb_substr($t, 0, $pos)) : $t;
+        };
 
-        $client = Http::acceptJson();
-
-        if (app()->environment('local')) {
-            $client = $client->withoutVerifying();
-        }
-
-        $response =  VideoTheme::where('id', $id)
+        $items = VideoTheme::query()
             ->where('active', true)
-            ->get();
+            ->where(function ($q) use ($title) {
+                $q->where('title', $title)
+                  ->orWhere('title', 'like', $title . ' (%');
+            })
+            ->orderBy('title')
+            ->get()
+            ->filter(fn($data) => $stripBase($data->title) === $title)
+            ->values();
 
-        $data = $response->first();
-
-        if (!$data) {
+        if ($items->isEmpty()) {
             $this->dispatch('notify', type: 'error', message: 'Vidéo introuvable');
             return;
         }
 
-        $videoId = pathinfo($data['url'], PATHINFO_FILENAME);
-        $optimizedUrl = "https://res.cloudinary.com/dmhdsjmzf/video/upload/q_auto,w_1280,f_auto,c_limit/{$videoId}.mp4";
-        $posterUrl = "https://res.cloudinary.com/dmhdsjmzf/video/upload/so_0,w_400,q_auto:low/{$videoId}.jpg";
+        $this->videos = $items->map(function ($data) {
+            $videoId = pathinfo($data->url, PATHINFO_FILENAME);
+            return [
+                'id'     => $data->id,
+                'title'  => $data->title,
+                'url'    => "https://res.cloudinary.com/dmhdsjmzf/video/upload/q_auto,w_1280,f_auto,c_limit/{$videoId}.mp4",
+                'poster' => "https://res.cloudinary.com/dmhdsjmzf/video/upload/so_0,w_400,q_auto:low/{$videoId}.jpg",
+            ];
+        })->values()->toArray();
 
-        $this->video = [
-            'id' => $data['id'],
-            'title' => $data['title'],
-            'url' => $optimizedUrl,
-            'poster' => $posterUrl,
-        ];
-
+        $this->displayTitle = $title;
         $this->open = true;
     }
 
     public function close(): void
     {
         $this->open = false;
-        $this->video = null;
+        $this->videos = [];
+        $this->displayTitle = '';
     }
 
     public function render()

@@ -146,15 +146,16 @@
                         <button
                                 type="button"
                                 wire:key="dict-item-{{ $item->id }}"
-                                aria-label="Voir la vidéo : {{ $item->title }}"
+                                data-title="{{ $item->display_title }}"
+                                aria-label="Voir la vidéo : {{ $item->display_title }}"
                                 class="flex items-center justify-between w-full text-left px-4 py-4
                                    bg-white dark:text-white border border-gray-200 rounded-xl shadow-sm
                                    dark:bg-zinc-800 dark:border-zinc-700
                                    hover:bg-gray-50 dark:hover:bg-zinc-700
                                    active:scale-[0.98] transition"
-                                wire:click="$dispatch('openVideoModal', { id: {{ $item->id }} })"
+                                @click="$dispatch('openVideoModal', { title: $event.currentTarget.dataset.title })"
                         >
-                            <span class="font-medium text-base truncate">{{ $item->title }}</span>
+                            <span class="font-medium text-base truncate">{{ $item->display_title }}</span>
 
                             <svg
                                     aria-hidden="true"

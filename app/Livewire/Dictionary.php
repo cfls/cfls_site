@@ -55,17 +55,27 @@ class Dictionary extends Component
 
     protected function query()
     {
-        $query = VideoTheme::query()->where('active', true);
+        // Strips numeric suffix like " (1)", " (2 mains)", " (1 main)" from the title.
+        // Uses LOCATE/SUBSTRING instead of REGEXP_REPLACE for MySQL 5.7 compatibility.
+        $stripExpr = "CASE"
+            . " WHEN title REGEXP '[(][0-9]+' AND LOCATE(' (', title) > 1"
+            . " THEN TRIM(SUBSTRING(title, 1, LOCATE(' (', title) - 1))"
+            . " ELSE title END";
+
+        $query = VideoTheme::query()
+            ->selectRaw("MIN(id) as id, ({$stripExpr}) as display_title, COUNT(*) as video_count")
+            ->where('active', true)
+            ->groupByRaw($stripExpr);
 
         if ($this->letter !== 'tous') {
             $query->where('title', 'like', strtoupper($this->letter) . '%');
         }
 
         if (trim($this->search) !== '') {
-            $query->where('title', 'like', '%' . $this->search . '%');
+            $query->where('title', 'like', '%' . trim($this->search) . '%');
         }
 
-        return $query->orderBy('title');
+        return $query->orderByRaw($stripExpr);
     }
 
     public function openVideo(int $id): void
