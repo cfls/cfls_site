@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Mail\NewSuggestionMail;
 use App\Models\Suggestion;
 use App\Models\VideoTheme;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -55,27 +56,32 @@ class Dictionary extends Component
 
     protected function query()
     {
-        // Strips numeric suffix like " (1)", " (2 mains)", " (1 main)" from the title.
-        // Uses LOCATE/SUBSTRING instead of REGEXP_REPLACE for MySQL 5.7 compatibility.
         $stripExpr = "CASE"
             . " WHEN title REGEXP '[(][0-9]+' AND LOCATE(' (', title) > 1"
             . " THEN TRIM(SUBSTRING(title, 1, LOCATE(' (', title) - 1))"
             . " ELSE title END";
 
-        $query = VideoTheme::query()
-            ->selectRaw("MIN(id) as id, ({$stripExpr}) as display_title, COUNT(*) as video_count")
-            ->where('active', true)
-            ->groupByRaw($stripExpr);
+        // Inner query computes display_title per row so the outer GROUP BY
+        // references a real column — required by MySQL ONLY_FULL_GROUP_BY.
+        $inner = VideoTheme::query()
+            ->selectRaw("id, title, ({$stripExpr}) as display_title")
+            ->where('active', true);
 
         if ($this->letter !== 'tous') {
-            $query->where('title', 'like', strtoupper($this->letter) . '%');
+            $inner->where('title', 'like', strtoupper($this->letter) . '%');
         }
 
         if (trim($this->search) !== '') {
-            $query->where('title', 'like', '%' . trim($this->search) . '%');
+            $inner->where('title', 'like', '%' . trim($this->search) . '%');
         }
 
-        return $query->orderByRaw($stripExpr);
+        $innerBase = $inner->toBase();
+
+        return DB::table(DB::raw("({$innerBase->toSql()}) as sub"))
+            ->mergeBindings($innerBase)
+            ->selectRaw('MIN(id) as id, display_title, COUNT(*) as video_count')
+            ->groupBy('display_title')
+            ->orderBy('display_title');
     }
 
     public function openVideo(int $id): void
