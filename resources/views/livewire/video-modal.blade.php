@@ -160,6 +160,16 @@
             </div>
         @endif
 
+        {{-- Synonymes --}}
+        @if(count($synonyms) > 0)
+            <div class="text-center pt-1">
+                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Synonymes :</span>
+                <span class="text-sm text-gray-500 dark:text-gray-400 ml-1">
+                    {{ implode(' · ', $synonyms) }}
+                </span>
+            </div>
+        @endif
+
         {{-- Botones velocidad --}}
         <div class="flex justify-center gap-2">
             <button

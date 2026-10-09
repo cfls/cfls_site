@@ -5,7 +5,9 @@
       "Bash(Get-ChildItem *)",
       "Bash(Select-Object Name, LastWriteTime)",
       "mcp__plugin_context-mode_context-mode__ctx_batch_execute",
-      "Skill(conventional-commits)"
+      "Skill(conventional-commits)",
+      "Bash(php -r \"echo date\\('Y_m_d_His'\\);\")",
+      "Bash(php *)"
     ]
   }
 }

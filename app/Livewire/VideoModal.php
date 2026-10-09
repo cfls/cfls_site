@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Synonym;
 use App\Models\VideoTheme;
 use Livewire\Component;
 
@@ -10,6 +11,7 @@ class VideoModal extends Component
     public bool $open = false;
     public array $videos = [];
     public string $displayTitle = '';
+    public array $synonyms = [];
 
     protected $listeners = ['openVideoModal' => 'openByTitle'];
 
@@ -38,7 +40,7 @@ class VideoModal extends Component
         }
 
         $this->videos = $items->map(function ($data) {
-            $videoId = pathinfo($data->url, PATHINFO_FILENAME);
+            $videoId = pathinfo($data->url ?? $data->code_video ?? '', PATHINFO_FILENAME);
             return [
                 'id'     => $data->id,
                 'title'  => $data->title,
@@ -46,6 +48,14 @@ class VideoModal extends Component
                 'poster' => "https://res.cloudinary.com/dmhdsjmzf/video/upload/so_0,w_400,q_auto:low/{$videoId}.jpg",
             ];
         })->values()->toArray();
+
+        $ids = $items->pluck('id')->toArray();
+        $this->synonyms = Synonym::whereIn('video_theme_cloudinary_id', $ids)
+            ->orderBy('word')
+            ->pluck('word')
+            ->unique()
+            ->values()
+            ->toArray();
 
         $this->displayTitle = $title;
         $this->open = true;
@@ -56,6 +66,7 @@ class VideoModal extends Component
         $this->open = false;
         $this->videos = [];
         $this->displayTitle = '';
+        $this->synonyms = [];
     }
 
     public function render()

@@ -5,6 +5,7 @@ namespace App\Models;
 use Cloudinary\Asset\Video;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class VideoTheme extends Model
 {
@@ -28,5 +29,10 @@ class VideoTheme extends Model
     public function questions()
     {
         return $this->hasMany(Question::class);
+    }
+
+    public function synonyms(): HasMany
+    {
+        return $this->hasMany(Synonym::class, 'video_theme_cloudinary_id');
     }
 }
