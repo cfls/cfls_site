@@ -68,6 +68,7 @@ class AdminPanelProvider extends PanelProvider
                 'Téléchargements gratuits',
                 'Boutique',
                 'Syllabus',
+                'Dictionnaire',
                 'Commandes & Inscriptions',
             ]);
     }

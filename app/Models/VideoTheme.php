@@ -35,4 +35,17 @@ class VideoTheme extends Model
     {
         return $this->hasMany(Synonym::class, 'video_theme_cloudinary_id');
     }
+
+    public function getDisplayTitleAttribute(): string
+    {
+        if (array_key_exists('display_title', $this->attributes)) {
+            return $this->attributes['display_title'];
+        }
+        $title = $this->attributes['title'] ?? '';
+        $pos = mb_strpos($title, ' (');
+        if ($pos !== false && $pos > 0 && preg_match('/^\d/', mb_substr($title, $pos + 2))) {
+            return trim(mb_substr($title, 0, $pos));
+        }
+        return $title;
+    }
 }
