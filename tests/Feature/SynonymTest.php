@@ -168,3 +168,114 @@ it('modal view hides synonyms section when no synonyms exist', function () {
         ->call('openByTitle', 'Bonjour')
         ->assertDontSee('Synonymes');
 });
+
+// ──────────────────────────────────────────────
+// API endpoint tests
+// ──────────────────────────────────────────────
+
+it('GET /api/v4/synonyms returns all synonyms grouped by word', function () {
+    $syllabu = makeSyllabu();
+    $theme   = makeTheme($syllabu->id);
+    $video   = makeVideoTheme('Comprendre', $theme->id, $syllabu->id);
+
+    Synonym::create(['video_theme_cloudinary_id' => $video->id, 'word' => 'Compréhension']);
+    Synonym::create(['video_theme_cloudinary_id' => $video->id, 'word' => 'Entendre']);
+
+    $response = $this->getJson('/api/v4/synonyms');
+
+    $response->assertOk()
+        ->assertJsonPath('data.0.word', 'Comprendre')
+        ->assertJsonCount(2, 'data.0.synonyms');
+});
+
+it('GET /api/v4/synonyms returns only words that have synonyms', function () {
+    $syllabu = makeSyllabu();
+    $theme   = makeTheme($syllabu->id);
+    makeVideoTheme('Sans synonymes', $theme->id, $syllabu->id);
+    $video = makeVideoTheme('Avec synonyme', $theme->id, $syllabu->id);
+    Synonym::create(['video_theme_cloudinary_id' => $video->id, 'word' => 'Exemple']);
+
+    $this->getJson('/api/v4/synonyms')
+        ->assertOk()
+        ->assertJsonCount(1, 'data');
+});
+
+it('GET /api/v4/synonyms/{id} returns synonyms for a specific word', function () {
+    $syllabu = makeSyllabu();
+    $theme   = makeTheme($syllabu->id);
+    $video   = makeVideoTheme('Comprendre', $theme->id, $syllabu->id);
+
+    Synonym::create(['video_theme_cloudinary_id' => $video->id, 'word' => 'Compréhension']);
+    Synonym::create(['video_theme_cloudinary_id' => $video->id, 'word' => 'Entendre']);
+
+    $this->getJson("/api/v4/synonyms/{$video->id}")
+        ->assertOk()
+        ->assertJsonPath('data.video_theme_cloudinary_id', $video->id)
+        ->assertJsonPath('data.word', 'Comprendre')
+        ->assertJsonCount(2, 'data.synonyms');
+});
+
+it('GET /api/v4/synonyms/{id} returns empty array when word has no synonyms', function () {
+    $syllabu = makeSyllabu();
+    $theme   = makeTheme($syllabu->id);
+    $video   = makeVideoTheme('Bonjour', $theme->id, $syllabu->id);
+
+    $this->getJson("/api/v4/synonyms/{$video->id}")
+        ->assertOk()
+        ->assertJsonPath('data.word', 'Bonjour')
+        ->assertJsonCount(0, 'data.synonyms');
+});
+
+it('GET /api/v4/synonyms/{id} returns 404 for unknown ID', function () {
+    $this->getJson('/api/v4/synonyms/999999')
+        ->assertNotFound();
+});
+
+it('GET /api/v4/synonyms/{id} deduplicates synonyms across grouped variants', function () {
+    $syllabu = makeSyllabu();
+    $theme   = makeTheme($syllabu->id);
+    $video1  = makeVideoTheme('Aller (1)', $theme->id, $syllabu->id);
+    $video2  = makeVideoTheme('Aller (2)', $theme->id, $syllabu->id);
+
+    Synonym::create(['video_theme_cloudinary_id' => $video1->id, 'word' => 'Partir']);
+    Synonym::create(['video_theme_cloudinary_id' => $video1->id, 'word' => 'Marcher']);
+    Synonym::create(['video_theme_cloudinary_id' => $video2->id, 'word' => 'Partir']); // duplicate
+
+    $this->getJson("/api/v4/synonyms/{$video1->id}")
+        ->assertOk()
+        ->assertJsonPath('data.word', 'Aller')
+        ->assertJsonCount(2, 'data.synonyms');
+});
+
+it('GET /api/v4/synonyms/sync returns flat synonym records', function () {
+    $syllabu = makeSyllabu();
+    $theme   = makeTheme($syllabu->id);
+    $video   = makeVideoTheme('Comprendre', $theme->id, $syllabu->id);
+
+    Synonym::create(['video_theme_cloudinary_id' => $video->id, 'word' => 'Entendre']);
+    Synonym::create(['video_theme_cloudinary_id' => $video->id, 'word' => 'Compréhension']);
+
+    $this->getJson('/api/v4/synonyms/sync')
+        ->assertOk()
+        ->assertJsonStructure(['data', 'total', 'has_more', 'servidor_hora'])
+        ->assertJsonPath('total', 2)
+        ->assertJsonPath('has_more', false);
+});
+
+it('GET /api/v4/synonyms/sync returns only records updated after desde', function () {
+    $syllabu = makeSyllabu();
+    $theme   = makeTheme($syllabu->id);
+    $video   = makeVideoTheme('Comprendre', $theme->id, $syllabu->id);
+
+    $old = Synonym::create(['video_theme_cloudinary_id' => $video->id, 'word' => 'Ancien']);
+    $old->updated_at = now()->subDays(10);
+    $old->saveQuietly();
+
+    Synonym::create(['video_theme_cloudinary_id' => $video->id, 'word' => 'Nouveau']);
+
+    $desde = now()->subDay()->toIso8601String();
+
+    $this->getJson('/api/v4/synonyms/sync?desde=' . urlencode($desde))
+        ->assertOk()
+        ->assertJsonPath('total', 1);
+});

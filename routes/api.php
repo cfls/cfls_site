@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthControllerV4;
 use App\Http\Controllers\Api\V1\DictionaryController;
 use App\Http\Controllers\Api\V1\FeedBackController;
 use App\Http\Controllers\Api\V4\FeedBackController as FeedBackControllerV4;
+use App\Http\Controllers\Api\V4\SynonymController;
 use App\Http\Controllers\Api\V1\LettersController;
 use App\Http\Controllers\Api\V1\MemoryGameController;
 use App\Http\Controllers\Api\V1\PlanController;
@@ -48,6 +49,10 @@ Route::prefix('v4')->group(function () {
     });
 
     Route::post('/feedback', [FeedBackControllerV4::class, 'store']);
+
+    Route::get('/synonyms/sync', [SynonymController::class, 'sync']);
+    Route::get('/synonyms', [SynonymController::class, 'index']);
+    Route::get('/synonyms/{id}', [SynonymController::class, 'show'])->whereNumber('id');
 });
 
 /***   VERSION  3 ***/
