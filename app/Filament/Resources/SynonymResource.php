@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class SynonymResource extends Resource
 {
@@ -73,16 +74,25 @@ class SynonymResource extends Resource
 
     /**
      * Distinct display_title → canonical MIN(id) mapping for the Select field.
+     *
+     * Uses a subquery to compute display_title as a real column first, then
+     * GROUP BY that column — compatible with MySQL ONLY_FULL_GROUP_BY mode.
      */
     public static function getWordOptions(): array
     {
         $expr = self::stripExpr('title');
 
-        return VideoTheme::query()
-            ->selectRaw("MIN(id) as id, ({$expr}) as display_title")
-            ->where('active', true)
-            ->groupByRaw("({$expr})")
-            ->orderByRaw("({$expr})")
+        $inner = VideoTheme::query()
+            ->selectRaw("id, ({$expr}) as display_title")
+            ->where('active', true);
+
+        $innerBase = $inner->toBase();
+
+        return DB::table(DB::raw("({$innerBase->toSql()}) as sub"))
+            ->mergeBindings($innerBase)
+            ->selectRaw('MIN(id) as id, display_title')
+            ->groupBy('display_title')
+            ->orderBy('display_title')
             ->get()
             ->pluck('display_title', 'id')
             ->toArray();
