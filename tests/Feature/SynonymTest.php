@@ -279,3 +279,73 @@ it('GET /api/v4/synonyms/sync returns only records updated after desde', functio
         ->assertOk()
         ->assertJsonPath('total', 1);
 });
+
+// ──────────────────────────────────────────────
+// Sync endpoint — borrado incremental
+// ──────────────────────────────────────────────
+
+it('GET /api/v4/synonyms/sync devuelve deletes vacío sin deletes_since', function () {
+    $syllabu = makeSyllabu();
+    $theme   = makeTheme($syllabu->id);
+    $video   = makeVideoTheme('Comprendre', $theme->id, $syllabu->id);
+
+    $synonym = Synonym::create(['video_theme_cloudinary_id' => $video->id, 'word' => 'Entendre']);
+    $synonym->delete();
+
+    $this->getJson('/api/v4/synonyms/sync')
+        ->assertOk()
+        ->assertJsonPath('deletes', []);
+});
+
+it('GET /api/v4/synonyms/sync incluye el ID en deletes cuando fue borrado después de deletes_since', function () {
+    $syllabu    = makeSyllabu();
+    $theme      = makeTheme($syllabu->id);
+    $video      = makeVideoTheme('Comprendre', $theme->id, $syllabu->id);
+    $synonym    = Synonym::create(['video_theme_cloudinary_id' => $video->id, 'word' => 'Entendre']);
+    $deletedId  = $synonym->id;
+    $synonym->delete();
+
+    $since = now()->subHour()->toIso8601String();
+
+    $this->getJson('/api/v4/synonyms/sync?deletes_since=' . urlencode($since))
+        ->assertOk()
+        ->assertJsonPath('deletes', [$deletedId]);
+});
+
+it('GET /api/v4/synonyms/sync no incluye en deletes sinónimos borrados antes de deletes_since', function () {
+    $syllabu = makeSyllabu();
+    $theme   = makeTheme($syllabu->id);
+    $video   = makeVideoTheme('Comprendre', $theme->id, $syllabu->id);
+
+    $synonym = Synonym::create(['video_theme_cloudinary_id' => $video->id, 'word' => 'Entendre']);
+    $synonym->deleted_at = now()->subDays(10);
+    $synonym->saveQuietly();
+
+    $since = now()->subHour()->toIso8601String();
+
+    $this->getJson('/api/v4/synonyms/sync?deletes_since=' . urlencode($since))
+        ->assertOk()
+        ->assertJsonPath('deletes', []);
+});
+
+it('GET /api/v4/synonyms/sync devuelve full_resync cuando deletes_since supera 90 días', function () {
+    $since = now()->subDays(91)->toIso8601String();
+
+    $this->getJson('/api/v4/synonyms/sync?deletes_since=' . urlencode($since))
+        ->assertOk()
+        ->assertJsonPath('full_resync', true);
+});
+
+it('GET /api/v4/synonyms/sync no incluye registros borrados en data', function () {
+    $syllabu = makeSyllabu();
+    $theme   = makeTheme($syllabu->id);
+    $video   = makeVideoTheme('Comprendre', $theme->id, $syllabu->id);
+
+    Synonym::create(['video_theme_cloudinary_id' => $video->id, 'word' => 'Entendre']);
+    $deleted = Synonym::create(['video_theme_cloudinary_id' => $video->id, 'word' => 'Partir']);
+    $deleted->delete();
+
+    $this->getJson('/api/v4/synonyms/sync')
+        ->assertOk()
+        ->assertJsonPath('total', 1);
+});

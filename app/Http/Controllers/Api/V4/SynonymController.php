@@ -76,9 +76,17 @@ class SynonymController extends Controller
 
     public function sync(Request $request): JsonResponse
     {
-        $limit   = min((int) $request->query('limit', 500), 1000);
-        $desde   = $request->filled('desde') ? $request->date('desde') : null;
-        $desdeId = (int) $request->query('desde_id', 0);
+        $limit        = min((int) $request->query('limit', 500), 1000);
+        $desde        = $request->filled('desde') ? $request->date('desde') : null;
+        $desdeId      = (int) $request->query('desde_id', 0);
+        $deletesSince = $request->filled('deletes_since') ? $request->date('deletes_since') : null;
+
+        if ($deletesSince && $deletesSince->lt(now()->subDays(90))) {
+            return response()->json([
+                'full_resync'   => true,
+                'servidor_hora' => now()->toIso8601String(),
+            ]);
+        }
 
         $query = Synonym::query()->select('id', 'video_theme_cloudinary_id', 'word', 'updated_at');
 
@@ -94,10 +102,19 @@ class SynonymController extends Controller
         $total = $query->count();
         $items = $query->orderBy('updated_at')->orderBy('id')->limit($limit)->get();
 
+        $deletes = $deletesSince
+            ? Synonym::withTrashed()
+                ->whereNotNull('deleted_at')
+                ->where('deleted_at', '>', $deletesSince)
+                ->pluck('id')
+                ->all()
+            : [];
+
         return response()->json([
             'data'          => $items,
             'total'         => $total,
             'has_more'      => $total > $limit,
+            'deletes'       => $deletes,
             'servidor_hora' => now()->toIso8601String(),
         ]);
     }
