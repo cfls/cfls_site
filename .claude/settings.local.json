@@ -10,7 +10,10 @@
       "Bash(php *)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "PowerShell(Get-Content *)"
+      "PowerShell(Get-Content *)",
+      "Read(//c/Users/User/Downloads/**)",
+      "Bash(python3 -c ' *)",
+      "Bash(python -c ' *)"
     ]
   }
 }
