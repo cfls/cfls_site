@@ -80,12 +80,24 @@ class EditSynonym extends EditRecord
 
         DB::transaction(function () use ($record, $synonymWords): void {
             $groupIds = SynonymResource::getGroupIds($record);
-            Synonym::whereIn('video_theme_cloudinary_id', $groupIds)->delete();
 
-            foreach ($synonymWords as $word) {
+            $existing = Synonym::whereIn('video_theme_cloudinary_id', $groupIds)
+                ->pluck('word')
+                ->map(fn ($w) => trim($w));
+
+            $toDelete = $existing->diff($synonymWords);
+            $toCreate = $synonymWords->diff($existing);
+
+            if ($toDelete->isNotEmpty()) {
+                Synonym::whereIn('video_theme_cloudinary_id', $groupIds)
+                    ->whereIn('word', $toDelete)
+                    ->delete();
+            }
+
+            foreach ($toCreate as $word) {
                 Synonym::create([
                     'video_theme_cloudinary_id' => $record->id,
-                    'word' => $word,
+                    'word'                      => $word,
                 ]);
             }
         });
