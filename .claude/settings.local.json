@@ -10,7 +10,11 @@
       "Bash(php *)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "PowerShell(Get-Content *)"
+      "PowerShell(Get-Content *)",
+      "Bash(python -m venv .venv)",
+      "Bash(.venv/Scripts/pip install *)",
+      "Bash(.venv/Scripts/python -c \"import ultralytics, PIL, mysql.connector, dotenv; print\\('OK'\\)\")",
+      "Bash(.venv/Scripts/python analyze.py --limite 20)"
     ]
   }
 }
