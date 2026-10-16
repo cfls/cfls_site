@@ -37,7 +37,7 @@ class VideoController extends Controller
             $title = $video['display_name'] ?? $video['public_id'];
             $slug  = Str::slug($title);
 
-            DB::table('video_themes_cloudinary_version')->updateOrInsert(
+            DB::table('video_themes_cloudinary')->updateOrInsert(
                 ['slug' => $slug], // condición única
                 [
                     'title'      => $title,

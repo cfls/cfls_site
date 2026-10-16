@@ -85,6 +85,8 @@
     </select>
     <select name="orden" onchange="this.form.submit()">
       <option value="desviacion" @selected(request('orden', 'desviacion') === 'desviacion')>Plus décentrés d'abord</option>
+      <option value="az" @selected(request('orden') === 'az')>Alphabétique A-Z</option>
+      <option value="za" @selected(request('orden') === 'za')>Alphabétique Z-A</option>
       <option value="nombre" @selected(request('orden') === 'nombre')>Par nom</option>
       <option value="reciente" @selected(request('orden') === 'reciente')>Plus récents</option>
     </select>

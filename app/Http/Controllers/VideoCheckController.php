@@ -54,6 +54,8 @@ class VideoCheckController extends Controller
 
         $orden = $request->get('orden', 'desviacion');
         $query = match ($orden) {
+            'az'       => $query->orderBy('public_id'),
+            'za'       => $query->orderByDesc('public_id'),
             'nombre'   => $query->orderBy('public_id'),
             'reciente' => $query->orderByDesc('updated_at'),
             default    => $query->orderByDesc('desviacion'),
