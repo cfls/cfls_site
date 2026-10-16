@@ -6,6 +6,7 @@ use Cloudinary\Asset\Video;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class VideoTheme extends Model
 {
@@ -34,6 +35,11 @@ class VideoTheme extends Model
     public function synonyms(): HasMany
     {
         return $this->hasMany(Synonym::class, 'video_theme_cloudinary_id');
+    }
+
+    public function videoCheck(): HasOne
+    {
+        return $this->hasOne(VideoCheck::class, 'video_theme_cloudinary_id');
     }
 
     public function getDisplayTitleAttribute(): string

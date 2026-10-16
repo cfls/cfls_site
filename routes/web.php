@@ -13,6 +13,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\SyllabusController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\VideoCheckController;
 use App\Http\Controllers\VideoController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -90,6 +91,16 @@ Route::get('ue1-themes-11/a-bientôt', fn() => redirect()->away('https://cfls.be
     Route::get('/videos/{slug}', [ResourceController::class, 'index'])->name('videos.slug');
 
     Route::get('/videos/{category}/{slug}', [ResourceController::class, 'vimeo'])->name('videos.vimeo');
+
+
+    // Révision du cadrage (requiert auth + rôle admin, vérifié dans le constructeur du contrôleur)
+        Route::middleware(['auth'])->group(function () {
+            Route::get('/admin/cadrage', [VideoCheckController::class, 'index'])->name('videos.index');
+            Route::get('/admin/cadrage/exporter', [VideoCheckController::class, 'exportar'])->name('videos.exporter');
+            Route::post('/admin/cadrage/{video}/marquer', [VideoCheckController::class, 'marcar'])->name('videos.marquer');
+        });
+
+
      Route::get('/ressource/{slug}', [ResourceController::class, 'resource'])->name('resource.slug');
     // Boutique Routes
     Route::get('/boutique', [BoutiqueController::class, 'index'])->name('boutique.index');
