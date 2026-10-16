@@ -1,7 +1,7 @@
 {
     "Verify Email Address": "Vérifiez votre adresse e-mail",
     "Please click the button below to verify your email address.": "Veuillez cliquer sur le bouton ci-dessous pour vérifier votre adresse e-mail.",
-    "If you did not create an account, no further action is required.": "Si vous n'avez pas créé de compte, aucune autre action n'est requise.",
+    "If you did not create an account, no further action is required.": "Si vous n’avez pas créé de compte, aucune autre action n’est requise.",
     "Hello!": "Bonjour !",
     "Whoops!": "Oups !",
     "Regards,": "Cordialement,",
@@ -10,5 +10,40 @@
     "to": "à",
     "of": "sur",
     "results": "résultats",
-    "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below\ninto your web browser:": "Si vous avez des difficultés à cliquer sur le bouton « :actionText », copiez et collez l’URL ci-dessous\ndans votre navigateur :"
+    "If you’re having trouble clicking the \":actionText\" button, copy and paste the URL below\ninto your web browser:": "Si vous avez des difficultés à cliquer sur le bouton « :actionText », copiez et collez l’URL ci-dessous\ndans votre navigateur :",
+
+    "Dashboard": "Tableau de bord",
+    "Profile": "Profil",
+
+    "Please enter your password to confirm you would like to log out of your other browser sessions across all of your devices.": "Veuillez entrer votre mot de passe pour confirmer que vous souhaitez vous déconnecter de toutes vos autres sessions de navigation sur tous vos appareils.",
+
+    "Confirm Password": "Confirmer le mot de passe",
+    "For your security, please confirm your password to continue.": "Pour votre sécurité, veuillez confirmer votre mot de passe pour continuer.",
+    "Confirm": "Confirmer",
+    "Password": "Mot de passe",
+    "Cancel": "Annuler",
+
+    "Create API Token": "Créer un jeton API",
+    "API tokens allow third-party services to authenticate with our application on your behalf.": "Les jetons API permettent à des services tiers de s’authentifier auprès de notre application en votre nom.",
+    "Token Name": "Nom du jeton",
+    "Created.": "Créé.",
+    "Create": "Créer",
+    "Manage API Tokens": "Gérer les jetons API",
+    "You may delete any of your existing tokens if they are no longer needed.": "Vous pouvez supprimer n’importe lequel de vos jetons existants s’ils ne sont plus nécessaires.",
+    "Last used": "Dernière utilisation le",
+    "Delete": "Supprimer",
+    "API Token": "Jeton API",
+    "Please copy your new API token. For your security, it won’t be shown again.": "Veuillez copier votre nouveau jeton API. Pour votre sécurité, il ne sera plus affiché.",
+    "Close": "Fermer",
+    "API Token Permissions": "Permissions du jeton API",
+    "Save": "Enregistrer",
+    "Delete API Token": "Supprimer le jeton API",
+    "Are you sure you would like to delete this API token?": "Êtes-vous sûr de vouloir supprimer ce jeton API ?",
+
+    "API Tokens": "Jetons API",
+    "Log Out": "Se déconnecter",
+    "Manage Team": "Gérer l’équipe",
+    "Team Settings": "Paramètres de l’équipe",
+    "Create New Team": "Créer une nouvelle équipe",
+    "Switch Teams": "Changer d’équipe"
 }

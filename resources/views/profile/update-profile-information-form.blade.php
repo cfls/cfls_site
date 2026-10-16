@@ -196,7 +196,7 @@
                     <!-- Statut -->
                     <div class="mb-3 flex items-center gap-2">
                         <span class="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
-                            Active
+                            Actif
                         </span>
                     </div>
 

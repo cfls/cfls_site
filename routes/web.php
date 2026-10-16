@@ -93,11 +93,11 @@ Route::get('ue1-themes-11/a-bientôt', fn() => redirect()->away('https://cfls.be
     Route::get('/videos/{category}/{slug}', [ResourceController::class, 'vimeo'])->name('videos.vimeo');
 
 
-    // Revisión de encuadre (requiere auth + role=admin, verificado en el constructor del controlador)
+    // Révision du cadrage (requiert auth + rôle admin, vérifié dans le constructeur du contrôleur)
         Route::middleware(['auth'])->group(function () {
-            Route::get('/admin/encuadre', [VideoCheckController::class, 'index'])->name('videos.index');
-            Route::get('/admin/encuadre/exporter', [VideoCheckController::class, 'exportar'])->name('videos.exportar');
-            Route::post('/admin/encuadre/{video}/marcar', [VideoCheckController::class, 'marcar'])->name('videos.marcar');
+            Route::get('/admin/cadrage', [VideoCheckController::class, 'index'])->name('videos.index');
+            Route::get('/admin/cadrage/exporter', [VideoCheckController::class, 'exportar'])->name('videos.exporter');
+            Route::post('/admin/cadrage/{video}/marquer', [VideoCheckController::class, 'marcar'])->name('videos.marquer');
         });
 
 

@@ -86,7 +86,7 @@ class VideoCheckController extends Controller
 
         $title = $video->videoTheme?->title ?? $video->public_id;
 
-        return back()->with('status', "«{$title}» movido a " . VideoCheck::GRUPOS[$data['grupo']]);
+        return back()->with('status', "«{$title}» déplacé vers " . VideoCheck::GRUPOS[$data['grupo']]);
     }
 
     public function exportar(Request $request)
@@ -116,6 +116,6 @@ class VideoCheckController extends Controller
                 });
 
             fclose($out);
-        }, 'encuadre-' . ($grupo ?: 'todos') . '.csv', ['Content-Type' => 'text/csv']);
+        }, 'cadrage-' . ($grupo ?: 'tous') . '.csv', ['Content-Type' => 'text/csv']);
     }
 }

@@ -61,8 +61,8 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->navigationItems([
-                NavigationItem::make('Encuadre vidéos')
-                    ->url('/admin/encuadre')
+                NavigationItem::make('Cadrage vidéos')
+                    ->url('/admin/cadrage')
                     ->icon('heroicon-o-video-camera')
                     ->group('Vidéos & Mots Croisés')
                     ->sort(10),

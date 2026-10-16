@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="es">
+<html lang="fr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<title>Revisión de encuadre · {{ $grupos[$grupo] }}</title>
+<title>Révision du cadrage · {{ $grupos[$grupo] }}</title>
 <style>
   :root {
     --bg: #f6f5f2; --panel: #fff; --ink: #1d1d1b; --muted: #6d6a64; --line: #e3e0da;
@@ -50,7 +50,7 @@
 </head>
 <body>
 <header>
-  <h1>Revisión de encuadre <small>· {{ number_format($total) }} videos analizados</small></h1>
+  <h1>Révision du cadrage <small>· {{ number_format($total) }} vidéos analysées</small></h1>
 
   <div class="tabs">
     @foreach ($grupos as $clave => $nombre)
@@ -62,7 +62,7 @@
 
   <form class="filtros" method="GET">
     <input type="hidden" name="grupo" value="{{ $grupo }}">
-    <input type="search" name="q" value="{{ request('q') }}" placeholder="Buscar por título, slug…">
+    <input type="search" name="q" value="{{ request('q') }}" placeholder="Rechercher par titre, slug…">
     <select name="theme_id" onchange="this.form.submit()">
       <option value="">Tous les thèmes</option>
       @foreach ($temas as $t)
@@ -76,16 +76,16 @@
       @endforeach
     </select>
     <select name="revisado" onchange="this.form.submit()">
-      <option value="">Todos</option>
-      <option value="0" @selected(request('revisado') === '0')>Sin revisar</option>
-      <option value="1" @selected(request('revisado') === '1')>Revisados a mano</option>
+      <option value="">Tous</option>
+      <option value="0" @selected(request('revisado') === '0')>Non révisés</option>
+      <option value="1" @selected(request('revisado') === '1')>Révisés manuellement</option>
     </select>
     <select name="orden" onchange="this.form.submit()">
-      <option value="desviacion" @selected(request('orden', 'desviacion') === 'desviacion')>Más descentrados primero</option>
-      <option value="nombre" @selected(request('orden') === 'nombre')>Por nombre</option>
-      <option value="reciente" @selected(request('orden') === 'reciente')>Más recientes</option>
+      <option value="desviacion" @selected(request('orden', 'desviacion') === 'desviacion')>Plus décentrés d'abord</option>
+      <option value="nombre" @selected(request('orden') === 'nombre')>Par nom</option>
+      <option value="reciente" @selected(request('orden') === 'reciente')>Plus récents</option>
     </select>
-    <a class="export" href="{{ route('videos.exportar', ['grupo' => $grupo]) }}">Descargar CSV de este grupo</a>
+    <a class="export" href="{{ route('videos.exporter', ['grupo' => $grupo]) }}">Télécharger le CSV de ce groupe</a>
   </form>
 </header>
 
@@ -95,13 +95,13 @@
 
 <main>
   @if ($videos->isEmpty())
-    <p class="vacio">No hay videos en este grupo.</p>
+    <p class="vacio">Aucune vidéo dans ce groupe.</p>
   @else
     <div class="grid">
       @foreach ($videos as $v)
         <figure>
           <div class="thumb" data-video="{{ $v->videoUrl() }}">
-            @if ($v->revisado)<span class="badge rev">Revisado</span>@endif
+            @if ($v->revisado)<span class="badge rev">Révisé</span>@endif
             @if (! is_null($v->desviacion))
               <span class="badge">{{ round($v->desviacion * 100) }} %</span>
             @endif
@@ -113,20 +113,20 @@
               <div class="meta">{{ $v->videoTheme->themes->title }}</div>
             @endif
             <div class="meta">
-              Persona en {{ $v->frames_con_persona }}/{{ $v->frames_total }} fotogramas
+              Personne dans {{ $v->frames_con_persona }}/{{ $v->frames_total }} images
               @if ($v->duracion) · {{ gmdate('i:s', (int) $v->duracion) }} @endif
             </div>
           </figcaption>
-          <form class="acciones" method="POST" action="{{ route('videos.marcar', $v) }}">
+          <form class="acciones" method="POST" action="{{ route('videos.marquer', $v) }}">
             @csrf
             @if ($grupo !== 'ok')
-              <button class="ok" name="grupo" value="ok">Está bien</button>
+              <button class="ok" name="grupo" value="ok">Correct</button>
             @endif
             @if ($grupo !== 'descentrado')
-              <button class="mal" name="grupo" value="descentrado">Descentrado</button>
+              <button class="mal" name="grupo" value="descentrado">Décentré</button>
             @endif
             <select name="grupo" onchange="this.form.submit()">
-              <option value="">Mover a…</option>
+              <option value="">Déplacer vers…</option>
               @foreach ($grupos as $clave => $nombre)
                 @if ($clave !== $grupo)<option value="{{ $clave }}">{{ $nombre }}</option>@endif
               @endforeach
@@ -136,12 +136,12 @@
       @endforeach
     </div>
 
-    <nav class="pag">{{ $videos->links('pagination::simple-default') }} <small>Página {{ $videos->currentPage() }} de {{ $videos->lastPage() }}</small></nav>
+    <nav class="pag">{{ $videos->links('pagination::simple-default') }} <small>Page {{ $videos->currentPage() }} sur {{ $videos->lastPage() }}</small></nav>
   @endif
 </main>
 
 <dialog id="player">
-  <button type="button" onclick="cerrar()" aria-label="Cerrar">×</button>
+  <button type="button" onclick="cerrar()" aria-label="Fermer">×</button>
   <video controls playsinline></video>
 </dialog>
 
