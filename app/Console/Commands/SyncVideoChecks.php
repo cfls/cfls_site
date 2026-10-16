@@ -46,20 +46,23 @@ class SyncVideoChecks extends Command
                 continue;
             }
 
+            $existing = DB::table('video_checks')->where('public_id', $publicId)->first();
+
             DB::table('video_checks')->insert([
                 'video_theme_cloudinary_id' => $row->id,
                 'public_id'                 => $publicId,
-                'grupo'                     => 'revisar',
-                'desviacion'                => null,
-                'frames_con_persona'        => 0,
-                'frames_total'              => 0,
-                'duracion'                  => null,
-                'revisado'                  => false,
+                'grupo'                     => $existing->grupo ?? 'revisar',
+                'desviacion'                => $existing->desviacion ?? null,
+                'frames_con_persona'        => $existing->frames_con_persona ?? 0,
+                'frames_total'              => $existing->frames_total ?? 0,
+                'duracion'                  => $existing->duracion ?? null,
+                'revisado'                  => $existing->revisado ?? false,
                 'created_at'                => now(),
                 'updated_at'                => now(),
             ]);
 
-            $this->line(" + Insertado: {$publicId}");
+            $source = $existing ? ' (copiado de vtc=' . $existing->video_theme_cloudinary_id . ')' : '';
+            $this->line(" + Insertado: {$publicId}{$source}");
             $insertados++;
         }
 
