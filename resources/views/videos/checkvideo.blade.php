@@ -40,7 +40,10 @@
   form.acciones button.mal:hover { background: var(--warn); color: #fff; border-color: var(--warn); }
   form.acciones select { flex: 1 0 100%; padding: 5px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; }
   .vacio { padding: 60px; text-align: center; color: var(--muted); }
-  nav.pag { margin-top: 24px; }
+  nav.pag { margin-top: 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  nav.pag .pag-btn { padding: 7px 18px; border: 1px solid #2f5d50; border-radius: 6px; background: #e6f0ee; color: #2f5d50; text-decoration: none; font-size: 14px; font-weight: 500; }
+  nav.pag .pag-btn:hover { background: #2f5d50; color: #fff; }
+  nav.pag .pag-btn[aria-disabled] { opacity: .35; pointer-events: none; }
   dialog { border: 0; padding: 0; border-radius: 10px; width: min(960px, 94vw); background: #000; }
   dialog::backdrop { background: rgba(0,0,0,.7); }
   dialog video { width: 100%; display: block; aspect-ratio: 5/4; object-fit: contain; background: #000; }
@@ -136,7 +139,21 @@
       @endforeach
     </div>
 
-    <nav class="pag">{{ $videos->links('pagination::simple-default') }} <small>Page {{ $videos->currentPage() }} sur {{ $videos->lastPage() }}</small></nav>
+    <nav class="pag">
+      @if ($videos->previousPageUrl())
+        <a class="pag-btn" href="{{ $videos->previousPageUrl() }}">← Précédent</a>
+      @else
+        <span class="pag-btn" aria-disabled>← Précédent</span>
+      @endif
+
+      <small>Page {{ $videos->currentPage() }} sur {{ $videos->lastPage() }}</small>
+
+      @if ($videos->nextPageUrl())
+        <a class="pag-btn" href="{{ $videos->nextPageUrl() }}">Suivant →</a>
+      @else
+        <span class="pag-btn" aria-disabled>Suivant →</span>
+      @endif
+    </nav>
   @endif
 </main>
 
