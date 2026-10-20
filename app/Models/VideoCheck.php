@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class VideoCheck extends Model
 {
     public const GRUPOS = [
-        'regrabar'    => 'À refaire',
-        'descentrado' => 'Décentré',
-        'sin_persona' => 'Sans personne',
-        'revisar'     => 'À réviser',
-        'ok'          => 'Correct',
-        'error'       => 'Erreur',
+        'a_refaire'    => 'À refaire',
+        'decentre'     => 'Décentré',
+        'sans_personne' => 'Sans personne',
+        'a_reviser'    => 'À réviser',
+        'ok'           => 'Correct',
+        'erreur'       => 'Erreur',
     ];
 
     protected $fillable = [

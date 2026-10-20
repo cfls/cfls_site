@@ -51,7 +51,7 @@ class SyncVideoChecks extends Command
             DB::table('video_checks')->insert([
                 'video_theme_cloudinary_id' => $row->id,
                 'public_id'                 => $publicId,
-                'grupo'                     => $existing->grupo ?? 'revisar',
+                'grupo'                     => $existing->grupo ?? 'a_reviser',
                 'desviacion'                => $existing->desviacion ?? null,
                 'frames_con_persona'        => $existing->frames_con_persona ?? 0,
                 'frames_total'              => $existing->frames_total ?? 0,

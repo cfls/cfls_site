@@ -57,14 +57,14 @@
 
   <div class="tabs">
     @foreach ($grupos as $clave => $nombre)
-      <a href="{{ route('videos.index', ['grupo' => $clave]) }}" @class(['activo' => $clave === $grupo])>
+      <a href="{{ route('videos.index', ['groupe' => $clave]) }}" @class(['activo' => $clave === $grupo])>
         {{ $nombre }}<span>{{ number_format($totales[$clave] ?? 0) }}</span>
       </a>
     @endforeach
   </div>
 
   <form class="filtros" method="GET">
-    <input type="hidden" name="grupo" value="{{ $grupo }}">
+    <input type="hidden" name="groupe" value="{{ $grupo }}">
     <input type="search" name="q" value="{{ request('q') }}" placeholder="Rechercher par titre, slug…">
     <select name="theme_id" onchange="this.form.submit()">
       <option value="">Tous les thèmes</option>
@@ -90,7 +90,7 @@
       <option value="nombre" @selected(request('orden') === 'nombre')>Par nom</option>
       <option value="reciente" @selected(request('orden') === 'reciente')>Plus récents</option>
     </select>
-    <a class="export" href="{{ route('videos.exporter', ['grupo' => $grupo]) }}">Télécharger le CSV de ce groupe</a>
+    <a class="export" href="{{ route('videos.exporter', ['groupe' => $grupo]) }}">Télécharger le CSV de ce groupe</a>
   </form>
 </header>
 
@@ -125,12 +125,12 @@
           <form class="acciones" method="POST" action="{{ route('videos.marquer', $v) }}">
             @csrf
             @if ($grupo !== 'ok')
-              <button class="ok" name="grupo" value="ok">Correct</button>
+              <button class="ok" name="groupe" value="ok">Correct</button>
             @endif
-            @if ($grupo !== 'descentrado')
-              <button class="mal" name="grupo" value="descentrado">Décentré</button>
+            @if ($grupo !== 'decentre')
+              <button class="mal" name="groupe" value="decentre">Décentré</button>
             @endif
-            <select name="grupo" onchange="this.form.submit()">
+            <select name="mover_a" onchange="this.form.submit()">
               <option value="">Déplacer vers…</option>
               @foreach ($grupos as $clave => $nombre)
                 @if ($clave !== $grupo)<option value="{{ $clave }}">{{ $nombre }}</option>@endif

@@ -19,9 +19,9 @@ class VideoCheckController extends Controller
 
     public function index(Request $request)
     {
-        $grupo = $request->get('grupo', 'descentrado');
+        $grupo = $request->get('groupe', 'decentre');
         if (! array_key_exists($grupo, VideoCheck::GRUPOS)) {
-            $grupo = 'descentrado';
+            $grupo = 'decentre';
         }
 
         $query = VideoCheck::with(['videoTheme.themes', 'videoTheme.syllabus'])
@@ -81,19 +81,23 @@ class VideoCheckController extends Controller
     public function marcar(Request $request, VideoCheck $video)
     {
         $data = $request->validate([
-            'grupo' => ['required', Rule::in(array_keys(VideoCheck::GRUPOS))],
+            'groupe'  => ['nullable', Rule::in(array_keys(VideoCheck::GRUPOS))],
+            'mover_a' => ['nullable', Rule::in(array_keys(VideoCheck::GRUPOS))],
         ]);
 
-        $video->update(['grupo' => $data['grupo'], 'revisado' => true]);
+        $groupe = ($data['groupe'] ?? null) ?: ($data['mover_a'] ?? null);
+        abort_if(! $groupe, 422);
+
+        $video->update(['grupo' => $groupe, 'revisado' => true]);
 
         $title = $video->videoTheme?->title ?? $video->public_id;
 
-        return back()->with('status', "«{$title}» déplacé vers " . VideoCheck::GRUPOS[$data['grupo']]);
+        return back()->with('status', "«{$title}» déplacé vers " . VideoCheck::GRUPOS[$groupe]);
     }
 
     public function exportar(Request $request)
     {
-        $grupo = $request->get('grupo');
+        $grupo = $request->get('groupe');
 
         return response()->streamDownload(function () use ($grupo) {
             $out = fopen('php://output', 'w');
