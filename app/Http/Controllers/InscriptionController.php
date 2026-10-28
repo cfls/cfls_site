@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Mail;
 
 class InscriptionController extends Controller
 {
+    private const IMMERSIVE_REGISTRATIONS_CLOSED = true;
+
     // Mostrar el formulario
     public function index()
     {
@@ -154,11 +156,19 @@ class InscriptionController extends Controller
     // Mostrar la página de la Journée Immersive
     public function immersive()
     {
-        return view('special.journee_immersive');
+        return view('special.journee_immersive', [
+            'registrationsClosed' => self::IMMERSIVE_REGISTRATIONS_CLOSED,
+        ]);
     }
 
     public function storeImmersive(Request $request)
     {
+        if (self::IMMERSIVE_REGISTRATIONS_CLOSED) {
+            return redirect()
+                ->route('inscription.journee_immersive')
+                ->withFragment('resultat');
+        }
+
         $validated = $request->validate([
             'nom'       => 'required|string|max:255',
             'email'     => 'required|email|max:255',

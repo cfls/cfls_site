@@ -234,6 +234,28 @@
             user-select: all;
         }
 
+        .closed-notice {
+            border: 1px solid #c9a96e;
+            border-left-width: 4px;
+            border-radius: 4px;
+            background: #fdfaf5;
+            padding: 22px 24px;
+            color: #5a4020;
+            font-family: 'Assistant', sans-serif;
+            text-align: center;
+        }
+
+        .closed-notice strong {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 18px;
+        }
+
+        .closed-notice p {
+            margin: 0;
+            line-height: 1.7;
+        }
+
         /* ── BOUTON ── */
         .btn-submit {
             width: 100%;
@@ -382,6 +404,12 @@
             color: #f7ebd3;
         }
 
+        .dark .closed-notice {
+            background: #1e293b;
+            border-color: #e6c684;
+            color: #f7ebd3;
+        }
+
         .dark .btn-submit {
             background: #e6c684;
             color: #2b2113;
@@ -440,7 +468,13 @@
             <div class="divider"></div>
 
             <p class="section-title">Inscription</p>
-            <p class="hero-caption">Réservez dès maintenant votre place pour la <strong>Journée Immersive</strong> !</p>
+            <p class="hero-caption">
+                @if ($registrationsClosed)
+                    Les inscriptions pour la <strong>Journée Immersive</strong> sont clôturées.
+                @else
+                    Réservez dès maintenant votre place pour la <strong>Journée Immersive</strong> !
+                @endif
+            </p>
 
             <div class="divider"></div>
         </div>
@@ -473,6 +507,13 @@
                     <h2 style="color:#c0392b">Déjà inscrit !</h2>
                     <p>Cette adresse e-mail est <strong>déjà enregistrée</strong>.<br>
                         Vous n'avez pas besoin de vous inscrire à nouveau.</p>
+                </div>
+
+            @elseif ($registrationsClosed)
+
+                <div class="closed-notice" role="status">
+                    <strong>Inscriptions clôturées</strong>
+                    <p>Merci pour votre intérêt. Il n'est plus possible de s'inscrire à cette journée.</p>
                 </div>
 
             @else
