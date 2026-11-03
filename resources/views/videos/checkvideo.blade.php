@@ -57,7 +57,7 @@
 
   <div class="tabs">
     @foreach ($grupos as $clave => $nombre)
-      <a href="{{ route('videos.index', ['groupe' => $clave]) }}" @class(['activo' => $clave === $grupo])>
+      <a href="{{ route('videos.index', array_merge(request()->only(['q', 'theme_id', 'syllabu_id', 'revisado', 'orden']), ['groupe' => $clave])) }}" @class(['activo' => $clave === $grupo])>
         {{ $nombre }}<span>{{ number_format($totales[$clave] ?? 0) }}</span>
       </a>
     @endforeach
