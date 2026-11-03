@@ -19,12 +19,37 @@ class VideoCheckController extends Controller
 
     public function index(Request $request)
     {
-        $grupo = $request->get('groupe', 'decentre');
-        if (! array_key_exists($grupo, VideoCheck::GRUPOS)) {
-            $grupo = 'decentre';
-        }
+        $grupo = $this->grupo($request);
+        $syllabusId = $request->get('syllabu_id');
+        $query = $this->filtrar($request, $grupo)->with('videoTheme.syllabus');
 
-        $query = VideoCheck::with(['videoTheme.themes', 'videoTheme.syllabus'])
+        $totales = VideoCheck::selectRaw('grupo, count(*) as cnt')
+            ->groupBy('grupo')
+            ->pluck('cnt', 'grupo');
+
+        return view('videos.checkvideo', [
+            'videos'   => $query->paginate(48)->withQueryString(),
+            'grupo'    => $grupo,
+            'grupos'   => VideoCheck::GRUPOS,
+            'totales'  => $totales,
+            'total'    => $totales->sum(),
+            'temas'    => $syllabusId
+                ? Theme::where('syllabu_id', $syllabusId)->orderBy('title')->get(['id', 'title'])
+                : Theme::orderBy('title')->get(['id', 'title']),
+            'syllabus' => Syllabu::orderBy('title')->get(['id', 'title']),
+        ]);
+    }
+
+    private function grupo(Request $request): string
+    {
+        $grupo = $request->get('groupe', 'decentre');
+
+        return array_key_exists($grupo, VideoCheck::GRUPOS) ? $grupo : 'decentre';
+    }
+
+    private function filtrar(Request $request, string $grupo)
+    {
+        $query = VideoCheck::with(['videoTheme.themes'])
             ->where('grupo', $grupo);
 
         if ($q = trim((string) $request->get('q'))) {
@@ -61,21 +86,8 @@ class VideoCheckController extends Controller
             default    => $query->orderByDesc('desviacion'),
         };
 
-        $totales = VideoCheck::selectRaw('grupo, count(*) as cnt')
-            ->groupBy('grupo')
-            ->pluck('cnt', 'grupo');
-
-        return view('videos.checkvideo', [
-            'videos'   => $query->paginate(48)->withQueryString(),
-            'grupo'    => $grupo,
-            'grupos'   => VideoCheck::GRUPOS,
-            'totales'  => $totales,
-            'total'    => $totales->sum(),
-            'temas'    => $syllabusId
-                ? Theme::where('syllabu_id', $syllabusId)->orderBy('title')->get(['id', 'title'])
-                : Theme::orderBy('title')->get(['id', 'title']),
-            'syllabus' => Syllabu::orderBy('title')->get(['id', 'title']),
-        ]);
+        // desempate estable: evita filas repetidas/omitidas al paginar o exportar por bloques
+        return $query->orderBy('id');
     }
 
     public function marcar(Request $request, VideoCheck $video)
@@ -97,31 +109,28 @@ class VideoCheckController extends Controller
 
     public function exportar(Request $request)
     {
-        $grupo = $request->get('groupe');
+        $grupo = $this->grupo($request);
+        $query = $this->filtrar($request, $grupo);
 
-        return response()->streamDownload(function () use ($grupo) {
+        return response()->streamDownload(function () use ($query) {
             $out = fopen('php://output', 'w');
+            fwrite($out, "\xEF\xBB\xBF"); // BOM para que Excel lea bien los acentos
             fputcsv($out, ['id', 'titulo', 'tema', 'url', 'grupo', 'desviacion', 'revisado']);
 
-            VideoCheck::with(['videoTheme.themes'])
-                ->when($grupo, fn ($q) => $q->where('grupo', $grupo))
-                ->orderBy('public_id')
-                ->chunk(500, function ($rows) use ($out) {
-                    foreach ($rows as $r) {
-                        $vt = $r->videoTheme;
-                        fputcsv($out, [
-                            $r->id,
-                            $vt?->title ?? '',
-                            $vt?->themes?->title ?? '',
-                            $vt?->url ?? '',
-                            $r->grupo,
-                            $r->desviacion,
-                            $r->revisado ? 1 : 0,
-                        ]);
-                    }
-                });
+            foreach ($query->lazy(500) as $r) {
+                $vt = $r->videoTheme;
+                fputcsv($out, [
+                    $r->id,
+                    $vt?->title ?? '',
+                    $vt?->themes?->title ?? '',
+                    $vt?->url ?? '',
+                    $r->grupo,
+                    $r->desviacion,
+                    $r->revisado ? 1 : 0,
+                ]);
+            }
 
             fclose($out);
-        }, 'cadrage-' . ($grupo ?: 'tous') . '.csv', ['Content-Type' => 'text/csv']);
+        }, 'cadrage-' . $grupo . '.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
     }
 }

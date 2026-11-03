@@ -90,7 +90,7 @@
       <option value="nombre" @selected(request('orden') === 'nombre')>Par nom</option>
       <option value="reciente" @selected(request('orden') === 'reciente')>Plus récents</option>
     </select>
-    <a class="export" href="{{ route('videos.exporter', ['groupe' => $grupo]) }}">Télécharger le CSV de ce groupe</a>
+    <a class="export" href="{{ route('videos.exporter', array_merge(request()->only(['q', 'theme_id', 'syllabu_id', 'revisado', 'orden']), ['groupe' => $grupo])) }}">Télécharger le CSV de ce groupe</a>
   </form>
 </header>
 
