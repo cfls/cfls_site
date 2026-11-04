@@ -1,6 +1,6 @@
 <section class="dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
     <div
-            x-data="adventCalendar()"
+            x-data="adventCalendar(@js($videos))"
             x-init="init()"
             class="max-w-5xl mx-auto py-10"
     >
@@ -16,7 +16,7 @@
                         class="relative overflow-hidden cursor-pointer transition text-white font-semibold
                         border rounded-2xl flex flex-col items-center justify-center
                         aspect-square w-24 sm:w-28 md:w-32 lg:w-36 p-3 sm:p-4 md:p-5"
-                        :class="day <= maxDay
+                        :class="isOpen(day)
                         ? 'bg-green-600 hover:bg-green-700 shadow-lg'
                         : 'bg-green-900 opacity-50 cursor-not-allowed'"
                         @click="openDay(day)"
@@ -33,13 +33,13 @@
                         Jour <span x-text="day"></span>
                     </div>
 
-                    <template x-if="day <= maxDay">
+                    <template x-if="isOpen(day)">
                         <span class="text-yellow-300 text-xs md:text-sm drop-shadow-md mt-1">
                             Voir la vidéo
                         </span>
                     </template>
 
-                    <template x-if="day > maxDay">
+                    <template x-if="!isOpen(day)">
                         <span class="text-gray-300 text-sm mt-1">🔒</span>
                     </template>
 
@@ -151,55 +151,21 @@
 
 @push('scripts')
     <script>
-        function adventCalendar() {
+        function adventCalendar(videos = {}) {
             return {
                 loading: false,
                 selectedDay: null,
-                maxDay: 0,
-
-                videos: {
-                    1: "https://www.facebook.com/facebook/videos/1182447029949198/",
-                    2: "https://www.facebook.com/facebook/videos/1974780879746382/",
-                    3: "https://www.facebook.com/facebook/videos/827793526536110/",
-                    4: "https://www.facebook.com/facebook/videos/844559214964440/",
-                    5: "https://www.instagram.com/reel/DR4N5YujJRA",
-                    6: "https://www.facebook.com/facebook/videos/1409422874116275/",
-                    7: "https://www.facebook.com/facebook/videos/2998670950325989/",
-                    8: "https://www.facebook.com/facebook/videos/1387185633049203/",
-                    9: "https://www.facebook.com/facebook/videos/2623760977985718/",
-                    10: "https://www.facebook.com/facebook/videos/2000867280763184/",
-                    11: "https://www.facebook.com/facebook/videos/775162852211824",
-                    12: "https://www.facebook.com/facebook/videos/844877155064449",
-                    13: "https://www.facebook.com/facebook/videos/1538216154085257/",
-                    14: "https://www.facebook.com/facebook/videos/1221356443228362/",
-                    15: "https://www.facebook.com/facebook/videos/887321303981556/",
-                    16: "https://www.facebook.com/facebook/videos/1777450442970199/",
-                    17: "https://www.facebook.com/facebook/videos/1173351198196403",
-                    18: "https://www.facebook.com/facebook/videos/2135594023845638",
-                    19: "https://www.facebook.com/facebook/videos/1514520982964091",
-                    20: "https://www.facebook.com/facebook/videos/4155291211403910",
-                    21: "https://www.facebook.com/facebook/videos/1655822782052582",
-                    22: "https://www.facebook.com/facebook/videos/1423485942525272",
-                    23: "https://www.facebook.com/facebook/videos/818282581247715",
-                    24: "https://www.instagram.com/reel/DSpPTnqDNv7",
-                    25: "https://www.facebook.com/facebook/videos/1381189613753480",
-                },
+                videos: videos,   // vidéos publiées depuis Filament
 
                 icons: {
                     1: "🎁", 2: "🎅", 3: "⛄", 4: "🌟", 5: "🍬",
-                    6: "🧦", 7: "🕯️", 8: "❄️", 9: "🦌", 10: "🎄",
+                    6: "🧦", 7: "🕯️", 8: "❄️", 9: "🦌", 10: "🎄", 
                     11: "🔔", 12: "🍪", 13: "🪵", 14: "📯", 15: "🥁",
                     16: "🪅", 17: "📦", 18: "🍫", 19: "🎉", 20: "✨",
                     21: "🧸", 22: "🎀", 23: "🥨", 24: "🌙", 25: "⭐"
                 },
 
                 init() {
-                    const today = new Date();
-
-                    if (today.getMonth() === 11) {
-                        this.maxDay = today.getDate();
-                    }
-
                     // ESC para cerrar
                     window.addEventListener("keydown", (e) => {
                         if (e.key === "Escape" && this.selectedDay !== null) {
@@ -208,9 +174,14 @@
                     });
                 },
 
+                /* DÍA DESBLOQUEADO = VIDEO PUBLICADO */
+                isOpen(day) {
+                    return !!this.videos[day];
+                },
+
                 /* ABRIR MODAL */
                 openDay(day) {
-                    if (day <= this.maxDay) {
+                    if (this.isOpen(day)) {
                         this.selectedDay = day;
                         this.loading = true;   // ⏳ Mostrar loader
 
@@ -234,7 +205,6 @@
                 /* EMBED FACEBOOK */
                 facebookEmbed(day) {
                     const url = this.videos[day];
-                    console.log(url);
                     return "https://www.facebook.com/plugins/video.php?href=" +
                         encodeURIComponent(url) +
                         "&show_text=0&autoplay=1";
@@ -243,8 +213,9 @@
                     return this.videos[day]?.includes("instagram.com");
                 },
                 instagramEmbed(day) {
-                    const url = this.videos[day];
-                    return `https://www.instagram.com/reel/${url.split("/reel/")[1]}/embed`;
+                    // Extrait le code du post (ignore "/" final et ?igsh=...)
+                    const match = this.videos[day].match(/instagram\.com\/(?:reels?|p|tv)\/([A-Za-z0-9_-]+)/);
+                    return `https://www.instagram.com/reel/${match?.[1]}/embed`;
                 },
                 videoDisponible(day) {
                     return !!this.videos[day];

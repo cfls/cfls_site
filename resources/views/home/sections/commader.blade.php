@@ -5,7 +5,7 @@
 
 <section class="bg-white dark:bg-gray-900 mb-4">
 
-    {{-- <x-specials.calendaravdient /> --}}
+     <x-specials.calendaravdient />
     <div class="glide max-w-screen-2xl px-4 pt-12 pb-8 mx-auto lg:pt-16" x-data x-init="initGlide($el)">
         <div class="glide__track" data-glide-el="track">
             <ul class="glide__slides">
