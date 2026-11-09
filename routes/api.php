@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\LettersController;
 use App\Http\Controllers\Api\V1\MemoryGameController;
 use App\Http\Controllers\Api\V1\PlanController;
 use App\Http\Controllers\Api\V1\ProgressController;
+use App\Http\Controllers\Api\V1\Quiz2Controller;
 use App\Http\Controllers\Api\V1\QuizController;
 use App\Http\Controllers\Api\V1\QuizResultController;
 use App\Http\Controllers\Api\V1\QuizResultsController;
@@ -104,6 +105,13 @@ Route::prefix('v1')->group(function () {
     Route::get('/questions/{slug}', [QuizController::class, 'index']);
     Route::get('/questions/{slug}/{theme}', [QuizController::class, 'show']);
     Route::get('/synthesis/{slug}/{type}', [QuizController::class, 'synthesis']);
+    // Juegos sobre questions
+    Route::get('/questions2/sync', [Quiz2Controller::class, 'sync']);
+    Route::get('/questions2/all/{slug}',[Quiz2Controller::class, 'themes']);
+    Route::get('/questions2/{slug}', [Quiz2Controller::class, 'index']);
+    Route::get('/questions2/{slug}/{theme}', [Quiz2Controller::class, 'show']);
+    Route::get('/synthesis2/{slug}/{type}', [Quiz2Controller::class, 'synthesis']);
+    /////
     Route::get('/dictionnaire/sync', [DictionaryController::class, 'sync']);
     Route::get('/dictionnaire', [DictionaryController::class, 'index']);
     Route::get('/dictionnaire/{id}', [DictionaryController::class, 'show']);
