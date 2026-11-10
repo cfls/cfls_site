@@ -6,6 +6,7 @@ use App\Http\Resources\V1\Question2Resource;
 use App\Models\Question2;
 use App\Models\Syllabu;
 use App\Models\Theme;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 // API de juegos sobre la tabla questions_2 (independiente de QuizController / questions).
@@ -22,21 +23,28 @@ class Quiz2Controller
         'questions_2.status',
     ];
 
-    public function index($slug)
+    // Preguntas por partida.
+    private const GAME_LIMIT = 15;
+
+    // Máximo de IDs aceptados en ?exclude= (se conservan los últimos).
+    private const MAX_EXCLUDE = 500;
+
+    public function index($slug, Request $request)
     {
         $syllabusId = $this->syllabusId($slug);
 
-        $questions = Question2::with(['video:id,url', 'theme:id,title'])
+        $query = Question2::with(['video:id,url', 'theme:id,title'])
             ->where('syllabu_id', $syllabusId)
             ->where('status', 1)
-            ->inRandomOrder()
-            ->limit(25)
-            ->get(self::COLUMNS);
+            ->select(self::COLUMNS);
 
-        return response()->json([
+        [$questions, $meta] = $this->pickQuestions($query, $request);
+
+        return response()->json(array_filter([
             'status' => 'success',
             'data' => Question2Resource::collection($questions),
-        ]);
+            'meta' => $meta,
+        ], fn ($value) => $value !== null));
     }
 
     public function show($slug, $theme, Request $request)
@@ -60,35 +68,30 @@ class Quiz2Controller
             $query->where('questions_2.type', $type);
         }
 
-        return Question2Resource::collection($query->inRandomOrder()->limit(15)->get());
+        return $this->collection(...$this->pickQuestions($query, $request));
     }
 
-    public function synthesis($slug, $type)
+    public function synthesis($slug, $type, Request $request)
     {
         $syllabusId = $this->syllabusId($slug);
 
-        $questions = $this->baseQuery()
+        $query = $this->baseQuery()
             ->where('questions_2.syllabu_id', $syllabusId)
-            ->where('questions_2.type', $type)
-            ->inRandomOrder()
-            ->limit(15)
-            ->get();
+            ->where('questions_2.type', $type);
 
-        return Question2Resource::collection($questions);
+        return $this->collection(...$this->pickQuestions($query, $request));
     }
 
-    public function themes($slug)
+    public function themes($slug, Request $request)
     {
         $syllabusId = $this->syllabusId($slug);
 
-        $questions = Question2::with(['video:id,url', 'theme:id,title'])
+        $query = Question2::with(['video:id,url', 'theme:id,title'])
             ->where('syllabu_id', $syllabusId)
             ->where('status', 1)
-            ->inRandomOrder()
-            ->limit(20)
-            ->get(self::COLUMNS);
+            ->select(self::COLUMNS);
 
-        return Question2Resource::collection($questions);
+        return $this->collection(...$this->pickQuestions($query, $request));
     }
 
     public function sync(Request $request)
@@ -135,6 +138,59 @@ class Quiz2Controller
         abort_unless($id, 404);
 
         return $id;
+    }
+
+    // Elige GAME_LIMIT preguntas al azar. Con ?exclude= prioriza las no vistas; si no alcanzan,
+    // completa con vistas y devuelve reset = true para que la app reinicie su lista.
+    // Sin exclude no hay meta (respuesta igual que antes). No escribe nada en la base.
+    private function pickQuestions(Builder $query, Request $request): array
+    {
+        $exclude = $this->excludedIds($request);
+
+        if (! $exclude) {
+            return [$query->inRandomOrder()->limit(self::GAME_LIMIT)->get(), null];
+        }
+
+        $fresh = (clone $query)
+            ->whereNotIn('questions_2.id', $exclude)
+            ->inRandomOrder()
+            ->limit(self::GAME_LIMIT)
+            ->get();
+
+        if ($fresh->count() >= self::GAME_LIMIT) {
+            return [$fresh, ['reset' => false]];
+        }
+
+        $seen = (clone $query)
+            ->whereIn('questions_2.id', $exclude)
+            ->inRandomOrder()
+            ->limit(self::GAME_LIMIT - $fresh->count())
+            ->get();
+
+        return [$fresh->concat($seen)->shuffle(), ['reset' => true]];
+    }
+
+    // IDs de ?exclude=1,2,3: enteros positivos, sin repetidos, como máximo los últimos MAX_EXCLUDE.
+    private function excludedIds(Request $request): array
+    {
+        $raw = $request->query('exclude', '');
+        $raw = is_array($raw) ? implode(',', $raw) : (string) $raw;
+
+        return collect(explode(',', $raw))
+            ->map(fn ($id) => trim($id))
+            ->filter(fn ($id) => ctype_digit($id) && (int) $id > 0)
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->slice(-self::MAX_EXCLUDE)
+            ->values()
+            ->all();
+    }
+
+    private function collection($questions, ?array $meta)
+    {
+        $collection = Question2Resource::collection($questions);
+
+        return $meta ? $collection->additional(['meta' => $meta]) : $collection;
     }
 
     // Preguntas activas con el tipo de video (subtheme) y relaciones precargadas.
