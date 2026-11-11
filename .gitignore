@@ -40,4 +40,11 @@ visit-lsfb/
 /tools/
 
 
+
+# Entornos virtuales de Python
+.venv/
+venv/
+__pycache__/
+
+# Herramienta local de Python
 tools/
