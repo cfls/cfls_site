@@ -10,15 +10,24 @@
     <div class="bg-gradient-to-b from-sky-50 to-white dark:from-gray-900 dark:to-gray-900">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
 
+            {{-- Retour --}}
+            <div class="pt-8">
+                <a href="{{ route('ekho-sport') }}#theme-{{ $section->id }}"
+                   class="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-white dark:bg-gray-800 px-4 py-2 font-bold text-indigo-700 dark:text-indigo-300 ring-1 ring-gray-200 dark:ring-gray-700 shadow-sm transition hover:bg-indigo-600 hover:text-white hover:ring-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+                    Retour aux thèmes
+                </a>
+            </div>
+
             {{-- Fil d'Ariane --}}
-            <nav aria-label="Fil d'Ariane" class="flex flex-wrap items-center gap-2 pt-8 pb-5 text-sm text-gray-500 dark:text-gray-400">
+            <nav aria-label="Fil d'Ariane" class="flex flex-wrap items-center gap-2 pt-5 pb-5 text-sm text-gray-500 dark:text-gray-400">
                 <a href="{{ route('ekho-sport') }}" class="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">Êkhô Sport</a>
-                <span>›</span>
+                <span aria-hidden="true">›</span>
                 <a href="{{ route('ekho-sport') }}#theme-{{ $section->id }}" class="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
                     {{ $section->number ? $section->number . '. ' : '' }}{{ $section->title }}
                 </a>
-                <span>›</span>
-                <span>{{ $subsection->title }}</span>
+                <span aria-hidden="true">›</span>
+                <span aria-current="page">{{ $subsection->title }}</span>
             </nav>
 
             {{-- Título --}}
@@ -41,10 +50,16 @@
 
                     {{-- Reproductor --}}
                     <main>
-                        <div class="overflow-hidden rounded-2xl bg-indigo-950 shadow-2xl shadow-indigo-950/25">
+                        <div class="relative overflow-hidden rounded-2xl bg-indigo-950 shadow-2xl shadow-indigo-950/25">
                             <video id="ekho-video" controls playsinline preload="metadata"
                                    src="{{ $first->url }}" poster="{{ $first->thumbnail_url }}"
                                    class="block aspect-video w-full bg-indigo-950"></video>
+
+                            <div id="ekho-loading" role="status" aria-live="polite"
+                                 class="pointer-events-none absolute inset-0 hidden items-center justify-center bg-indigo-950/70">
+                                <span class="h-12 w-12 animate-spin rounded-full border-4 border-white/25 border-t-white" aria-hidden="true"></span>
+                                <span class="sr-only">Chargement de la vidéo…</span>
+                            </div>
                         </div>
 
                         <div class="mt-4 flex flex-wrap items-center justify-between gap-4">
@@ -95,12 +110,12 @@
                                             data-poster="{{ $video->thumbnail_url }}"
                                             data-title="{{ $video->title }}"
                                             @if ($loop->first) aria-current="true" @endif>
-                                        <span class="relative h-12 w-20 shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-sky-300 to-indigo-600">
+                                        <span class="relative aspect-video w-32 shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-sky-300 to-indigo-600">
                                             @if ($video->thumbnail_url)
                                                 <img src="{{ $video->thumbnail_url }}" alt="" loading="lazy" class="h-full w-full object-cover">
                                             @endif
                                         </span>
-                                        <span class="font-semibold">{{ $video->title }}</span>
+                                        <span class="text-base font-semibold">{{ $video->title }}</span>
                                     </button>
                                 </li>
                             @endforeach
@@ -142,11 +157,23 @@
                 const loop  = document.getElementById('ekho-loop');
                 const items = Array.from(document.querySelectorAll('.ekho-item'));
                 const speeds = document.querySelectorAll('.ekho-speed');
+                const spinner = document.getElementById('ekho-loading');
 
                 const itemOn  = ['bg-indigo-600', 'text-white'];
                 const itemOff = ['text-gray-700', 'dark:text-gray-300', 'hover:bg-sky-50', 'dark:hover:bg-gray-700'];
                 let current = 0;
                 let rate = 1;
+                let switching = false;
+
+                // Los controles nativos se ocultan mientras carga para que el navegador no muestre su propio spinner
+                function showLoading() { video.controls = false; spinner.classList.remove('hidden'); spinner.classList.add('flex'); }
+                function hideLoading() { switching = false; video.controls = true; spinner.classList.add('hidden'); spinner.classList.remove('flex'); }
+
+                // Spinner mientras carga o se queda sin buffer; se oculta en cuanto hay imagen en movimiento
+                video.addEventListener('waiting', showLoading);
+                video.addEventListener('playing', hideLoading);
+                video.addEventListener('error', hideLoading);
+                video.addEventListener('pause', () => { if (!switching) hideLoading(); });
 
                 function play(i, autoplay = true) {
                     if (i < 0 || i >= items.length) return;
@@ -157,13 +184,26 @@
                     item.setAttribute('aria-current', 'true');
                     if (item.offsetParent) item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 
+                    // Al reproducir directamente no se muestra el póster (evita ver la imagen unos segundos)
+                    if (autoplay) {
+                        switching = true;
+                        video.removeAttribute('poster');
+                        showLoading();
+                    } else {
+                        video.poster = item.dataset.poster || '';
+                    }
                     video.src = item.dataset.src;
-                    video.poster = item.dataset.poster || '';
                     video.playbackRate = rate;
                     title.textContent = item.dataset.title;
                     pos.textContent = i + 1;
                     current = i;
-                    if (autoplay) video.play().catch(() => {});
+                    if (autoplay) {
+                        video.play().catch(() => {
+                            // Autoplay bloqueado: se vuelve al póster para que el usuario pulse play
+                            video.poster = item.dataset.poster || '';
+                            hideLoading();
+                        });
+                    }
                 }
 
                 items.forEach((item, i) => item.addEventListener('click', () => play(i)));
