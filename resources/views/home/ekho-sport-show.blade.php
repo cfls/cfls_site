@@ -164,20 +164,22 @@
                 let current = 0;
                 let rate = 1;
                 let switching = false;
+                let switched = false; // se ha pasado a otro signo con reproducción automática
 
                 // Los controles nativos se ocultan mientras carga para que el navegador no muestre su propio spinner
                 function showLoading() { video.controls = false; spinner.classList.remove('hidden'); spinner.classList.add('flex'); }
                 function hideLoading() { switching = false; syncControls(); spinner.classList.add('hidden'); spinner.classList.remove('flex'); }
 
-                // En bucle los controles nativos se ocultan mientras reproduce: en móvil el icono play/pausa tapaba el signo en cada vuelta
-                function syncControls() { video.controls = !(video.loop && !video.paused); }
+                // En bucle o al pasar a otro signo los controles nativos se ocultan mientras reproduce: en móvil el icono play/pausa tapaba el signo
+                function syncControls() { video.controls = !((video.loop || switched) && !video.paused); }
 
                 // Spinner mientras carga o se queda sin buffer; se oculta en cuanto hay imagen en movimiento.
                 // En bucle se ignora el 'waiting' del reinicio para no volver a mostrar los controles en cada vuelta
                 video.addEventListener('waiting', () => { if (!(video.loop && !switching)) showLoading(); });
                 video.addEventListener('playing', hideLoading);
                 video.addEventListener('error', hideLoading);
-                video.addEventListener('pause', () => { if (!switching) hideLoading(); });
+                // Al terminar también salta 'pause': se ignora para que los controles no parpadeen antes del siguiente signo
+                video.addEventListener('pause', () => { if (!switching && !video.ended) { switched = false; hideLoading(); } });
 
                 function play(i, autoplay = true) {
                     if (i < 0 || i >= items.length) return;
@@ -191,6 +193,7 @@
                     // Al reproducir directamente no se muestra el póster (evita ver la imagen unos segundos)
                     if (autoplay) {
                         switching = true;
+                        switched = true;
                         video.removeAttribute('poster');
                         showLoading();
                     } else {
@@ -228,7 +231,13 @@
                 }));
 
                 // Al terminar un signo, pasa al siguiente (si no está en bucle)
-                video.addEventListener('ended', () => { if (!video.loop) play(current + 1); });
+                // En el último signo se vuelven a mostrar los controles
+                video.addEventListener('ended', () => {
+                    if (video.loop) return;
+                    if (current + 1 < items.length) { play(current + 1); return; }
+                    switched = false;
+                    hideLoading();
+                });
             })();
         </script>
     @endif
