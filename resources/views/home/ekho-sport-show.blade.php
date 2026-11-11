@@ -167,10 +167,14 @@
 
                 // Los controles nativos se ocultan mientras carga para que el navegador no muestre su propio spinner
                 function showLoading() { video.controls = false; spinner.classList.remove('hidden'); spinner.classList.add('flex'); }
-                function hideLoading() { switching = false; video.controls = true; spinner.classList.add('hidden'); spinner.classList.remove('flex'); }
+                function hideLoading() { switching = false; syncControls(); spinner.classList.add('hidden'); spinner.classList.remove('flex'); }
 
-                // Spinner mientras carga o se queda sin buffer; se oculta en cuanto hay imagen en movimiento
-                video.addEventListener('waiting', showLoading);
+                // En bucle los controles nativos se ocultan mientras reproduce: en móvil el icono play/pausa tapaba el signo en cada vuelta
+                function syncControls() { video.controls = !(video.loop && !video.paused); }
+
+                // Spinner mientras carga o se queda sin buffer; se oculta en cuanto hay imagen en movimiento.
+                // En bucle se ignora el 'waiting' del reinicio para no volver a mostrar los controles en cada vuelta
+                video.addEventListener('waiting', () => { if (!(video.loop && !switching)) showLoading(); });
                 video.addEventListener('playing', hideLoading);
                 video.addEventListener('error', hideLoading);
                 video.addEventListener('pause', () => { if (!switching) hideLoading(); });
@@ -210,7 +214,10 @@
                 document.getElementById('ekho-prev').addEventListener('click', () => play(current - 1));
                 document.getElementById('ekho-next').addEventListener('click', () => play(current + 1));
 
-                loop.addEventListener('change', () => { video.loop = loop.checked; });
+                loop.addEventListener('change', () => { video.loop = loop.checked; syncControls(); });
+
+                // Sin controles nativos (en bucle), tocar el vídeo lo pausa y vuelven a aparecer los controles
+                video.addEventListener('click', () => { if (!video.controls && !switching) video.pause(); });
 
                 speeds.forEach(btn => btn.addEventListener('click', () => {
                     rate = parseFloat(btn.dataset.speed);
