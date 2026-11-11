@@ -60,6 +60,10 @@ class HomeController extends Controller
 
     public function ekhoSport()
     {
+        // Portada oculta temporalmente: las subsecciones (/ekho-sport/{subsection}) siguen accesibles.
+        // Para publicarla, eliminar esta línea.
+        return view('home.ekho-sport-soon');
+
         $sections = SportSection::with([
             'subsections' => fn ($q) => $q->active()->withCount(['videos' => fn ($v) => $v->active()]),
         ])
