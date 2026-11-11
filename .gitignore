@@ -39,3 +39,11 @@ test/
 visit-lsfb/
 
 
+
+# Entornos virtuales de Python
+.venv/
+venv/
+__pycache__/
+
+# Herramienta local de Python
+tools/
