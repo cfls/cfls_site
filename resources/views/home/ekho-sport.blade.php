@@ -20,16 +20,16 @@
                     Choisissez une vidéo pour découvrir les signes.
                 </p>
 
-                <div class="mt-8 flex justify-center gap-3">
-                    <div class="min-w-[8rem] rounded-2xl bg-white dark:bg-gray-800 px-6 py-3 shadow-sm ring-1 ring-gray-100 dark:ring-gray-700">
-                        <div class="text-2xl font-extrabold text-gray-900 dark:text-white">{{ $sections->whereNotNull('page')->count() }}</div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">thèmes</div>
-                    </div>
-                    <div class="min-w-[8rem] rounded-2xl bg-white dark:bg-gray-800 px-6 py-3 shadow-sm ring-1 ring-gray-100 dark:ring-gray-700">
-                        <div class="text-2xl font-extrabold text-gray-900 dark:text-white">{{ $totalVideos }}</div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">vidéos</div>
-                    </div>
-                </div>
+{{--                <div class="mt-8 flex justify-center gap-3">--}}
+{{--                    <div class="min-w-[8rem] rounded-2xl bg-white dark:bg-gray-800 px-6 py-3 shadow-sm ring-1 ring-gray-100 dark:ring-gray-700">--}}
+{{--                        <div class="text-2xl font-extrabold text-gray-900 dark:text-white">{{ $sections->whereNotNull('page')->count() }}</div>--}}
+{{--                        <div class="text-sm text-gray-500 dark:text-gray-400">thèmes</div>--}}
+{{--                    </div>--}}
+{{--                    <div class="min-w-[8rem] rounded-2xl bg-white dark:bg-gray-800 px-6 py-3 shadow-sm ring-1 ring-gray-100 dark:ring-gray-700">--}}
+{{--                        <div class="text-2xl font-extrabold text-gray-900 dark:text-white">{{ $totalVideos }}</div>--}}
+{{--                        <div class="text-sm text-gray-500 dark:text-gray-400">vidéos</div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
             </header>
 
             {{-- Índice rápido --}}
