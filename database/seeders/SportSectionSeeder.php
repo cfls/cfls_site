@@ -20,7 +20,6 @@ class SportSectionSeeder extends Seeder
         // 'subs' => [video_number, título]
         // video_number = número de la carpeta en Cloudinary ("Ekho Sport/1. ACTIONS DE BASSE" => 1)
         $data = [
-            ['number' => null,  'title' => 'Remerciements et partenaires', 'subtitle' => null, 'page' => null, 'subs' => []],
             ['number' => 'I',   'title' => 'VOCABULAIRE DE COACHING ÉKHÔ SPORT', 'subtitle' => 'communication rapide', 'page' => 15, 'subs' => [
                 [1, 'Actions de base'],
                 [2, 'Mouvement'],
