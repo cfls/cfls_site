@@ -62,17 +62,17 @@ class HomeController extends Controller
     {
         // Portada oculta temporalmente: las subsecciones (/ekho-sport/{subsection}) siguen accesibles.
         // Para publicarla, eliminar esta línea.
-        return view('home.ekho-sport-soon');
+       // return view('home.ekho-sport-soon');
 
-//        $sections = SportSection::with([
-//            'subsections' => fn ($q) => $q->active()->withCount(['videos' => fn ($v) => $v->active()]),
-//        ])
-//            ->orderBy('sort_order')
-//            ->get();
-//
-//        $totalVideos = $sections->sum(fn ($s) => $s->subsections->sum('videos_count'));
-//
-//        return view('home.ekho-sport', compact('sections', 'totalVideos'));
+        $sections = SportSection::with([
+            'subsections' => fn ($q) => $q->active()->withCount(['videos' => fn ($v) => $v->active()]),
+        ])
+            ->orderBy('sort_order')
+            ->get();
+
+        $totalVideos = $sections->sum(fn ($s) => $s->subsections->sum('videos_count'));
+
+        return view('home.ekho-sport', compact('sections', 'totalVideos'));
     }
 
     public function ekhoSportShow(SportSubsection $subsection)
