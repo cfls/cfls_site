@@ -12,13 +12,13 @@ class Calendaravdient extends Component
 
     public function __construct(public ?int $year = null)
     {
-        $this->year ??= now()->year;
+        $this->year ??= now(config('advent.timezone'))->year;
     }
 
     // Le calendrier n'est affiché qu'en décembre (sauf ADVENT_CALENDAR_FORCE=true)
     public function shouldRender(): bool
     {
-        return now()->month === 12 || config('advent.force');
+        return now(config('advent.timezone'))->month === 12 || config('advent.force');
     }
 
     public function render(): View

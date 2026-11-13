@@ -59,7 +59,7 @@ class AdventVideoResource extends Resource
 
                 Forms\Components\Toggle::make('is_published')
                     ->label('Publié')
-                    ->helperText('Une fois publiée, la case du jour est débloquée sur le site.')
+                    ->helperText('La case s’ouvre automatiquement le jour J à ' . config('advent.unlock_hour') . 'h (heure belge), uniquement si la vidéo est publiée.')
                     ->default(false),
             ]);
     }
@@ -79,6 +79,22 @@ class AdventVideoResource extends Resource
                     ->limit(60)
                     ->url(fn (AdventVideo $record) => $record->video_url, shouldOpenInNewTab: true)
                     ->searchable(),
+                Tables\Columns\TextColumn::make('unlock_at')
+                    ->label('Ouverture (heure belge)')
+                    ->state(fn (AdventVideo $record) => $record->unlock_at->format('d/m/Y H:i')),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Sur le site')
+                    ->badge()
+                    ->state(fn (AdventVideo $record) => match (true) {
+                        ! $record->is_published => 'Brouillon',
+                        now()->lt($record->unlock_at) => 'Programmée',
+                        default => 'Ouverte',
+                    })
+                    ->color(fn (string $state) => match ($state) {
+                        'Ouverte' => 'success',
+                        'Programmée' => 'warning',
+                        default => 'gray',
+                    }),
                 Tables\Columns\ToggleColumn::make('is_published')
                     ->label('Publié')
                     ->onColor('success')
