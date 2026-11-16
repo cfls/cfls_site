@@ -45,14 +45,14 @@
         {{-- Botón: sugerir una seña --}}
         <div class="flex justify-end">
             @auth
-                <flux:button
-                        size="sm"
-                        variant="ghost"
-                        icon="plus-circle"
-                        wire:click="openSuggestModal"
+                <button
+                    type="button"
+                    wire:click="openSuggestModal"
+                    class="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition"
                 >
+                    <flux:icon icon="plus-circle" class="w-4 h-4" />
                     Vous ne trouvez pas un signe ?
-                </flux:button>
+                </button>
             @else
                 <a
                     href="{{ route('login') }}"
