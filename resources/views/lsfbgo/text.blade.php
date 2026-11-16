@@ -1,6 +1,7 @@
 <x-app-layout>
     @php
         function cleanWord(string $word): string {
+            $word = str_replace('\\', '', $word); // quitar barras invertidas (p. ej. "Époux \/ Mari")
             $word = preg_replace('/\s*\(.*?\)/', '', $word);
             $word = explode('/', $word)[0];
             return trim($word);
@@ -66,7 +67,7 @@
                     <option value="" disabled class="text-gray-400">Type de question</option>
                     <option value="text" {{ $type === 'text' ? 'selected' : '' }}>📝 Text</option>
                     <option value="choice" {{ $type === 'choice' ? 'selected' : '' }}>☑️ Choix</option>
-                    <option value="yes-no" {{ $type === 'yes-no' ? 'selected' : '' }}>✅ Oui/Non</option>
+                    {{-- <option value="yes-no" {{ $type === 'yes-no' ? 'selected' : '' }}>✅ Oui/Non</option> --}}
                     <option value="video-choice" {{ $type === 'video-choice' ? 'selected' : '' }}>🎥 Vidéos</option>
                     <option value="match" {{ $type === 'match' ? 'selected' : '' }}>🔗 Association</option>
                 </select>
@@ -290,19 +291,18 @@
                                                     </svg>
                                                 </button>
 
-                                                <form action="{{ route('admin-lsfbgo.update-status-question', $question->id) }}" method="POST">
+                                                <form action="{{ route('admin-lsfbgo.update-status-question', $question->id) }}" method="POST" data-ajax-status data-status="{{ $question->status ? 1 : 0 }}">
                                                     @csrf @method('PUT')
                                                     <button type="submit"
-                                                            onclick="return confirm('{{ $question->status ? 'Désactiver' : 'Activer' }} cette question ?')"
-                                                            class="{{ $question->status ? 'text-green-600 hover:text-green-900' : 'text-red-600 hover:text-red-900' }} transition"
+                                                            class="{{ $question->status ? 'text-red-600 hover:text-red-900' : 'text-green-600 hover:text-green-900' }} transition"
                                                             title="{{ $question->status ? 'Désactiver' : 'Activer' }}">
 
                                                         @if($question->status)
 
 
-                                                            Activer
-                                                        @else
                                                             Désactiver
+                                                        @else
+                                                            Activer
                                                         @endif
                                                     </button>
                                                 </form>
@@ -442,7 +442,7 @@
                 <div class="fixed inset-0 bg-gray-500 bg-opacity-75" onclick="closeEditModal({{ $question->id }})"></div>
 
                 <div class="relative bg-white rounded-lg max-w-2xl w-full">
-                    <form action="{{ route('admin-lsfbgo.update-question', $question->id) }}" method="POST">
+                    <form action="{{ route('admin-lsfbgo.update-question', $question->id) }}" method="POST" data-ajax-update>
                         @csrf
                         @method('PUT')
 
@@ -689,6 +689,64 @@
                     openCreateModal();
                 });
             }
+
+            // Manejo de formularios de edición con AJAX
+            document.querySelectorAll('form[data-ajax-update]').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    const formData = new FormData(this);
+                    const questionId = this.action.split('/').pop();
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    const originalButton = submitButton.innerHTML;
+
+                    submitButton.disabled = true;
+                    submitButton.textContent = 'Enregistrement...';
+
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': formData.get('_token')
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                closeEditModal(questionId);
+                                updateTableRow(questionId, formData.get('answer'));
+                                showToast(data.message || 'Question mise à jour avec succès!');
+                            } else {
+                                showToast(data.message || 'Une erreur est survenue', false);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToast('Une erreur est survenue lors de la mise à jour', false);
+                        })
+                        .finally(() => {
+                            submitButton.disabled = false;
+                            submitButton.innerHTML = originalButton;
+                        });
+                });
+            });
         });
+
+        function updateTableRow(questionId, newAnswer) {
+            const editButton = document.querySelector(`button[onclick="openEditModal(${questionId})"]`);
+            const row = editButton?.closest('tr');
+            if (!row) return;
+
+            // Columna "Réponse" (4ª)
+            const answerDiv = row.querySelectorAll('td')[3]?.querySelector('div');
+            if (!answerDiv) return;
+
+            answerDiv.textContent = newAnswer;
+            answerDiv.parentElement.classList.add('bg-green-100');
+            setTimeout(() => answerDiv.parentElement.classList.remove('bg-green-100'), 2000);
+        }
     </script>
+    @include('lsfbgo.partials.ajax-status')
 </x-app-layout>

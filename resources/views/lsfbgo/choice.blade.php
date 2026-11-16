@@ -1,6 +1,7 @@
 <x-app-layout>
     @php
         function cleanWord(string $word): string {
+            $word = str_replace('\\', '', $word); // quitar barras invertidas (p. ej. "Époux \/ Mari")
             $word = preg_replace('/\s*\(.*?\)/', '', $word);
             $word = explode('/', $word)[0];
             return trim($word);
@@ -95,7 +96,7 @@
                     <option value="" disabled class="text-gray-400">Type de question</option>
                     <option value="text" {{ $type === 'text' ? 'selected' : '' }}>📝 Text</option>
                     <option value="choice" {{ $type === 'choice' ? 'selected' : '' }}>☑️ Choix</option>
-                    <option value="yes-no" {{ $type === 'yes-no' ? 'selected' : '' }}>✅ Oui/Non</option>
+                    {{-- <option value="yes-no" {{ $type === 'yes-no' ? 'selected' : '' }}>✅ Oui/Non</option> --}}
                     <option value="video-choice" {{ $type === 'video-choice' ? 'selected' : '' }}>🎥 Vidéos</option>
                     <option value="match" {{ $type === 'match' ? 'selected' : '' }}>🔗 Association</option>
                 </select>
@@ -311,6 +312,15 @@
                                                 @endphp
                                                 {{ count($optionsArray) }} options
                                             </span>
+                                            <!-- Palabras de cada opción (la correcta en verde) -->
+                                            <div class="options-chips mt-2 flex flex-wrap gap-1.5 max-w-xs">
+                                                @foreach(is_array($optionsArray) ? $optionsArray : [] as $option)
+                                                    @php $isCorrect = cleanWord((string) $option) === cleanWord($question->answer ?? ''); @endphp
+                                                    <span class="px-2 py-0.5 text-xs rounded-full {{ $isCorrect ? 'bg-green-100 text-green-800 font-semibold' : 'bg-gray-100 text-gray-700' }}">
+                                                        {{ $isCorrect ? '✓ ' : '' }}{{ cleanWord((string) $option) }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
                                         </td>
 
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -332,19 +342,18 @@
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                                     </svg>
                                                 </button>
-                                                <form action="{{ route('admin-lsfbgo.update-status-question', $question->id) }}" method="POST">
+                                                <form action="{{ route('admin-lsfbgo.update-status-question', $question->id) }}" method="POST" data-ajax-status data-status="{{ $question->status ? 1 : 0 }}">
                                                     @csrf @method('PUT')
                                                     <button type="submit"
-                                                            onclick="return confirm('{{ $question->status ? 'Désactiver' : 'Activer' }} cette question ?')"
-                                                            class="{{ $question->status ? 'text-green-600 hover:text-green-900' : 'text-red-600 hover:text-red-900' }} transition"
+                                                            class="{{ $question->status ? 'text-red-600 hover:text-red-900' : 'text-green-600 hover:text-green-900' }} transition"
                                                             title="{{ $question->status ? 'Désactiver' : 'Activer' }}">
 
                                                         @if($question->status)
 
 
-                                                            Activer
-                                                        @else
                                                             Désactiver
+                                                        @else
+                                                            Activer
                                                         @endif
                                                     </button>
                                                 </form>
@@ -471,7 +480,7 @@
                 <div class="fixed inset-0 bg-gray-500 bg-opacity-75" onclick="closeEditModal({{ $question->id }})"></div>
 
                 <div class="relative bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-                    <form action="{{ route('admin-lsfbgo.update-question', $question->id) }}" method="POST">
+                    <form action="{{ route('admin-lsfbgo.update-question', $question->id) }}" method="POST" data-ajax-update>
                         @csrf
                         @method('PUT')
 
@@ -536,7 +545,7 @@
                                 <input
                                         type="text"
                                         name="answer"
-                                        value="{{ $question->answer }}"
+                                        value="{{ cleanWord($question->answer ?? '') }}"
                                         class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"
                                         required>
                             </div>
@@ -567,7 +576,7 @@
                                                     <input
                                                             type="text"
                                                             name="options[]"
-                                                            value="{{ $option }}"
+                                                            value="{{ cleanWord((string) $option) }}"
                                                             placeholder="Texte de l'option"
                                                             class="flex-1 rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                                                             required>
@@ -896,7 +905,12 @@
            TABLE UPDATE
         ====================================================== */
 
-        function updateTableRow(id, newAnswer, optionsCount) {
+        // Equivalente JS de cleanWord() en PHP
+        function cleanWord(word) {
+            return (word ?? '').replace(/\\/g, '').replace(/\s*\(.*?\)/g, '').split('/')[0].trim();
+        }
+
+        function updateTableRow(id, newAnswer, optionValues) {
             const btn = document.querySelector(`button[onclick="openEditModal(${id})"]`);
             if (!btn) return;
 
@@ -904,19 +918,32 @@
             if (!row) return;
 
             const cells = row.querySelectorAll('td');
+            const answer = cleanWord(newAnswer);
 
             // Update answer
             const answerCell = cells[3]?.querySelector('.text-sm');
             if (answerCell) {
-                answerCell.textContent = newAnswer;
+                answerCell.textContent = answer;
                 cells[3].classList.add('bg-green-100');
                 setTimeout(() => cells[3].classList.remove('bg-green-100'), 2000);
             }
 
             // Update options badge
-            if (optionsCount !== undefined) {
-                const badge = cells[4]?.querySelector('span');
-                if (badge) badge.textContent = `${optionsCount} options`;
+            const badge = cells[4]?.querySelector('span');
+            if (badge) badge.textContent = `${optionValues.length} options`;
+
+            // Update options chips
+            const chips = cells[4]?.querySelector('.options-chips');
+            if (chips) {
+                chips.replaceChildren(...optionValues.map(value => {
+                    const word = cleanWord(value);
+                    const isCorrect = word === answer;
+                    const chip = document.createElement('span');
+                    chip.className = 'px-2 py-0.5 text-xs rounded-full ' +
+                        (isCorrect ? 'bg-green-100 text-green-800 font-semibold' : 'bg-gray-100 text-gray-700');
+                    chip.textContent = (isCorrect ? '✓ ' : '') + word;
+                    return chip;
+                }));
             }
         }
 
@@ -928,7 +955,7 @@
 
             /* ===== UPDATE QUESTION (AJAX) ===== */
 
-            document.querySelectorAll('form[action*="update-question"]').forEach(form => {
+            document.querySelectorAll('form[data-ajax-update]').forEach(form => {
                 form.addEventListener('submit', async function (e) {
                     e.preventDefault();
 
@@ -955,8 +982,11 @@
 
                         if (data.success) {
                             closeEditModal(id);
-                            updateTableRow(id, formData.get('answer'),
-                                this.querySelectorAll('.option-item').length);
+                            // Mismo filtro que el controlador: solo opciones no vacías
+                            const optionValues = formData.getAll('options[]')
+                                .map(value => value.trim())
+                                .filter(Boolean);
+                            updateTableRow(id, formData.get('answer'), optionValues);
                             showSuccessModal(data.message || 'Question mise à jour!');
                         } else {
                             alert(data.message || 'Erreur');
@@ -1020,4 +1050,5 @@
     </script>
 
 
+    @include('lsfbgo.partials.ajax-status')
 </x-app-layout>

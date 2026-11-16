@@ -80,9 +80,14 @@ class VideoThemeResource extends Resource
                     ->label('Syllabus')
                     ->numeric()
                     ->sortable(),
-//                Tables\Columns\TextColumn::make('url')
-//                    ->label('Url Cloudinary')
-//                    ->searchable(),
+                Tables\Columns\TextColumn::make('url')
+                    ->label('Url Vidéo')
+                    ->limit(40)
+                    ->tooltip(fn ($state) => $state)
+                    ->copyable()
+                    ->copyMessage('URL copiée')
+                    ->copyableState(fn ($state) => $state)
+                    ->searchable(),
                 Tables\Columns\IconColumn::make('active')
                     ->label('Statut')
                     ->boolean()

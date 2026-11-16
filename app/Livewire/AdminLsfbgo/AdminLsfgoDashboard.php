@@ -35,27 +35,31 @@ class AdminLsfgoDashboard extends Component
             [
                 'title' => 'Traduire la LSFB',
                 'type' => 'text',
-                'img' => 'text.jpeg'
+                'img' => 'text.jpeg',
+                'desc' => 'Écrire le mot vu en vidéo'
             ],
             [
                 'title' => 'Choix',
                 'type' => 'choice',
-                'img' => 'choice.jpeg'
+                'img' => 'choice.jpeg',
+                'desc' => 'Choisir le bon mot parmi plusieurs'
             ],
-            [
-                'title' => 'Oui/Non',
-                'type' => 'yes-no',
-                'img' => 'yes-no.jpeg'
-            ],
+//            [
+//                'title' => 'Oui/Non',
+//                'type' => 'yes-no',
+//                'img' => 'yes-no.jpeg'
+//            ],
             [
                 'title' => 'Vidéos Choix',
                 'type' => 'video-choice',
-                'img' => 'video-choice.jpeg'
+                'img' => 'video-choice.jpeg',
+                'desc' => 'Choisir la vidéo qui correspond au mot'
             ],
             [
                 'title' => 'Association',
                 'type' => 'match',
-                'img' => 'association.jpeg'
+                'img' => 'association.jpeg',
+                'desc' => 'Relier chaque mot à sa vidéo'
             ],
 
         ];

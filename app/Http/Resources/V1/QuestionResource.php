@@ -91,6 +91,9 @@ private function formatOptions()
 
     private function cleanWord(string $word): string
     {
+        // Quitar barras invertidas que vienen de datos importados (p. ej. "Époux \/ Mari")
+        $word = str_replace('\\', '', $word);
+
         // Quitar todo lo que está entre paréntesis
         $word = preg_replace('/\s*\(.*?\)/', '', $word);
 

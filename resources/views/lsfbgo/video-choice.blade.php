@@ -1,6 +1,7 @@
 <x-app-layout>
     @php
         function cleanWord(string $word): string {
+            $word = str_replace('\\', '', $word); // quitar barras invertidas (p. ej. "Époux \/ Mari")
             $word = preg_replace('/\s*\(.*?\)/', '', $word);
             $word = explode('/', $word)[0];
             return trim($word);
@@ -95,7 +96,7 @@
                     <option value="" disabled class="text-gray-400">Type de question</option>
                     <option value="text" {{ $type === 'text' ? 'selected' : '' }}>📝 Text</option>
                     <option value="choice" {{ $type === 'choice' ? 'selected' : '' }}>☑️ Choix</option>
-                    <option value="yes-no" {{ $type === 'yes-no' ? 'selected' : '' }}>✅ Oui/Non</option>
+                    {{-- <option value="yes-no" {{ $type === 'yes-no' ? 'selected' : '' }}>✅ Oui/Non</option> --}}
                     <option value="video-choice" {{ $type === 'video-choice' ? 'selected' : '' }}>🎥 Vidéos</option>
                     <option value="match" {{ $type === 'match' ? 'selected' : '' }}>🔗 Association</option>
                 </select>
@@ -295,6 +296,22 @@
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                                                 {{ is_array($options) ? count($options) : 0 }} options vidéo
                                             </span>
+                                            <!-- Miniatura + palabra de cada opción (la correcta en verde) -->
+                                            <div class="options-chips mt-2 flex flex-wrap gap-2 max-w-sm">
+                                                @foreach(is_array($options) ? $options : [] as $option)
+                                                    @php $isCorrect = cleanWord($option['value'] ?? '') === cleanWord($question->answer ?? ''); @endphp
+                                                    <a href="{{ $option['video'] ?? '#' }}" target="_blank" rel="noopener"
+                                                       class="flex flex-col items-center w-20" title="Ouvrir la vidéo">
+                                                        <img src="{{ $question->getVideoThumbnail($option['video'] ?? '', 2, 160, 96) }}"
+                                                             alt="{{ cleanWord($option['value'] ?? '') }}"
+                                                             loading="lazy"
+                                                             class="w-20 h-12 rounded object-cover bg-gray-800 ring-2 {{ $isCorrect ? 'ring-green-500' : 'ring-transparent' }}">
+                                                        <span class="mt-1 px-1.5 py-0.5 text-xs rounded-full text-center leading-tight {{ $isCorrect ? 'bg-green-100 text-green-800 font-semibold' : 'bg-gray-100 text-gray-700' }}">
+                                                            {{ $isCorrect ? '✓ ' : '' }}{{ cleanWord($option['value'] ?? '') }}
+                                                        </span>
+                                                    </a>
+                                                @endforeach
+                                            </div>
                                         </td>
 
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -316,19 +333,18 @@
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                                     </svg>
                                                 </button>
-                                                <form action="{{ route('admin-lsfbgo.update-status-question', $question->id) }}" method="POST">
+                                                <form action="{{ route('admin-lsfbgo.update-status-question', $question->id) }}" method="POST" data-ajax-status data-status="{{ $question->status ? 1 : 0 }}">
                                                     @csrf @method('PUT')
                                                     <button type="submit"
-                                                            onclick="return confirm('{{ $question->status ? 'Désactiver' : 'Activer' }} cette question ?')"
-                                                            class="{{ $question->status ? 'text-green-600 hover:text-green-900' : 'text-red-600 hover:text-red-900' }} transition"
+                                                            class="{{ $question->status ? 'text-red-600 hover:text-red-900' : 'text-green-600 hover:text-green-900' }} transition"
                                                             title="{{ $question->status ? 'Désactiver' : 'Activer' }}">
 
                                                         @if($question->status)
 
 
-                                                            Activer
-                                                        @else
                                                             Désactiver
+                                                        @else
+                                                            Activer
                                                         @endif
                                                     </button>
                                                 </form>
@@ -459,7 +475,7 @@
                 <div class="fixed inset-0 bg-gray-500 bg-opacity-75" onclick="closeEditModal({{ $question->id }})"></div>
 
                 <div class="relative bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto">
-                    <form action="{{ route('admin-lsfbgo.update-question', $question->id) }}" method="POST">
+                    <form action="{{ route('admin-lsfbgo.update-question', $question->id) }}" method="POST" data-ajax-update>
                         @csrf
                         @method('PUT')
 
@@ -745,41 +761,71 @@
             }
         }
 
-        function updateTableRow(questionId, newAnswer, optionsCount) {
+        // Equivalente JS de cleanWord() en PHP
+        function cleanWord(word) {
+            return (word ?? '').replace(/\\/g, '').replace(/\s*\(.*?\)/g, '').split('/')[0].trim();
+        }
+
+        function updateTableRow(questionId, newAnswer, optionValues) {
             const editButton = document.querySelector(`button[onclick="openEditModal(${questionId})"]`);
+            const row = editButton?.closest('tr');
+            if (!row) return;
 
-            if (editButton) {
-                const row = editButton.closest('tr');
+            const cells = row.querySelectorAll('td');
+            const answer = cleanWord(newAnswer);
 
-                if (row) {
-                    const cells = row.querySelectorAll('td');
-
-                    // Actualizar respuesta (columna 3)
-                    const answerCell = cells[2];
-                    if (answerCell) {
-                        const textDiv = answerCell.querySelector('div');
-                        if (textDiv) {
-                            textDiv.textContent = newAnswer;
-
-                            answerCell.classList.add('bg-green-100');
-                            setTimeout(() => {
-                                answerCell.classList.remove('bg-green-100');
-                            }, 2000);
-                        }
-                    }
-
-                    // Actualizar contador de options (columna 4)
-                    if (optionsCount !== undefined) {
-                        const optionsCell = cells[3];
-                        if (optionsCell) {
-                            const badge = optionsCell.querySelector('span');
-                            if (badge) {
-                                badge.textContent = `${optionsCount} options vidéo`;
-                            }
-                        }
-                    }
-                }
+            // Respuesta (columna 3)
+            const answerCell = cells[2];
+            const textDiv = answerCell?.querySelector('div');
+            if (textDiv) {
+                textDiv.textContent = answer;
+                answerCell.classList.add('bg-green-100');
+                setTimeout(() => answerCell.classList.remove('bg-green-100'), 2000);
             }
+
+            // Contador y palabras de las options (columna 4)
+            const optionsCell = cells[3];
+            const badge = optionsCell?.querySelector('span');
+            if (badge) {
+                badge.textContent = `${optionValues.length} options vidéo`;
+            }
+
+            const chips = optionsCell?.querySelector('.options-chips');
+            if (chips) {
+                chips.replaceChildren(...optionValues.map(({ value, video }) => {
+                    const word = cleanWord(value);
+                    const isCorrect = word === answer;
+
+                    const link = document.createElement('a');
+                    link.href = video;
+                    link.target = '_blank';
+                    link.rel = 'noopener';
+                    link.title = 'Ouvrir la vidéo';
+                    link.className = 'flex flex-col items-center w-20';
+
+                    const img = document.createElement('img');
+                    img.src = videoThumbnail(video);
+                    img.alt = word;
+                    img.loading = 'lazy';
+                    img.className = 'w-20 h-12 rounded object-cover bg-gray-800 ring-2 ' +
+                        (isCorrect ? 'ring-green-500' : 'ring-transparent');
+
+                    const label = document.createElement('span');
+                    label.className = 'mt-1 px-1.5 py-0.5 text-xs rounded-full text-center leading-tight ' +
+                        (isCorrect ? 'bg-green-100 text-green-800 font-semibold' : 'bg-gray-100 text-gray-700');
+                    label.textContent = (isCorrect ? '✓ ' : '') + word;
+
+                    link.append(img, label);
+                    return link;
+                }));
+            }
+        }
+
+        // Equivalente JS de Question2::getVideoThumbnail($url, 2, 160, 96)
+        function videoThumbnail(url) {
+            return url
+                .replace('/upload/', '/upload/so_2,w_160,h_96,c_fill/')
+                .replace(/\.mp4$/, '.jpg');
         }
 
         function addVideoOption(questionId) {
@@ -905,7 +951,7 @@
 
         // Manejo de formularios con AJAX
         document.addEventListener('DOMContentLoaded', function() {
-            const forms = document.querySelectorAll('form[action*="update-question"]');
+            const forms = document.querySelectorAll('form[data-ajax-update]');
 
             forms.forEach(form => {
                 form.addEventListener('submit', function(e) {
@@ -939,8 +985,14 @@
                             if (data.success) {
                                 closeEditModal(questionId);
 
-                                const optionsCount = form.querySelectorAll('.option-item').length;
-                                updateTableRow(questionId, formData.get('answer'), optionsCount);
+                                // Mismo filtro que el controlador: solo opciones con texto y vídeo
+                                const optionValues = [...form.querySelectorAll('.option-item')]
+                                    .map(item => ({
+                                        value: item.querySelector('input[name$="[value]"]')?.value.trim() ?? '',
+                                        video: item.querySelector('input[name$="[video]"]')?.value.trim() ?? '',
+                                    }))
+                                    .filter(opt => opt.value && opt.video);
+                                updateTableRow(questionId, formData.get('answer'), optionValues);
                                 showSuccessModal(data.message || 'Question mise à jour avec succès!');
                             } else {
                                 alert('Erreur: ' + (data.message || 'Une erreur est survenue'));
@@ -1003,4 +1055,5 @@
             }
         });
     </script>
+    @include('lsfbgo.partials.ajax-status')
 </x-app-layout>

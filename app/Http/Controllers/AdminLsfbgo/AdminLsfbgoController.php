@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\AdminLsfbgo;
 
 use App\Http\Controllers\Controller;
-use App\Models\Question;
+use App\Models\Question2;
 use App\Models\Syllabu;
 use App\Models\Theme;
 use App\Models\VideoTheme;
@@ -116,7 +116,7 @@ class AdminLsfbgoController extends Controller
             }
 
             // 🔹 Crear pregunta
-            Question::create([
+            Question2::create([
                 'syllabu_id'   => $validated['syllabu_id'],
                 'theme_id'     => $validated['theme_id'],
                 'type'         => $validated['type'],
@@ -177,7 +177,7 @@ class AdminLsfbgoController extends Controller
     }
 
 
-    public function updateStatusQuestion(Question $question)
+    public function updateStatusQuestion(Request $request, Question2 $question)
     {
 
 
@@ -188,7 +188,7 @@ class AdminLsfbgoController extends Controller
 
 
             // 🔹 Actualizar todas las questions del mismo video
-            Question::where('id', $question->id)
+            Question2::where('id', $question->id)
                 ->update(['status' => $newStatus]);
 
             // 🔹 Actualizar todos los themes del mismo video
@@ -199,6 +199,14 @@ class AdminLsfbgoController extends Controller
         $message = $newStatus
             ? 'Question activée avec succès!'
             : 'Question désactivée avec succès!';
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'status'  => $newStatus,
+                'message' => $message,
+            ]);
+        }
 
         return redirect()->back()->with('success', $message);
     }
@@ -232,7 +240,7 @@ class AdminLsfbgoController extends Controller
         // Habilitar query log
 
 
-        $questions = Question::with('video')
+        $questions = Question2::with('video')
             ->where('syllabu_id', $syllabusId)
             ->where('theme_id', $themeId)
             ->where('type', $type)
@@ -278,7 +286,7 @@ class AdminLsfbgoController extends Controller
         // Habilitar query log
 
 
-        $questions = Question::with('video')
+        $questions = Question2::with('video')
             ->where('syllabu_id', $syllabusId)
             ->where('theme_id', $themeId)
             ->where('type', $type)
@@ -303,7 +311,7 @@ class AdminLsfbgoController extends Controller
         $theme = Theme::findOrFail($theme_id);
 
         // Construir la query base
-        $query = Question::where('syllabu_id', $syllabus_id)
+        $query = Question2::where('syllabu_id', $syllabus_id)
             ->where('theme_id', $theme_id)
             ->where('type', $type)
             ->with('video');
@@ -336,8 +344,9 @@ class AdminLsfbgoController extends Controller
         return view('lsfbgo.'.$type, compact('type', 'syllabus', 'theme', 'questions'));
     }
 
-    public function updateQuestion(Request $request, Question $question)
+    public function updateQuestion(Request $request, Question2 $question)
     {
+      
         $rules = [
             'question_text' => 'nullable|string|max:500',
             'video_url' => 'nullable|url|max:500',

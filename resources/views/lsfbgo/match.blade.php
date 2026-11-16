@@ -33,6 +33,7 @@
 
     @php
         function cleanWord(string $word): string {
+            $word = str_replace('\\', '', $word); // quitar barras invertidas (p. ej. "Époux \/ Mari")
             $word = preg_replace('/\s*\(.*?\)/', '', $word);
             $word = explode('/', $word)[0];
             return trim($word);
@@ -96,7 +97,7 @@
                     <option value="" disabled class="text-gray-400">Type de question</option>
                     <option value="text" {{ $type === 'text' ? 'selected' : '' }}>📝 Text</option>
                     <option value="choice" {{ $type === 'choice' ? 'selected' : '' }}>☑️ Choix</option>
-                    <option value="yes-no" {{ $type === 'yes-no' ? 'selected' : '' }}>✅ Oui/Non</option>
+                    {{-- <option value="yes-no" {{ $type === 'yes-no' ? 'selected' : '' }}>✅ Oui/Non</option> --}}
                     <option value="video-choice" {{ $type === 'video-choice' ? 'selected' : '' }}>🎥 Vidéos</option>
                     <option value="match" {{ $type === 'match' ? 'selected' : '' }}>🔗 Association</option>
                 </select>
@@ -288,20 +289,19 @@
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                                     </svg>
                                                 </button>
-                                                <form action="{{ route('admin-lsfbgo.update-status-question', $question->id) }}" method="POST">
+                                                <form action="{{ route('admin-lsfbgo.update-status-question', $question->id) }}" method="POST" data-ajax-status data-status="{{ $question->status ? 1 : 0 }}">
                                                     @csrf @method('PUT')
 
                                                     <button type="submit"
-                                                            onclick="return confirm('{{ $question->status ? 'Désactiver' : 'Activer' }} cette question ?')"
-                                                            class="{{ $question->status ? 'text-green-600 hover:text-green-900' : 'text-red-600 hover:text-red-900' }} transition"
+                                                            class="{{ $question->status ? 'text-red-600 hover:text-red-900' : 'text-green-600 hover:text-green-900' }} transition"
                                                             title="{{ $question->status ? 'Désactiver' : 'Activer' }}">
 
                                                         @if($question->status)
 
 
-                                                            Activer
-                                                        @else
                                                             Désactiver
+                                                        @else
+                                                            Activer
                                                         @endif
                                                     </button>
                                                 </form>
@@ -429,7 +429,7 @@
                 <div class="fixed inset-0 bg-gray-500 bg-opacity-75" onclick="closeEditModal({{ $question->id }})"></div>
 
                 <div class="relative bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto">
-                    <form action="{{ route('admin-lsfbgo.update-question', $question->id) }}" method="POST">
+                    <form action="{{ route('admin-lsfbgo.update-question', $question->id) }}" method="POST" data-ajax-update>
                         @csrf
                         @method('PUT')
 
@@ -701,40 +701,32 @@
             }
         }
 
-        function updateTableRow(questionId, newAnswer, optionsCount) {
+        function updateTableRow(questionId, words) {
             const editButton = document.querySelector(`button[onclick="openEditModal(${questionId})"]`);
+            const row = editButton?.closest('tr');
+            if (!row) return;
 
-            if (editButton) {
-                const row = editButton.closest('tr');
+            const cells = row.querySelectorAll('td');
 
-                if (row) {
-                    const cells = row.querySelectorAll('td');
+            // Contador de options (columna 2)
+            const badge = cells[1]?.querySelector('span');
+            if (badge) {
+                badge.textContent = `${words.length} options vidéo`;
+            }
 
-                    // Actualizar respuesta (columna 3)
-                    const answerCell = cells[2];
-                    if (answerCell) {
-                        const textDiv = answerCell.querySelector('div');
-                        if (textDiv) {
-                            textDiv.textContent = newAnswer;
+            // Palabras de la asociación (columna 3)
+            const associationsCell = cells[2];
+            const container = associationsCell?.querySelector('div');
+            if (container) {
+                container.replaceChildren(...words.map(word => {
+                    const chip = document.createElement('span');
+                    chip.className = 'px-2 py-1 text-sm bg-purple-100 text-purple-800 rounded-full';
+                    chip.textContent = word;
+                    return chip;
+                }));
 
-                            answerCell.classList.add('bg-green-100');
-                            setTimeout(() => {
-                                answerCell.classList.remove('bg-green-100');
-                            }, 2000);
-                        }
-                    }
-
-                    // Actualizar contador de options (columna 4)
-                    if (optionsCount !== undefined) {
-                        const optionsCell = cells[3];
-                        if (optionsCell) {
-                            const badge = optionsCell.querySelector('span');
-                            if (badge) {
-                                badge.textContent = `${optionsCount} options vidéo`;
-                            }
-                        }
-                    }
-                }
+                associationsCell.classList.add('bg-green-100');
+                setTimeout(() => associationsCell.classList.remove('bg-green-100'), 2000);
             }
         }
 
@@ -761,7 +753,7 @@
                         </div>
                         <input
                             type="text"
-                            name="options[${createOptionIndex}][word]"
+                            name="options[${newIndex}][word]"
                             placeholder="Texte de l'option"
                             class="w-full rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500 text-sm"
                             required>
@@ -861,7 +853,7 @@
 
         // Manejo de formularios con AJAX
         document.addEventListener('DOMContentLoaded', function() {
-            const forms = document.querySelectorAll('form[action*="update-question"]');
+            const forms = document.querySelectorAll('form[data-ajax-update]');
 
             forms.forEach(form => {
                 form.addEventListener('submit', function(e) {
@@ -895,8 +887,15 @@
                             if (data.success) {
                                 closeEditModal(questionId);
 
-                                const optionsCount = form.querySelectorAll('.option-item').length;
-                                updateTableRow(questionId, formData.get('answer'), optionsCount);
+                                // Mismo filtro que el controlador: solo opciones con palabra y vídeo
+                                const words = [...form.querySelectorAll('.option-item')]
+                                    .map(item => ({
+                                        word: item.querySelector('input[name$="[word]"]')?.value.trim() ?? '',
+                                        video: item.querySelector('input[name$="[video]"]')?.value.trim() ?? '',
+                                    }))
+                                    .filter(opt => opt.word && opt.video)
+                                    .map(opt => opt.word);
+                                updateTableRow(questionId, words);
                                 showSuccessModal(data.message || 'Question mise à jour avec succès!');
                             } else {
                                 alert('Erreur: ' + (data.message || 'Une erreur est survenue'));
@@ -959,4 +958,5 @@
             }
         });
     </script>
+    @include('lsfbgo.partials.ajax-status')
 </x-app-layout>

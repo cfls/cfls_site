@@ -38,4 +38,20 @@ class Question2 extends Model
     {
         return $this->belongsTo(VideoTheme::class, 'video_id');
     }
+
+    public function getVideoThumbnail(string $videoUrl, int $second = 2, int $width = 320, int $height = 180): string
+    {
+        return preg_replace(
+            ['/\/upload\//', '/\.mp4$/'],
+            ["/upload/so_{$second},w_{$width},h_{$height},c_fill/", '.jpg'],
+            $videoUrl
+        );
+    }
+
+    public function getVideoThumbnail2($id): string
+    {
+        $video = VideoTheme::where('id', $id)->first();
+
+        return $video ? $this->getVideoThumbnail($video->url) : '';
+    }
 }
