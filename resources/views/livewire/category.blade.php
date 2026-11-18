@@ -21,6 +21,10 @@
             @endforeach
         </select>
     </form>
+
+    @if(app(\App\Services\ClosurePeriod::class)->isNoticeActive())
+        <x-closure-banner wire:key="closure-banner" />
+    @endif
     @if (!empty($groupedProducts))
         <div class="flex justify-center flex-wrap gap-4 my-6">
             @foreach ($groupedProducts as $subcategoryName => $products)

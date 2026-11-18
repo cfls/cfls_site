@@ -205,3 +205,17 @@ Route::post('/enquete-suppression', [AccountDeletionSurveyController::class, 'st
 
 // Questions
 
+
+// Vista previa del email de confirmación de pedido (solo en local).
+// ?closed=1 simula un pedido hecho durante el cierre de fin de año.
+if (app()->environment('local')) {
+    Route::get('/dev/mail/order-confirmation/{order?}', function (Request $request, ?\App\Models\Order $order = null) {
+        $order ??= \App\Models\Order::latest()->firstOrFail();
+
+        if ($request->boolean('closed')) {
+            $order->created_at = app(\App\Services\ClosurePeriod::class)->start()->addDay()->setTime(10, 0);
+        }
+
+        return new \App\Mail\OrderConfirmationMail($order);
+    })->name('dev.mail.order-confirmation');
+}

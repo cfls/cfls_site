@@ -1,5 +1,8 @@
 <x-layout>
     <x-slot name="title">Accueil</x-slot>
+    @if(app(\App\Services\ClosurePeriod::class)->isNoticeActive())
+        <x-closure-banner class="mt-6" />
+    @endif
     @include('home.sections.title')
 {{--    @include('home.sections.information')--}}
     @include('home.sections.commader')

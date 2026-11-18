@@ -45,5 +45,8 @@
     "Manage Team": "Gérer l’équipe",
     "Team Settings": "Paramètres de l’équipe",
     "Create New Team": "Créer une nouvelle équipe",
-    "Switch Teams": "Changer d’équipe"
+    "Switch Teams": "Changer d’équipe",
+    "closure.title": "Fermeture de fin d’année",
+    "closure.banner":"Le CFLS est fermé du :start au :end inclus (réouverture le :reopen). Les commandes passées pendant cette période seront traitées à partir du :reopen_short.",
+    "closure.checkout": "Votre commande sera traitée à partir du :reopen."
 }

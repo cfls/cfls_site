@@ -34,6 +34,15 @@
                             Elle est bien enregistrée. Nous préparons votre colis dès réception de votre paiement.
                         </p>
 
+                        @php
+                            $closure = app(\App\Services\ClosurePeriod::class);
+                        @endphp
+                        @if($closure->isClosed($order->created_at))
+                            <p style="font-size: 16px; color: #92400e; background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 12px 16px; margin: 0 0 20px; line-height: 1.6;">
+                                📅 {{ __('closure.checkout', ['reopen' => $closure->reopenDate()->translatedFormat('d/m/Y')]) }}
+                            </p>
+                        @endif
+
                         <hr style="margin: 25px 0; border: none; border-top: 1px solid #e5e7eb;">
 
                         <h2 style="font-size: 20px; color: #111827; margin: 0 0 15px;">

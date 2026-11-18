@@ -368,6 +368,16 @@
                                     </div>
                             </div>
 
+                            @php
+                                $closure = app(\App\Services\ClosurePeriod::class);
+                            @endphp
+                            @if($closure->isClosed())
+                                <p role="status" class="mt-5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-amber-900 dark:border-amber-700 dark:bg-amber-900/40 dark:text-amber-100">
+                                    <i class="fa-regular fa-calendar-xmark mr-2" aria-hidden="true"></i>
+                                    {{ __('closure.checkout', ['reopen' => $closure->reopenDate()->translatedFormat('d/m/Y')]) }}
+                                </p>
+                            @endif
+
                             <div class="flex flex-col md:flex-row gap-4 mt-5">
                                 <button type="submit"
                                         :disabled="loading"
